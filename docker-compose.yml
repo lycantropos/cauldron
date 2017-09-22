@@ -7,4 +7,7 @@ services:
     entrypoint: /opt/cauldron/docker-entrypoint.sh
     volumes:
       - ./conanfile.txt:/opt/cauldron/conanfile.txt
+      - ./CMakeLists.txt:/opt/cauldron/CMakeLists.txt
+      - ./cauldron:/opt/cauldron/cauldron
+      - ./tests:/opt/cauldron/tests
       - ./docker-entrypoint.sh:/opt/cauldron/docker-entrypoint.sh
