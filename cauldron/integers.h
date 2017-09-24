@@ -17,7 +17,7 @@ class Integers : Generator<T> {
       : min_value_(min_value),
         max_value_(max_value) {};
 
-  T operator()() override {
+  T operator()() const override {
     std::random_device random_device;
     auto distribution = std::uniform_int_distribution<T>(min_value_,
                                                          max_value_);

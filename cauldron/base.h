@@ -3,5 +3,5 @@
 
 template<typename T>
 class Generator {
-  virtual T operator()() = 0;
+  virtual T operator()() const = 0;
 };
