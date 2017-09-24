@@ -17,10 +17,6 @@ class Integers : Generator<T> {
       : min_value_(min_value),
         max_value_(max_value) {};
 
-  explicit Integers(T max_value)
-      : min_value_(std::numeric_limits<T>::min()),
-        max_value_(max_value) {};
-
   T operator()() override {
     std::random_device random_device;
     auto distribution = std::uniform_int_distribution<T>(min_value_,
