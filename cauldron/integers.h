@@ -11,6 +11,7 @@
 namespace strategies {
 template<typename T>
 class Integers : Generator<T> {
+  using Predicate = std::function<bool(T)>;
  public:
   explicit Integers(T min_value = std::numeric_limits<T>::min(),
                     T max_value = std::numeric_limits<T>::max(),
@@ -21,7 +22,7 @@ class Integers : Generator<T> {
 
   explicit Integers(T min_value,
                     T max_value,
-                    const std::vector<std::function<bool(T)>> &predicates,
+                    const std::vector<Predicate> &predicates,
                     unsigned max_attempts = MAX_ATTEMPTS)
       : min_value_(min_value),
         max_value_(max_value),
@@ -61,7 +62,6 @@ class Integers : Generator<T> {
   }
 
  private:
-  using Predicate = std::function<bool(T)>;
   T min_value_;
   T max_value_;
   std::vector<Predicate> predicates_;
