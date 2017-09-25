@@ -11,9 +11,10 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
          ++single_character) {
       auto single_character_string = std::string({single_character});
       strategies::Characters same_character(single_character_string);
+
       auto character = same_character();
-      bool are_characters_equal = character == single_character;
-      REQUIRE(are_characters_equal);
+
+      REQUIRE(character == single_character);
     }
   }
   SECTION("multiple characters") {
@@ -25,7 +26,9 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
       characters_string.push_back(characters_integers());
     }
     strategies::Characters characters(characters_string);
+
     auto character = characters();
+
     REQUIRE(is_character_in_string(character,
                                    characters_string));
   }

@@ -15,12 +15,14 @@ void check_strategy() {
 
   SECTION("stays in range") {
     T integer = integers();
+
     bool stays_in_range = min_value <= integer <= max_value;
     REQUIRE(stays_in_range);
   }
   SECTION("filtration") {
     auto even = [](T number) { return number % 2 == 0; };
     auto odd = [](T number) { return number % 2 != 0; };
+
     SECTION("even") {
       auto even_integers = integers.filter(even);
       auto odd_integers = integers.filter(odd);
@@ -31,6 +33,7 @@ void check_strategy() {
       REQUIRE(even(even_integer));
       REQUIRE(odd(odd_integer));
     }
+
     SECTION("impossible") {
       auto non_existent_integers = integers.filter(even).filter(odd);
 
