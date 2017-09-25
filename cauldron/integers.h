@@ -52,7 +52,7 @@ class Integers {
     throw OutOfTries(max_attempts_);
   }
 
-  Integers<T> filter(const Predicate &predicate) {
+  Integers<T> filter(const Predicate &predicate) const {
     auto predicates = std::vector<Predicate>(predicates_);
     predicates.push_back(predicate);
     return Integers<T>(min_value_,
