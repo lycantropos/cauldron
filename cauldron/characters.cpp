@@ -40,9 +40,4 @@ char Characters::operator()() const {
   assert(0 <= index <= max_index);
   return characters_[index];
 }
-
-
-Characters characters(const char whitelist_characters[]) {
-  return Characters(whitelist_characters);
-}
 }

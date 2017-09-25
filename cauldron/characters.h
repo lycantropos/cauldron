@@ -20,7 +20,4 @@ class Characters {
  private:
   std::string characters_;
 };
-
-
-Characters characters(const char whitelist_characters[]);
 }
