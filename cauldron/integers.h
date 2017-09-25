@@ -10,7 +10,7 @@
 
 namespace strategies {
 template<typename T>
-class Integers : Generator<T> {
+class Integers {
   using Predicate = std::function<bool(T)>;
  public:
   explicit Integers(T min_value = std::numeric_limits<T>::min(),
@@ -38,7 +38,7 @@ class Integers : Generator<T> {
     return true;
   }
 
-  T operator()() const override {
+  T operator()() const {
     std::random_device random_device;
     auto distribution = std::uniform_int_distribution<T>(min_value_,
                                                          max_value_);

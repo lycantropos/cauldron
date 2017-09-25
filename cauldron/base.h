@@ -18,10 +18,4 @@ class OutOfTries : public std::exception {
  private:
   std::string msg_;
 };
-
-
-template<typename T>
-class Generator {
-  virtual T operator()() const = 0;
-};
 }
