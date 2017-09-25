@@ -7,7 +7,7 @@ include(build/conanbuildinfo.cmake)
 conan_basic_setup()
 
 set(HEADER_FILES
-        cauldron/base.h
+        cauldron/common.h
         cauldron/integers.h)
 set(SOURCE_FILES
         tests/main.cpp
