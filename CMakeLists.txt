@@ -8,9 +8,11 @@ conan_basic_setup()
 
 set(HEADER_FILES
         cauldron/common.h
+        cauldron/booleans.h
         cauldron/integers.h)
 set(SOURCE_FILES
         tests/main.cpp
+        tests/test_booleans.cpp
         tests/test_integers.cpp)
 add_executable(main ${HEADER_FILES} ${SOURCE_FILES})
 target_link_libraries(main ${CONAN_LIBS})
