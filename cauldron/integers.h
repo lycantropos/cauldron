@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <limits>
 #include <functional>
-#include "base.h"
+#include "common.h"
 
 
 namespace strategies {
