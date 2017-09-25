@@ -6,6 +6,7 @@
 #include <limits>
 #include <functional>
 #include "common.h"
+#include "utils.h"
 
 
 namespace strategies {
@@ -30,12 +31,7 @@ class Integers {
         max_attempts_(max_attempts) {};
 
   bool satisfactory(T object) const {
-    for (const auto &predicate: predicates_) {
-      if (not predicate(object)) {
-        return false;
-      }
-    }
-    return true;
+    return utils::satisfies_predicates<T>(object, predicates_);
   }
 
   T operator()() const {
