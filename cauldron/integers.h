@@ -52,7 +52,7 @@ class Integers : Generator<T> {
     throw OutOfTries(max_attempts_);
   }
 
-  Integers<T> filter(std::function<bool(T)> predicate) {
+  Integers<T> filter(const Predicate &predicate) {
     auto predicates = std::vector<Predicate>(predicates_);
     predicates.push_back(predicate);
     return Integers<T>(min_value_,
