@@ -14,7 +14,7 @@ class OutOfTries : public std::exception {
                + std::to_string(max_tries)
                + " attempts") {};
 
-  const char *what() const throw() {
+  const char *what() const throw() override {
     return msg_.c_str();
   }
 
