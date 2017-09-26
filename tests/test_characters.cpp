@@ -5,10 +5,17 @@
 
 
 TEST_CASE("\"characters\" strategy", "[characters]") {
+  unsigned maximum_length = 100;
+  auto max_ascii_character = std::numeric_limits<char>::max();
+  std::string non_zero_ascii_characters;
+  for (char character = 1;
+       character < max_ascii_character;
+       ++character) {
+    non_zero_ascii_characters.push_back(character);
+  }
+
   SECTION("single character") {
-    for (char single_character = 1;
-         single_character < std::numeric_limits<signed char>::max();
-         ++single_character) {
+    for (char single_character: non_zero_ascii_characters) {
       auto single_character_string = std::string({single_character});
       strategies::Characters same_character(single_character_string);
 
@@ -19,7 +26,7 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
   }
 
   SECTION("multiple characters") {
-    strategies::Integers<unsigned long> lengths(1, 100);
+    strategies::Integers<unsigned long> lengths(1, maximum_length);
     strategies::Integers<char> characters_integers;
     auto length = lengths();
     std::string characters_string;
@@ -42,39 +49,24 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
   }
 
   SECTION("filtration") {
-    auto lower = [](char character) {
-      return std::islower(character) != 0;
-    };
-    auto upper = [](char character) {
-      return std::isupper(character) != 0;
-    };
-    strategies::Integers<unsigned long> lengths(1, 100);
-    strategies::Integers<char> characters_integers;
-    auto lower_characters_integers = characters_integers.filter(lower);
-    auto upper_characters_integers = characters_integers.filter(upper);
-    auto length = lengths();
-    std::string characters_string;
-    for (unsigned long _ = 0; _ < length; ++_) {
-      characters_string.push_back(lower_characters_integers());
-      characters_string.push_back(upper_characters_integers());
-    }
-    strategies::Characters characters(characters_string);
+    strategies::Characters characters(non_zero_ascii_characters);
 
     SECTION("case") {
-      auto lower_characters = characters.filter(lower);
-      auto upper_characters = characters.filter(upper);
+      auto lower_characters = characters.filter(is_lower);
+      auto upper_characters = characters.filter(is_upper);
 
       auto lower_character = lower_characters();
       auto upper_character = upper_characters();
 
-      REQUIRE(lower(lower_character));
-      REQUIRE(upper(upper_character));
+      REQUIRE(is_lower(lower_character));
+      REQUIRE(is_upper(upper_character));
     }
 
     SECTION("impossible") {
-      auto non_existent_characters = characters.filter(lower).filter(upper);
+      auto invalid_characters = characters.filter(is_lower).filter(is_upper);
 
-      REQUIRE_THROWS_AS(non_existent_characters(), strategies::OutOfTries);
+      REQUIRE_THROWS_AS(invalid_characters(),
+                        strategies::OutOfTries);
     }
   }
 }
