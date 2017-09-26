@@ -13,19 +13,19 @@
 namespace strategies {
 class Strings {
  public:
-  Strings(size_t length,
-          Characters alphabet,
+  Strings(const Integers<size_t> &lengths,
+          const Characters &alphabet,
           unsigned max_attempts = MAX_ATTEMPTS);
 
-  Strings(size_t length,
-          Characters alphabet,
-          std::vector<utils::Predicate<std::string>> predicates,
+  Strings(const Integers<size_t> &lengths,
+          const Characters &alphabet,
+          const std::vector<utils::Predicate<std::string>> &predicates,
           unsigned max_attempts = MAX_ATTEMPTS);
 
-  Strings(size_t length,
-          const char alphabet[]);
+  Strings(const Integers<size_t> &lengths,
+          const char *alphabet);
 
-  Strings(size_t length,
+  Strings(const Integers<size_t> &lengths,
           const std::string &alphabet);
 
   Strings filter(const utils::Predicate<std::string> &predicate) const;
@@ -35,7 +35,7 @@ class Strings {
   std::string operator()() const;
 
  private:
-  size_t length_;
+  Integers<size_t> lengths_;
   Characters alphabet_;
   std::vector<utils::Predicate<std::string>> predicates_;
   unsigned max_attempts_;

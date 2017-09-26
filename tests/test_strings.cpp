@@ -2,6 +2,7 @@
 #include <iostream>
 #include "../cauldron/strings.h"
 #include "utils.h"
+#include "../cauldron/just.h"
 
 
 bool is_string_from_alphabet(const std::string &string,
@@ -16,7 +17,8 @@ bool is_string_from_alphabet(const std::string &string,
 
 
 TEST_CASE("\"strings\" strategy", "[strings]") {
-  unsigned maximum_length = 100;
+  size_t min_length = 1;
+  size_t max_length = 100;
   auto max_ascii_character = std::numeric_limits<char>::max();
   std::string non_zero_ascii_characters;
   for (char character = 1;
@@ -26,10 +28,12 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
   }
 
   SECTION("single character alphabet") {
+    strategies::Integers<size_t> ones = strategies::Integers<size_t>(1, 1);
     for (char single_character: non_zero_ascii_characters) {
       auto single_character_string = std::string({single_character});
       strategies::Characters same_character(single_character_string);
-      strategies::Strings same_character_strings(1, same_character);
+      strategies::Strings same_character_strings(ones,
+                                                 same_character);
 
       auto string = same_character_strings();
 
@@ -38,25 +42,25 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
   }
 
   SECTION("multiple characters alphabet") {
-    strategies::Integers<unsigned long> alphabets_lengths(1, maximum_length);
-    strategies::Integers<unsigned long> strings_lengths(0, maximum_length);
+    strategies::Integers<size_t> alphabets_lengths(min_length, max_length);
+    strategies::Integers<size_t> strings_lengths(0, max_length);
     auto alphabet_length = alphabets_lengths();
-    auto strings_length = strings_lengths();
     std::string alphabet_characters;
     strategies::Integers<char> characters_integers;
-    for (unsigned long _ = 0; _ < alphabet_length; ++_) {
+    for (size_t _ = 0; _ < alphabet_length; ++_) {
       alphabet_characters.push_back(characters_integers());
     }
     strategies::Characters alphabet(alphabet_characters);
-    strategies::Strings strings(strings_length, alphabet);
+    strategies::Strings strings(strings_lengths, alphabet);
 
     auto string = strings();
 
-    REQUIRE(string.length() == strings_length);
+    REQUIRE(min_length <= string.length() <= max_length);
     REQUIRE(is_string_from_alphabet(string, alphabet_characters));
   }
 
   SECTION("filtration") {
+    size_t max_length = 2;
     auto all_digits = [](std::string string) -> bool {
       return std::all_of(string.begin(),
                          string.end(),
@@ -67,10 +71,11 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
                          string.end(),
                          is_alphabetic);
     };
-    unsigned strings_length = 2;
+    strategies::Integers<size_t> strings_lengths(min_length,
+                                                 max_length);
     strategies::Characters non_zero_ascii(non_zero_ascii_characters);
     auto alphanumeric = non_zero_ascii.filter(is_alphanumeric);
-    strategies::Strings strings(strings_length, alphanumeric);
+    strategies::Strings strings(strings_lengths, alphanumeric);
 
     SECTION("alphanumeric") {
       auto all_digits_strings = strings.filter(all_digits);
@@ -79,7 +84,7 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
       auto all_digits_string = all_digits_strings();
       auto all_alphabetic_string = all_alphabetic_strings();
 
-      REQUIRE(all_digits_string.length() == strings_length);
+      REQUIRE(min_length <= all_digits_string.length() <= max_length);
       REQUIRE(all_digits(all_digits_string));
     }
 

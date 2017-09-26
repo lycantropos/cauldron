@@ -2,40 +2,40 @@
 
 
 namespace strategies {
-Strings::Strings(size_t length,
-                 Characters alphabet,
+Strings::Strings(const Integers<size_t> &lengths,
+                 const Characters &alphabet,
                  unsigned max_attempts) :
-    length_(length),
-    alphabet_(std::move(alphabet)),
+    lengths_(lengths),
+    alphabet_(alphabet),
     max_attempts_(max_attempts) {}
 
 
-Strings::Strings(size_t length,
-                 Characters alphabet,
-                 std::vector<utils::Predicate<std::string>> predicates,
+Strings::Strings(const Integers<size_t> &lengths,
+                 const Characters &alphabet,
+                 const std::vector<utils::Predicate<std::string>> &predicates,
                  unsigned int max_attempts) :
-    length_(length),
-    alphabet_(std::move(alphabet)),
-    predicates_(std::move(predicates)),
+    lengths_(lengths),
+    alphabet_(alphabet),
+    predicates_(predicates),
     max_attempts_(max_attempts) {}
 
 
-Strings::Strings(size_t length,
-                 const char alphabet[]) :
-    length_(length),
+Strings::Strings(const Integers<size_t> &lengths,
+                 const char *alphabet) :
+    lengths_(lengths),
     alphabet_(Characters(alphabet)) {}
 
 
-Strings::Strings(size_t length,
+Strings::Strings(const Integers<size_t> &lengths,
                  const std::string &alphabet) :
-    length_(length),
+    lengths_(lengths),
     alphabet_(Characters(alphabet)) {}
 
 
 Strings Strings::filter(const utils::Predicate<std::string> &predicate) const {
   auto predicates = std::vector<utils::Predicate<std::string>>(predicates_);
   predicates.push_back(predicate);
-  return Strings(length_,
+  return Strings(lengths_,
                  alphabet_,
                  predicates,
                  max_attempts_);
@@ -50,9 +50,10 @@ bool Strings::satisfactory(const std::string &string) const {
 
 std::string Strings::operator()() const {
   for (unsigned _ = 0; _ < max_attempts_; ++_) {
-    std::string result(length_, 0);
+    auto length = lengths_();
+    std::string result(length, 0);
     std::generate_n(result.begin(),
-                    length_,
+                    length,
                     alphabet_);
     if (not satisfactory(result)) {
       continue;
