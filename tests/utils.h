@@ -11,4 +11,8 @@ bool is_lower(char character);
 
 bool is_upper(char character);
 
+bool is_digit(char character);
+
+bool is_alphabetic(char character);
+
 bool is_alphanumeric(char character);

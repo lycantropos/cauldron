@@ -17,6 +17,16 @@ bool is_upper(char character) {
 }
 
 
+bool is_digit(char character) {
+  return std::isdigit(character) != 0;
+}
+
+
+bool is_alphabetic(char character) {
+  return std::isalpha(character) != 0;
+}
+
+
 bool is_alphanumeric(char character) {
   return std::isalnum(character) != 0;
 }
