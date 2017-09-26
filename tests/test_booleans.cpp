@@ -4,10 +4,10 @@
 
 
 TEST_CASE("\"booleans\" strategy", "[booleans]") {
-  SECTION("probability") {
-    strategies::Booleans false_values(0.);
-    strategies::Booleans true_values(1.);
+  strategies::Booleans false_values(0.);
+  strategies::Booleans true_values(1.);
 
+  SECTION("probability") {
     REQUIRE(not false_values());
     REQUIRE(true_values());
   }
@@ -21,9 +21,6 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
     };
 
     SECTION("identical") {
-      strategies::Booleans false_values(0.);
-      strategies::Booleans true_values(1.);
-
       auto still_false_values = false_values.filter(negate);
       auto still_true_values = true_values.filter(identity);
 
@@ -32,9 +29,6 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
     }
 
     SECTION("impossible") {
-      strategies::Booleans false_values(0.);
-      strategies::Booleans true_values(1.);
-
       auto invalid_false_values = false_values.filter(identity);
       auto invalid_true_values = true_values.filter(negate);
 
