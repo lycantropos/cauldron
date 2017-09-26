@@ -20,9 +20,9 @@ class Characters {
 
   explicit Characters(const char whitelist_characters[]);
 
-  bool satisfactory(char object) const;
-
   Characters filter(const utils::Predicate<char> &predicate) const;
+
+  bool satisfactory(char character) const;
 
   char operator()() const;
 

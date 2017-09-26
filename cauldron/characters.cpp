@@ -36,8 +36,18 @@ Characters::Characters(const char whitelist_characters[]) {
 }
 
 
-bool Characters::satisfactory(char object) const {
-  return utils::satisfies_predicates<char>(object, predicates_);
+Characters Characters::filter(const utils::Predicate<char> &predicate) const {
+  auto predicates = std::vector<utils::Predicate<char>>(predicates_);
+  predicates.push_back(predicate);
+  return Characters(characters_,
+                    predicates,
+                    max_attempts_);
+}
+
+
+bool Characters::satisfactory(char character) const {
+  return utils::primitive_satisfies_predicates<char>(character,
+                                                     predicates_);
 }
 
 
@@ -62,14 +72,5 @@ char Characters::operator()() const {
     return result;
   }
   throw OutOfTries(max_attempts_);
-}
-
-
-Characters Characters::filter(const utils::Predicate<char> &predicate) const {
-  auto predicates = std::vector<utils::Predicate<char>>(predicates_);
-  predicates.push_back(predicate);
-  return Characters(characters_,
-                    predicates,
-                    max_attempts_);
 }
 }

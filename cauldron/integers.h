@@ -29,8 +29,18 @@ class Integers {
         predicates_(predicates),
         max_attempts_(max_attempts) {};
 
-  bool satisfactory(T object) const {
-    return utils::satisfies_predicates<T>(object, predicates_);
+  Integers<T> filter(const utils::Predicate<T> &predicate) const {
+    auto predicates = std::vector<utils::Predicate<T>>(predicates_);
+    predicates.push_back(predicate);
+    return Integers<T>(min_value_,
+                       max_value_,
+                       predicates,
+                       max_attempts_);
+  }
+
+  bool satisfactory(T integer) const {
+    return utils::primitive_satisfies_predicates<T>(integer,
+                                                    predicates_);
   }
 
   T operator()() const {
@@ -45,15 +55,6 @@ class Integers {
       return result;
     }
     throw OutOfTries(max_attempts_);
-  }
-
-  Integers<T> filter(const utils::Predicate<T> &predicate) const {
-    auto predicates = std::vector<utils::Predicate<T>>(predicates_);
-    predicates.push_back(predicate);
-    return Integers<T>(min_value_,
-                       max_value_,
-                       predicates,
-                       max_attempts_);
   }
 
  private:

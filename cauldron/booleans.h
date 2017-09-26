@@ -26,7 +26,7 @@ class Booleans {
         max_attempts_(max_attempts) {};
 
   bool satisfactory(bool object) const {
-    return utils::satisfies_predicates<bool>(object, predicates_);
+    return utils::primitive_satisfies_predicates<bool>(object, predicates_);
   }
 
   bool operator()() const {

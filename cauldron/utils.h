@@ -16,11 +16,11 @@ T positive_modulo(T dividend,
 
 
 template<typename T>
-bool satisfies_predicates(
-    T object,
+bool primitive_satisfies_predicates(
+    T primitive,
     const std::vector<Predicate<T>> &predicates) {
   for (const auto &predicate: predicates) {
-    if (not predicate(object)) {
+    if (not predicate(primitive)) {
       return false;
     }
   }
