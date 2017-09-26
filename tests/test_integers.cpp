@@ -23,7 +23,7 @@ void check_strategy() {
     auto even = [](T number) { return number % 2 == 0; };
     auto odd = [](T number) { return number % 2 != 0; };
 
-    SECTION("even") {
+    SECTION("parity") {
       auto even_integers = integers.filter(even);
       auto odd_integers = integers.filter(odd);
 
