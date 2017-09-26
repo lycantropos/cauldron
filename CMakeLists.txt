@@ -9,6 +9,7 @@ conan_basic_setup()
 set(HEADER_FILES
         cauldron/common.h
         cauldron/utils.h
+        cauldron/just.h
         cauldron/booleans.h
         cauldron/integers.h
         cauldron/characters.h
@@ -19,6 +20,7 @@ set(SOURCE_FILES
         cauldron/strings.cpp
         tests/utils.cpp
         tests/main.cpp
+        tests/test_just.cpp
         tests/test_booleans.cpp
         tests/test_integers.cpp
         tests/test_characters.cpp
