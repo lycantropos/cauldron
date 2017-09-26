@@ -38,4 +38,40 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
     REQUIRE_THROWS_AS(strategies::Characters("\0"),
                       std::invalid_argument);
   }
+  SECTION("filtration") {
+    auto lower = [](char character) {
+      return std::islower(character) != 0;
+    };
+    auto upper = [](char character) {
+      return std::isupper(character) != 0;
+    };
+    strategies::Integers<unsigned long> lengths(1, 100);
+    strategies::Integers<char> characters_integers;
+    auto lower_characters_integers = characters_integers.filter(lower);
+    auto upper_characters_integers = characters_integers.filter(upper);
+    auto length = lengths();
+    std::string characters_string;
+    for (unsigned long _ = 0; _ < length; ++_) {
+      characters_string.push_back(lower_characters_integers());
+      characters_string.push_back(upper_characters_integers());
+    }
+    strategies::Characters characters(characters_string);
+
+    SECTION("case") {
+      auto lower_characters = characters.filter(lower);
+      auto upper_characters = characters.filter(upper);
+
+      auto lower_character = lower_characters();
+      auto upper_character = upper_characters();
+
+      REQUIRE(lower(lower_character));
+      REQUIRE(upper(upper_character));
+    }
+
+    SECTION("impossible") {
+      auto non_existent_characters = characters.filter(lower).filter(upper);
+
+      REQUIRE_THROWS_AS(non_existent_characters(), strategies::OutOfTries);
+    }
+  }
 }

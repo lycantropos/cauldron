@@ -1,7 +1,6 @@
 #include <stdexcept>
 #include <cassert>
 #include "characters.h"
-#include "utils.h"
 
 
 namespace strategies {
@@ -12,9 +11,21 @@ void validate_characters(const std::string &characters) {
 }
 
 
-Characters::Characters(const std::string &whitelist_characters) {
+Characters::Characters(const std::string &whitelist_characters,
+                       unsigned max_attempts) {
   validate_characters(whitelist_characters);
   characters_ = whitelist_characters;
+  max_attempts_ = max_attempts;
+}
+
+
+Characters::Characters(const std::string &whitelist_characters,
+                       const std::vector<Characters::Predicate> &predicates,
+                       unsigned int max_attempts) {
+  validate_characters(whitelist_characters);
+  characters_ = whitelist_characters;
+  predicates_ = predicates;
+  max_attempts_ = max_attempts;
 }
 
 
@@ -22,6 +33,11 @@ Characters::Characters(const char whitelist_characters[]) {
   const auto &characters = std::string(whitelist_characters);
   validate_characters(characters);
   characters_ = characters;
+}
+
+
+bool Characters::satisfactory(char object) const {
+  return utils::satisfies_predicates<char>(object, predicates_);
 }
 
 
@@ -33,11 +49,27 @@ char Characters::operator()() const {
    * http://www.cplusplus.com/reference/string/string/max_size/
    */
   auto non_negative_integers = Integers<size_t>(0);
-  auto non_negative_integer = non_negative_integers();
   size_t max_index = characters_.length() - 1;
-  auto index = utils::positive_modulo<size_t>(non_negative_integer,
-                                              max_index);
-  assert(0 <= index <= max_index);
-  return characters_[index];
+  for (unsigned _ = 0; _ < max_attempts_; ++_) {
+    auto non_negative_integer = non_negative_integers();
+    auto index = utils::positive_modulo<size_t>(non_negative_integer,
+                                                max_index);
+    assert(0 <= index <= max_index);
+    char result = characters_[index];
+    if (not satisfactory(result)) {
+      continue;
+    }
+    return result;
+  }
+  throw OutOfTries(max_attempts_);
+}
+
+
+Characters Characters::filter(const Characters::Predicate &predicate) const {
+  auto predicates = std::vector<Predicate>(predicates_);
+  predicates.push_back(predicate);
+  return Characters(characters_,
+                    predicates,
+                    max_attempts_);
 }
 }
