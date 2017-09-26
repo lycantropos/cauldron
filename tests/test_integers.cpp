@@ -9,8 +9,10 @@ void check_strategy() {
   auto distribution = std::uniform_int_distribution<T>();
   std::vector<T> borders{distribution(random_device),
                          distribution(random_device)};
-  auto min_value = *std::min_element(borders.begin(), borders.end());
-  auto max_value = *std::max_element(borders.begin(), borders.end());
+  auto min_value = *std::min_element(borders.begin(),
+                                     borders.end());
+  auto max_value = *std::max_element(borders.begin(),
+                                     borders.end());
   strategies::Integers<T> integers(min_value, max_value);
 
   SECTION("stays in range") {
@@ -21,8 +23,8 @@ void check_strategy() {
   }
 
   SECTION("filtration") {
-    auto even = [](T number) { return number % 2 == 0; };
-    auto odd = [](T number) { return number % 2 != 0; };
+    auto even = [=](T number) { return number % 2 == 0; };
+    auto odd = [=](T number) { return number % 2 != 0; };
 
     SECTION("parity") {
       auto even_integers = integers.filter(even);
@@ -38,7 +40,8 @@ void check_strategy() {
     SECTION("impossible") {
       auto non_existent_integers = integers.filter(even).filter(odd);
 
-      REQUIRE_THROWS_AS(non_existent_integers(), strategies::OutOfTries);
+      REQUIRE_THROWS_AS(non_existent_integers(),
+                        strategies::OutOfTries);
     }
   }
 }

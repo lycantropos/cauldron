@@ -13,10 +13,10 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
   }
 
   SECTION("filtration") {
-    auto identity = [](bool boolean) -> bool {
+    auto identity = [=](bool boolean) -> bool {
       return boolean;
     };
-    auto negate = [](bool boolean) -> bool {
+    auto negate = [=](bool boolean) -> bool {
       return not boolean;
     };
 
