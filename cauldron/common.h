@@ -1,5 +1,8 @@
 #pragma once
 
+#include <functional>
+
+
 namespace strategies {
 static const unsigned MAX_ATTEMPTS = 1000;
 

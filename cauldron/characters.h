@@ -10,26 +10,25 @@
 
 namespace strategies {
 class Characters {
-  using Predicate = std::function<bool(char)>;
  public:
   explicit Characters(const std::string &whitelist_characters,
                       unsigned max_attempts = MAX_ATTEMPTS);
 
   explicit Characters(const std::string &whitelist_characters,
-                      const std::vector<Predicate> &predicates,
+                      const std::vector<utils::Predicate<char>> &predicates,
                       unsigned max_attempts = MAX_ATTEMPTS);
 
   explicit Characters(const char whitelist_characters[]);
 
   bool satisfactory(char object) const;
 
-  Characters filter(const Predicate &predicate) const;
+  Characters filter(const utils::Predicate<char> &predicate) const;
 
   char operator()() const;
 
  private:
   std::string characters_;
-  std::vector<Predicate> predicates_;
+  std::vector<utils::Predicate<char>> predicates_;
   unsigned max_attempts_;
 };
 }

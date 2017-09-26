@@ -12,7 +12,6 @@
 namespace strategies {
 template<typename T>
 class Integers {
-  using Predicate = std::function<bool(T)>;
  public:
   explicit Integers(T min_value = std::numeric_limits<T>::min(),
                     T max_value = std::numeric_limits<T>::max(),
@@ -23,7 +22,7 @@ class Integers {
 
   explicit Integers(T min_value,
                     T max_value,
-                    const std::vector<Predicate> &predicates,
+                    const std::vector<utils::Predicate<T>> &predicates,
                     unsigned max_attempts = MAX_ATTEMPTS)
       : min_value_(min_value),
         max_value_(max_value),
@@ -48,8 +47,8 @@ class Integers {
     throw OutOfTries(max_attempts_);
   }
 
-  Integers<T> filter(const Predicate &predicate) const {
-    auto predicates = std::vector<Predicate>(predicates_);
+  Integers<T> filter(const utils::Predicate<T> &predicate) const {
+    auto predicates = std::vector<utils::Predicate<T>>(predicates_);
     predicates.push_back(predicate);
     return Integers<T>(min_value_,
                        max_value_,
@@ -60,7 +59,7 @@ class Integers {
  private:
   T min_value_;
   T max_value_;
-  std::vector<Predicate> predicates_;
+  std::vector<utils::Predicate<T>> predicates_;
   unsigned max_attempts_;
 };
 }

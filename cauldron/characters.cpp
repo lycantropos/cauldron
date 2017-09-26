@@ -20,7 +20,7 @@ Characters::Characters(const std::string &whitelist_characters,
 
 
 Characters::Characters(const std::string &whitelist_characters,
-                       const std::vector<Characters::Predicate> &predicates,
+                       const std::vector<utils::Predicate<char>> &predicates,
                        unsigned int max_attempts) {
   validate_characters(whitelist_characters);
   characters_ = whitelist_characters;
@@ -65,8 +65,8 @@ char Characters::operator()() const {
 }
 
 
-Characters Characters::filter(const Characters::Predicate &predicate) const {
-  auto predicates = std::vector<Predicate>(predicates_);
+Characters Characters::filter(const utils::Predicate<char> &predicate) const {
+  auto predicates = std::vector<utils::Predicate<char>>(predicates_);
   predicates.push_back(predicate);
   return Characters(characters_,
                     predicates,
