@@ -11,6 +11,7 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
     REQUIRE(not false_values());
     REQUIRE(true_values());
   }
+
   SECTION("filtration") {
     auto identity = [](bool boolean) -> bool {
       return boolean;

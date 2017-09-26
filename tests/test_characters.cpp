@@ -17,6 +17,7 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
       REQUIRE(character == single_character);
     }
   }
+
   SECTION("multiple characters") {
     strategies::Integers<unsigned long> lengths(1, 100);
     strategies::Integers<char> characters_integers;
@@ -32,12 +33,14 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
     REQUIRE(is_character_in_string(character,
                                    characters_string));
   }
+
   SECTION("invalid whitelist characters") {
     REQUIRE_THROWS_AS(strategies::Characters(""),
                       std::invalid_argument);
     REQUIRE_THROWS_AS(strategies::Characters("\0"),
                       std::invalid_argument);
   }
+
   SECTION("filtration") {
     auto lower = [](char character) {
       return std::islower(character) != 0;

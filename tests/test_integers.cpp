@@ -19,6 +19,7 @@ void check_strategy() {
     bool stays_in_range = min_value <= integer <= max_value;
     REQUIRE(stays_in_range);
   }
+
   SECTION("filtration") {
     auto even = [](T number) { return number % 2 == 0; };
     auto odd = [](T number) { return number % 2 != 0; };
