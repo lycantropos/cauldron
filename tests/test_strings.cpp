@@ -28,12 +28,12 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
   }
 
   SECTION("single character alphabet") {
-    strategies::Integers<size_t> ones = strategies::Integers<size_t>(1, 1);
+    strategies::Just<size_t> ones(1);
     for (char single_character: non_zero_ascii_characters) {
       auto single_character_string = std::string({single_character});
       strategies::Characters same_character(single_character_string);
-      strategies::Strings same_character_strings(ones,
-                                                 same_character);
+      strategies::Strings same_character_strings(&ones,
+                                                 &same_character);
 
       auto string = same_character_strings();
 
@@ -51,7 +51,8 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
       alphabet_characters.push_back(characters_integers());
     }
     strategies::Characters alphabet(alphabet_characters);
-    strategies::Strings strings(strings_lengths, alphabet);
+    strategies::Strings strings(&strings_lengths,
+                                &alphabet);
 
     auto string = strings();
 
@@ -60,7 +61,6 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
   }
 
   SECTION("filtration") {
-    size_t max_length = 2;
     auto all_digits = [](std::string string) -> bool {
       return std::all_of(string.begin(),
                          string.end(),
@@ -71,11 +71,13 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
                          string.end(),
                          is_alphabetic);
     };
+    size_t max_length = 2;
     strategies::Integers<size_t> strings_lengths(min_length,
                                                  max_length);
     strategies::Characters non_zero_ascii(non_zero_ascii_characters);
     auto alphanumeric = non_zero_ascii.filter(is_alphanumeric);
-    strategies::Strings strings(strings_lengths, alphanumeric);
+    strategies::Strings strings(&strings_lengths,
+                                &alphanumeric);
 
     SECTION("alphanumeric") {
       auto all_digits_strings = strings.filter(all_digits);

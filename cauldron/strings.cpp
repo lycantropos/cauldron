@@ -2,16 +2,16 @@
 
 
 namespace strategies {
-Strings::Strings(const Integers<size_t> &lengths,
-                 const Characters &alphabet,
+Strings::Strings(Generator<size_t> *lengths,
+                 Generator<char> *alphabet,
                  unsigned max_attempts) :
     lengths_(lengths),
     alphabet_(alphabet),
     max_attempts_(max_attempts) {}
 
 
-Strings::Strings(const Integers<size_t> &lengths,
-                 const Characters &alphabet,
+Strings::Strings(Generator<size_t> *lengths,
+                 Generator<char> *alphabet,
                  const std::vector<utils::Predicate<std::string>> &predicates,
                  unsigned int max_attempts) :
     lengths_(lengths),
@@ -20,16 +20,16 @@ Strings::Strings(const Integers<size_t> &lengths,
     max_attempts_(max_attempts) {}
 
 
-Strings::Strings(const Integers<size_t> &lengths,
+Strings::Strings(Generator<size_t> *lengths,
                  const char *alphabet) :
     lengths_(lengths),
-    alphabet_(Characters(alphabet)) {}
+    alphabet_(new Characters(alphabet)) {}
 
 
-Strings::Strings(const Integers<size_t> &lengths,
+Strings::Strings(Generator<size_t> *lengths,
                  const std::string &alphabet) :
     lengths_(lengths),
-    alphabet_(Characters(alphabet)) {}
+    alphabet_(new Characters(alphabet)) {}
 
 
 Strings Strings::filter(const utils::Predicate<std::string> &predicate) const {
@@ -50,11 +50,13 @@ bool Strings::satisfactory(const std::string &string) const {
 
 std::string Strings::operator()() const {
   for (unsigned _ = 0; _ < max_attempts_; ++_) {
-    auto length = lengths_();
+    auto length = (*lengths_)();
     std::string result(length, 0);
     std::generate_n(result.begin(),
                     length,
-                    alphabet_);
+                    [&]() -> char {
+                      return (*alphabet_)();
+                    });
     if (not satisfactory(result)) {
       continue;
     }
