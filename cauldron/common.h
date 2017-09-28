@@ -7,6 +7,13 @@ namespace strategies {
 static const unsigned MAX_ATTEMPTS = 1000;
 
 
+template<typename T>
+class Generator {
+ public:
+  virtual T operator()() const = 0;
+};
+
+
 class OutOfTries : public std::exception {
  public:
   explicit OutOfTries(unsigned max_tries) :

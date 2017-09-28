@@ -10,7 +10,7 @@
 
 
 namespace strategies {
-class Booleans {
+class Booleans : public Generator<bool> {
   using Predicate = std::function<bool(bool)>;
  public:
   explicit Booleans(double probability = 0.5,
@@ -25,11 +25,19 @@ class Booleans {
         predicates_(std::move(predicates)),
         max_attempts_(max_attempts) {};
 
+  Booleans filter(const Predicate &predicate) {
+    auto predicates = std::vector<Predicate>(predicates_);
+    predicates.push_back(predicate);
+    return Booleans(probability_,
+                    predicates,
+                    max_attempts_);
+  }
+
   bool satisfactory(bool object) const {
     return utils::primitive_satisfies_predicates<bool>(object, predicates_);
   }
 
-  bool operator()() const {
+  bool operator()() const override {
     std::random_device random_device;
     auto distribution = std::bernoulli_distribution(probability_);
     for (unsigned _ = 0; _ < max_attempts_; ++_) {
@@ -40,14 +48,6 @@ class Booleans {
       return result;
     }
     throw OutOfTries(max_attempts_);
-  }
-
-  Booleans filter(const Predicate &predicate) {
-    auto predicates = std::vector<Predicate>(predicates_);
-    predicates.push_back(predicate);
-    return Booleans(probability_,
-                    predicates,
-                    max_attempts_);
   }
 
  private:

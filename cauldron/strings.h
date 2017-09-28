@@ -11,7 +11,7 @@
 
 
 namespace strategies {
-class Strings {
+class Strings : public Generator<std::string> {
  public:
   Strings(const Integers<size_t> &lengths,
           const Characters &alphabet,
@@ -32,7 +32,7 @@ class Strings {
 
   bool satisfactory(const std::string &string) const;
 
-  std::string operator()() const;
+  std::string operator()() const override;
 
  private:
   Integers<size_t> lengths_;

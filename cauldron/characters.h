@@ -9,7 +9,7 @@
 
 
 namespace strategies {
-class Characters {
+class Characters : public Generator<char> {
  public:
   explicit Characters(const std::string &whitelist_characters,
                       unsigned max_attempts = MAX_ATTEMPTS);
@@ -24,7 +24,7 @@ class Characters {
 
   bool satisfactory(char character) const;
 
-  char operator()() const;
+  char operator()() const override;
 
  private:
   std::string characters_;

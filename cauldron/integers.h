@@ -11,7 +11,7 @@
 
 namespace strategies {
 template<typename T>
-class Integers {
+class Integers: public Generator<T> {
  public:
   explicit Integers(T min_value = std::numeric_limits<T>::min(),
                     T max_value = std::numeric_limits<T>::max(),
@@ -43,7 +43,7 @@ class Integers {
                                                     predicates_);
   }
 
-  T operator()() const {
+  T operator()() const override {
     std::random_device random_device;
     auto distribution = std::uniform_int_distribution<T>(min_value_,
                                                          max_value_);
