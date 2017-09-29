@@ -4,6 +4,7 @@
 #include <string>
 #include <algorithm>
 #include <limits>
+#include <memory>
 #include "common.h"
 #include "integers.h"
 #include "characters.h"
@@ -13,19 +14,19 @@
 namespace strategies {
 class Strings : public Generator<std::string> {
  public:
-  Strings(Generator<size_t> *lengths,
-          Generator<char> *alphabet,
+  Strings(std::shared_ptr<Generator<size_t>> lengths,
+          std::shared_ptr<Generator<char>> alphabet,
           unsigned max_attempts = MAX_ATTEMPTS);
 
-  Strings(Generator<size_t> *lengths,
-          Generator<char> *alphabet,
+  Strings(std::shared_ptr<Generator<size_t>> lengths,
+          std::shared_ptr<Generator<char>> alphabet,
           const std::vector<utils::Predicate<std::string>> &predicates,
           unsigned max_attempts = MAX_ATTEMPTS);
 
-  Strings(Generator<size_t> *lengths,
+  Strings(std::shared_ptr<Generator<size_t>> lengths,
           const char *alphabet);
 
-  Strings(Generator<size_t> *lengths,
+  Strings(std::shared_ptr<Generator<size_t>> lengths,
           const std::string &alphabet);
 
   Strings filter(const utils::Predicate<std::string> &predicate) const;
@@ -35,8 +36,8 @@ class Strings : public Generator<std::string> {
   std::string operator()() const override;
 
  private:
-  Generator<size_t> *lengths_;
-  Generator<char> *alphabet_;
+  std::shared_ptr<Generator<size_t>> lengths_;
+  std::shared_ptr<Generator<char>> alphabet_;
   std::vector<utils::Predicate<std::string>> predicates_;
   unsigned max_attempts_;
 };

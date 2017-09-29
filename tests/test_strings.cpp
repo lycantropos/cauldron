@@ -1,8 +1,8 @@
 #include <catch.hpp>
 #include <iostream>
 #include "../cauldron/strings.h"
-#include "utils.h"
 #include "../cauldron/just.h"
+#include "utils.h"
 
 
 bool is_string_from_alphabet(const std::string &string,
@@ -32,8 +32,9 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
     for (char single_character: non_zero_ascii_characters) {
       auto single_character_string = std::string({single_character});
       strategies::Characters same_character(single_character_string);
-      strategies::Strings same_character_strings(&ones,
-                                                 &same_character);
+      strategies::Strings same_character_strings(
+          std::make_shared<strategies::Just<size_t>>(ones),
+          std::make_shared<strategies::Characters>(same_character));
 
       auto string = same_character_strings();
 
@@ -51,13 +52,15 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
       alphabet_characters.push_back(characters_integers());
     }
     strategies::Characters alphabet(alphabet_characters);
-    strategies::Strings strings(&strings_lengths,
-                                &alphabet);
+    strategies::Strings strings(
+        std::make_shared<strategies::Integers<size_t>>(strings_lengths),
+        std::make_shared<strategies::Characters>(alphabet));
 
     auto string = strings();
 
     REQUIRE(min_length <= string.length() <= max_length);
-    REQUIRE(is_string_from_alphabet(string, alphabet_characters));
+    REQUIRE(is_string_from_alphabet(string,
+                                    alphabet_characters));
   }
 
   SECTION("filtration") {
@@ -76,8 +79,9 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
                                                  max_length);
     strategies::Characters non_zero_ascii(non_zero_ascii_characters);
     auto alphanumeric = non_zero_ascii.filter(is_alphanumeric);
-    strategies::Strings strings(&strings_lengths,
-                                &alphanumeric);
+    strategies::Strings strings(
+        std::make_shared<strategies::Integers<size_t>>(strings_lengths),
+        std::make_shared<strategies::Characters>(alphanumeric));
 
     SECTION("alphanumeric") {
       auto all_digits_strings = strings.filter(all_digits);

@@ -2,16 +2,16 @@
 
 
 namespace strategies {
-Strings::Strings(Generator<size_t> *lengths,
-                 Generator<char> *alphabet,
+Strings::Strings(std::shared_ptr<Generator<size_t>> lengths,
+                 std::shared_ptr<Generator<char>> alphabet,
                  unsigned max_attempts) :
     lengths_(lengths),
     alphabet_(alphabet),
     max_attempts_(max_attempts) {}
 
 
-Strings::Strings(Generator<size_t> *lengths,
-                 Generator<char> *alphabet,
+Strings::Strings(std::shared_ptr<Generator<size_t>> lengths,
+                 std::shared_ptr<Generator<char>> alphabet,
                  const std::vector<utils::Predicate<std::string>> &predicates,
                  unsigned int max_attempts) :
     lengths_(lengths),
@@ -20,16 +20,16 @@ Strings::Strings(Generator<size_t> *lengths,
     max_attempts_(max_attempts) {}
 
 
-Strings::Strings(Generator<size_t> *lengths,
+Strings::Strings(std::shared_ptr<Generator<size_t>> lengths,
                  const char *alphabet) :
     lengths_(lengths),
-    alphabet_(new Characters(alphabet)) {}
+    alphabet_(std::make_shared<Characters>(alphabet)) {}
 
 
-Strings::Strings(Generator<size_t> *lengths,
+Strings::Strings(std::shared_ptr<Generator<size_t>> lengths,
                  const std::string &alphabet) :
     lengths_(lengths),
-    alphabet_(new Characters(alphabet)) {}
+    alphabet_(std::make_shared<Characters>(alphabet)) {}
 
 
 Strings Strings::filter(const utils::Predicate<std::string> &predicate) const {
