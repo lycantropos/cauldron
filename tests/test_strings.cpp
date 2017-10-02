@@ -95,7 +95,8 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
     }
 
     SECTION("impossible") {
-      auto invalid_strings = strings.filter(all_digits)->filter(all_alphabetic);
+      auto invalid_strings =
+          strings.filter(all_digits)->filter(all_alphabetic);
       REQUIRE_THROWS_AS((*invalid_strings)(),
                         strategies::OutOfCycles);
     }
