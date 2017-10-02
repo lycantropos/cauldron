@@ -29,11 +29,11 @@ Strings::Strings(std::shared_ptr<Strategy<size_t>> lengths,
 std::string Strings::producer() const {
   auto length = (*lengths_)();
   std::string result(length, 0);
-  // FIXME: workaround to get characters producer from generator
+  // FIXME: workaround using lambda to get producer from strategy
   auto characters_producer = [&]() -> char { return (*alphabet_)(); };
-  generate_n(result.begin(),
-             length,
-             characters_producer);
+  std::generate_n(result.begin(),
+                  length,
+                  characters_producer);
   return result;
 }
 
