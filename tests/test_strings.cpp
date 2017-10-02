@@ -74,7 +74,7 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
                          string.end(),
                          is_alphabetic);
     };
-    size_t max_length = 2;
+    size_t max_length = 3;
     strategies::Integers<size_t> strings_lengths(min_length,
                                                  max_length);
     strategies::Characters non_zero_ascii(non_zero_ascii_characters);
