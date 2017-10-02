@@ -10,22 +10,6 @@ Strings::Strings(std::shared_ptr<Strategy<size_t>> lengths,
     Filtered<std::string>(sieve) {}
 
 
-Strings::Strings(std::shared_ptr<Strategy<size_t>> lengths,
-                 const char *alphabet,
-                 const Sieve<std::string> &sieve) :
-    lengths_(std::move(lengths)),
-    alphabet_(std::make_shared<Characters>(alphabet)),
-    Filtered<std::string>(sieve) {}
-
-
-Strings::Strings(std::shared_ptr<Strategy<size_t>> lengths,
-                 const std::string &alphabet,
-                 const Sieve<std::string> &sieve) :
-    lengths_(std::move(lengths)),
-    alphabet_(std::make_shared<Characters>(alphabet)),
-    Filtered<std::string>(sieve) {}
-
-
 std::string Strings::producer() const {
   auto length = (*lengths_)();
   std::string result(length, 0);
