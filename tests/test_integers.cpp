@@ -1,6 +1,7 @@
 #include <catch.hpp>
 #include <iostream>
 #include "../cauldron/integers.h"
+#include "utils.h"
 
 
 template<typename T>
@@ -23,12 +24,9 @@ void check_integers_strategy() {
   }
 
   SECTION("filtration") {
-    auto even = [=](T number) { return number % 2 == 0; };
-    auto odd = [=](T number) { return number % 2 != 0; };
-
     SECTION("parity") {
-      auto even_integers = integers.filter(even);
-      auto odd_integers = integers.filter(odd);
+      auto even_integers = integers.filter(even<T>);
+      auto odd_integers = integers.filter(odd<T>);
 
       auto even_integer = (*even_integers)();
       auto odd_integer = (*odd_integers)();
@@ -38,7 +36,7 @@ void check_integers_strategy() {
     }
 
     SECTION("impossible") {
-      auto non_existent_integers = integers.filter(even)->filter(odd);
+      auto non_existent_integers = integers.filter(even<T>)->filter(odd<T>);
 
       REQUIRE_THROWS_AS((*non_existent_integers)(),
                         strategies::OutOfCycles);

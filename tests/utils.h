@@ -3,6 +3,18 @@
 #include <iostream>
 
 
+template<typename T>
+bool even(T number) {
+  return number % 2 == 0;
+};
+
+
+template<typename T>
+bool odd(T number) {
+  return number % 2 != 0;
+};
+
+
 bool is_character_in_string(char character,
                             const std::string &string);
 
