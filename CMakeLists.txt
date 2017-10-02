@@ -8,7 +8,7 @@ conan_basic_setup()
 
 set(HEADER_FILES
         cauldron/sieve.h
-        cauldron/common.h
+        cauldron/bases.h
         cauldron/just.h
         cauldron/booleans.h
         cauldron/integers.h

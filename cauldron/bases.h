@@ -6,16 +6,15 @@
 
 
 namespace strategies {
-
 template<typename T>
-class Generator {
+class Strategy {
  public:
   virtual T operator()() const = 0;
 };
 
 
 template<typename T>
-class Filtered : public Generator<T> {
+class Filtered : public Strategy<T> {
  public:
   Filtered() = default;
 

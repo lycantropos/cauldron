@@ -4,7 +4,7 @@
 #include <string>
 #include <algorithm>
 #include <limits>
-#include "common.h"
+#include "bases.h"
 #include "integers.h"
 
 

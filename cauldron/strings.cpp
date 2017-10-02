@@ -2,15 +2,15 @@
 
 
 namespace strategies {
-Strings::Strings(std::shared_ptr<Generator<size_t>> lengths,
-                 std::shared_ptr<Generator<char>> alphabet,
+Strings::Strings(std::shared_ptr<Strategy<size_t>> lengths,
+                 std::shared_ptr<Strategy<char>> alphabet,
                  const Sieve<std::string> &sieve) :
     lengths_(std::move(lengths)),
     alphabet_(std::move(alphabet)),
     Filtered<std::string>(sieve) {}
 
 
-Strings::Strings(std::shared_ptr<Generator<size_t>> lengths,
+Strings::Strings(std::shared_ptr<Strategy<size_t>> lengths,
                  const char *alphabet,
                  const Sieve<std::string> &sieve) :
     lengths_(std::move(lengths)),
@@ -18,7 +18,7 @@ Strings::Strings(std::shared_ptr<Generator<size_t>> lengths,
     Filtered<std::string>(sieve) {}
 
 
-Strings::Strings(std::shared_ptr<Generator<size_t>> lengths,
+Strings::Strings(std::shared_ptr<Strategy<size_t>> lengths,
                  const std::string &alphabet,
                  const Sieve<std::string> &sieve) :
     lengths_(std::move(lengths)),

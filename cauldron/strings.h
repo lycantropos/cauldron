@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <limits>
 #include <memory>
-#include "common.h"
+#include "bases.h"
 #include "integers.h"
 #include "characters.h"
 
@@ -13,22 +13,22 @@
 namespace strategies {
 class Strings : public Filtered<std::string> {
  public:
-  Strings(std::shared_ptr<Generator<size_t>> lengths,
-          std::shared_ptr<Generator<char>> alphabet,
+  Strings(std::shared_ptr<Strategy<size_t>> lengths,
+          std::shared_ptr<Strategy<char>> alphabet,
           const Sieve<std::string> &sieve = Sieve<std::string>());
 
-  Strings(std::shared_ptr<Generator<size_t>> lengths,
+  Strings(std::shared_ptr<Strategy<size_t>> lengths,
           const char *alphabet,
           const Sieve<std::string> &sieve = Sieve<std::string>());
 
-  Strings(std::shared_ptr<Generator<size_t>> lengths,
+  Strings(std::shared_ptr<Strategy<size_t>> lengths,
           const std::string &alphabet,
           const Sieve<std::string> &sieve = Sieve<std::string>());
 
  private:
 
-  std::shared_ptr<Generator<size_t>> lengths_;
-  std::shared_ptr<Generator<char>> alphabet_;
+  std::shared_ptr<Strategy<size_t>> lengths_;
+  std::shared_ptr<Strategy<char>> alphabet_;
 
   std::string producer() const override;
 
