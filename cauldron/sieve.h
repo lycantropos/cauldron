@@ -34,8 +34,7 @@ class Sieve {
   explicit Sieve(unsigned max_cycles = MAX_CYCLES) :
       max_cycles_(max_cycles) {};
 
-  explicit Sieve(const std::vector<Requirement<T>>
-                 &requirements,
+  explicit Sieve(const std::vector<Requirement<T>> &requirements,
                  unsigned max_cycles = MAX_CYCLES) :
       requirements_(requirements),
       max_cycles_(max_cycles) {}
