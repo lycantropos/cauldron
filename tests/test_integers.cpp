@@ -41,7 +41,7 @@ void check_strategy() {
       auto non_existent_integers = integers.filter(even)->filter(odd);
 
       REQUIRE_THROWS_AS((*non_existent_integers)(),
-                        strategies::OutOfTries);
+                        strategies::OutOfCycles);
     }
   }
 }

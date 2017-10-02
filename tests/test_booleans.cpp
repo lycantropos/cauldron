@@ -33,9 +33,9 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
       auto invalid_true_values = true_values.filter(negate);
 
       REQUIRE_THROWS_AS((*invalid_false_values)(),
-                        strategies::OutOfTries);
+                        strategies::OutOfCycles);
       REQUIRE_THROWS_AS((*invalid_true_values)(),
-                        strategies::OutOfTries);
+                        strategies::OutOfCycles);
     }
   }
 }

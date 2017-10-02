@@ -66,7 +66,7 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
       auto invalid_characters = characters.filter(is_lower)->filter(is_upper);
 
       REQUIRE_THROWS_AS((*invalid_characters)(),
-                        strategies::OutOfTries);
+                        strategies::OutOfCycles);
     }
   }
 }

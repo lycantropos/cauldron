@@ -6,7 +6,7 @@
 
 
 namespace strategies {
-static const unsigned MAX_ATTEMPTS = 1000;
+static const unsigned MAX_CYCLES = 1000;
 
 
 template<typename T>
@@ -16,12 +16,12 @@ class Generator {
 };
 
 
-class OutOfTries : public std::exception {
+class OutOfCycles : public std::exception {
  public:
-  explicit OutOfTries(unsigned max_tries) :
-      msg_("Could not generate any valid examples in "
-               + std::to_string(max_tries)
-               + " attempts") {};
+  explicit OutOfCycles(unsigned max_cycles) :
+      msg_("Could not find any satisfactory product in "
+               + std::to_string(max_cycles)
+               + " cycles") {};
 
   const char *what() const throw() override {
     return msg_.c_str();
@@ -35,13 +35,13 @@ class OutOfTries : public std::exception {
 template<typename T>
 class Sieve {
  public:
-  explicit Sieve(unsigned max_attempts = MAX_ATTEMPTS) :
-      max_tries_(max_attempts) {};
+  explicit Sieve(unsigned max_cycles = MAX_CYCLES) :
+      max_cycles_(max_cycles) {};
 
   explicit Sieve(const std::vector<utils::Predicate<T>> &predicates,
-                 unsigned max_attempts = MAX_ATTEMPTS) :
+                 unsigned max_cycles = MAX_CYCLES) :
       predicates_(predicates),
-      max_tries_(max_attempts) {}
+      max_cycles_(max_cycles) {}
 
   bool satisfactory(T product) const {
     for (const auto &predicate: predicates_) {
@@ -56,23 +56,23 @@ class Sieve {
     auto predicates = std::vector<utils::Predicate<T>>(predicates_);
     predicates.push_back(predicate);
     return Sieve<T>(predicates,
-                    max_tries_);
+                    max_cycles_);
   }
 
   T sift(std::function<T()> producer) const {
-    for (unsigned _ = 0; _ < max_tries_; ++_) {
+    for (unsigned _ = 0; _ < max_cycles_; ++_) {
       T product = producer();
       if (not satisfactory(product)) {
         continue;
       }
       return product;
     }
-    throw OutOfTries(max_tries_);
+    throw OutOfCycles(max_cycles_);
   }
 
  protected:
   std::vector<utils::Predicate<T>> predicates_;
-  unsigned max_tries_;
+  unsigned max_cycles_;
 };
 
 
