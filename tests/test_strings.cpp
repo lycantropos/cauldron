@@ -1,7 +1,7 @@
 #include <catch.hpp>
 #include <iostream>
-#include "../cauldron/strings.h"
 #include "../cauldron/just.h"
+#include "../cauldron/strings.h"
 #include "utils.h"
 
 
@@ -30,7 +30,7 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
   SECTION("single character alphabet") {
     strategies::Just<size_t> ones(1);
     for (char single_character: non_zero_ascii_characters) {
-      auto single_character_string = std::string({single_character});
+      auto single_character_string = std::string{single_character};
       strategies::Characters same_character(single_character_string);
       strategies::Strings same_character_strings(
           std::make_shared<strategies::Just<size_t>>(ones),
