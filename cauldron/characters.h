@@ -15,7 +15,7 @@ class Characters : public Filtered<char> {
                       const Sieve<char> &sieve = Sieve<char>());
 
   explicit Characters(const char whitelist_characters[],
-                        const Sieve<char> &sieve);
+                      const Sieve<char> &sieve = Sieve<char>());
 
  private:
   std::string characters_;
