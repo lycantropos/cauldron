@@ -4,7 +4,7 @@
 
 
 template<typename T>
-void check_strategy() {
+void check_just_strategy() {
   T value;
   strategies::Just<T> just_value(value);
   bool values_are_equal = just_value() == value;
@@ -15,53 +15,53 @@ void check_strategy() {
 TEST_CASE("\"just\" strategy", "[just]") {
   SECTION("primitives") {
     SECTION("unsigned char") {
-      check_strategy<bool>();
+      check_just_strategy<bool>();
     }
 
     SECTION("unsigned char") {
-      check_strategy<unsigned char>();
+      check_just_strategy<unsigned char>();
     }
 
     SECTION("signed char") {
-      check_strategy<signed char>();
+      check_just_strategy<signed char>();
     }
 
     SECTION("short int") {
-      check_strategy<short>();
+      check_just_strategy<short>();
     }
 
     SECTION("unsigned short int") {
-      check_strategy<unsigned short>();
+      check_just_strategy<unsigned short>();
     }
 
     SECTION("int") {
-      check_strategy<int>();
+      check_just_strategy<int>();
     }
 
     SECTION("unsigned int") {
-      check_strategy<unsigned>();
+      check_just_strategy<unsigned>();
     }
 
     SECTION("long int") {
-      check_strategy<long>();
+      check_just_strategy<long>();
     }
 
     SECTION("unsigned long int") {
-      check_strategy<unsigned long>();
+      check_just_strategy<unsigned long>();
     }
 
     SECTION("long long int") {
-      check_strategy<long long>();
+      check_just_strategy<long long>();
     }
 
     SECTION("unsigned long long int") {
-      check_strategy<unsigned long long>();
+      check_just_strategy<unsigned long long>();
     }
   }
 
   SECTION("objects") {
     SECTION("string") {
-      check_strategy<std::string>();
+      check_just_strategy<std::string>();
     }
   }
 }
