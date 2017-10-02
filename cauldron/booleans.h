@@ -10,49 +10,28 @@
 
 
 namespace strategies {
-class Booleans : public Generator<bool> {
-  using Predicate = std::function<bool(bool)>;
+class Booleans : public Filtered<bool> {
  public:
   explicit Booleans(double probability = 0.5,
-                    unsigned max_attempts = MAX_ATTEMPTS)
+                    const Sieve<bool> &sieve = Sieve<bool>())
       : probability_(probability),
-        max_attempts_(max_attempts) {};
-
-  explicit Booleans(double probability,
-                    std::vector<Predicate> predicates,
-                    unsigned max_attempts = MAX_ATTEMPTS)
-      : probability_(probability),
-        predicates_(std::move(predicates)),
-        max_attempts_(max_attempts) {};
-
-  Booleans filter(const Predicate &predicate) {
-    auto predicates = std::vector<Predicate>(predicates_);
-    predicates.push_back(predicate);
-    return Booleans(probability_,
-                    predicates,
-                    max_attempts_);
-  }
-
-  bool satisfactory(bool object) const {
-    return utils::primitive_satisfies_predicates<bool>(object, predicates_);
-  }
-
-  bool operator()() const override {
-    std::random_device random_device;
-    auto distribution = std::bernoulli_distribution(probability_);
-    for (unsigned _ = 0; _ < max_attempts_; ++_) {
-      auto result = distribution(random_device);
-      if (not satisfactory(result)) {
-        continue;
-      }
-      return result;
-    }
-    throw OutOfTries(max_attempts_);
-  }
+        Filtered<bool>(sieve) {};
 
  private:
   double probability_;
-  std::vector<Predicate> predicates_;
-  unsigned max_attempts_;
+
+  bool producer() const {
+    static std::random_device random_device;
+    auto distribution = std::bernoulli_distribution(probability_);
+    auto result = distribution(random_device);
+    return result;
+  }
+
+  std::unique_ptr<Filtered<bool>> update_sieve(
+      const Sieve<bool> &sieve
+  ) const override {
+    return std::make_unique<Booleans>(probability_,
+                                      sieve);
+  }
 };
 }

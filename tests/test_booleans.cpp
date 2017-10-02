@@ -24,17 +24,17 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
       auto still_false_values = false_values.filter(negate);
       auto still_true_values = true_values.filter(identity);
 
-      REQUIRE(still_false_values() == false_values());
-      REQUIRE(still_true_values() == true_values());
+      REQUIRE((*still_false_values)() == false_values());
+      REQUIRE((*still_true_values)() == true_values());
     }
 
     SECTION("impossible") {
       auto invalid_false_values = false_values.filter(identity);
       auto invalid_true_values = true_values.filter(negate);
 
-      REQUIRE_THROWS_AS(invalid_false_values(),
+      REQUIRE_THROWS_AS((*invalid_false_values)(),
                         strategies::OutOfTries);
-      REQUIRE_THROWS_AS(invalid_true_values(),
+      REQUIRE_THROWS_AS((*invalid_true_values)(),
                         strategies::OutOfTries);
     }
   }
