@@ -12,33 +12,29 @@
 
 
 namespace strategies {
-class Strings : public Generator<std::string> {
+class Strings : public Filtered<std::string> {
  public:
   Strings(std::shared_ptr<Generator<size_t>> lengths,
           std::shared_ptr<Generator<char>> alphabet,
-          unsigned max_attempts = MAX_ATTEMPTS);
+          const Sieve<std::string> &sieve = Sieve<std::string>());
 
   Strings(std::shared_ptr<Generator<size_t>> lengths,
-          std::shared_ptr<Generator<char>> alphabet,
-          const std::vector<utils::Predicate<std::string>> &predicates,
-          unsigned max_attempts = MAX_ATTEMPTS);
+          const char *alphabet,
+          const Sieve<std::string> &sieve = Sieve<std::string>());
 
   Strings(std::shared_ptr<Generator<size_t>> lengths,
-          const char *alphabet);
-
-  Strings(std::shared_ptr<Generator<size_t>> lengths,
-          const std::string &alphabet);
-
-  Strings filter(const utils::Predicate<std::string> &predicate) const;
-
-  bool satisfactory(const std::string &string) const;
-
-  std::string operator()() const override;
+          const std::string &alphabet,
+          const Sieve<std::string> &sieve = Sieve<std::string>());
 
  private:
+
   std::shared_ptr<Generator<size_t>> lengths_;
   std::shared_ptr<Generator<char>> alphabet_;
-  std::vector<utils::Predicate<std::string>> predicates_;
-  unsigned max_attempts_;
+
+  std::string producer() const override;
+
+  std::unique_ptr<Filtered<std::string>> update_sieve(
+      const Sieve<std::string> &sieve
+  ) const override;
 };
 }

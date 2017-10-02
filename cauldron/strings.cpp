@@ -4,64 +4,45 @@
 namespace strategies {
 Strings::Strings(std::shared_ptr<Generator<size_t>> lengths,
                  std::shared_ptr<Generator<char>> alphabet,
-                 unsigned max_attempts) :
-    lengths_(lengths),
-    alphabet_(alphabet),
-    max_attempts_(max_attempts) {}
+                 const Sieve<std::string> &sieve) :
+    lengths_(std::move(lengths)),
+    alphabet_(std::move(alphabet)),
+    Filtered<std::string>(sieve) {}
 
 
 Strings::Strings(std::shared_ptr<Generator<size_t>> lengths,
-                 std::shared_ptr<Generator<char>> alphabet,
-                 const std::vector<utils::Predicate<std::string>> &predicates,
-                 unsigned int max_attempts) :
-    lengths_(lengths),
-    alphabet_(alphabet),
-    predicates_(predicates),
-    max_attempts_(max_attempts) {}
+                 const char *alphabet,
+                 const Sieve<std::string> &sieve) :
+    lengths_(std::move(lengths)),
+    alphabet_(std::make_shared<Characters>(alphabet)),
+    Filtered<std::string>(sieve) {}
 
 
 Strings::Strings(std::shared_ptr<Generator<size_t>> lengths,
-                 const char *alphabet) :
-    lengths_(lengths),
-    alphabet_(std::make_shared<Characters>(alphabet)) {}
+                 const std::string &alphabet,
+                 const Sieve<std::string> &sieve) :
+    lengths_(std::move(lengths)),
+    alphabet_(std::make_shared<Characters>(alphabet)),
+    Filtered<std::string>(sieve) {}
 
 
-Strings::Strings(std::shared_ptr<Generator<size_t>> lengths,
-                 const std::string &alphabet) :
-    lengths_(lengths),
-    alphabet_(std::make_shared<Characters>(alphabet)) {}
-
-
-Strings Strings::filter(const utils::Predicate<std::string> &predicate) const {
-  auto predicates = std::vector<utils::Predicate<std::string>>(predicates_);
-  predicates.push_back(predicate);
-  return Strings(lengths_,
-                 alphabet_,
-                 predicates,
-                 max_attempts_);
+std::string Strings::producer() const {
+  auto length = (*lengths_)();
+  std::string result(length, 0);
+  // FIXME: workaround to get characters producer from generator
+  auto characters_producer = [&]() -> char { return (*alphabet_)(); };
+  generate_n(result.begin(),
+             length,
+             characters_producer);
+  return result;
 }
 
 
-bool Strings::satisfactory(const std::string &string) const {
-  return utils::object_satisfies_predicates<std::string>(string,
-                                                         predicates_);
-}
-
-
-std::string Strings::operator()() const {
-  for (unsigned _ = 0; _ < max_attempts_; ++_) {
-    auto length = (*lengths_)();
-    std::string result(length, 0);
-    std::generate_n(result.begin(),
-                    length,
-                    [&]() -> char {
-                      return (*alphabet_)();
-                    });
-    if (not satisfactory(result)) {
-      continue;
-    }
-    return result;
-  }
-  throw OutOfTries(max_attempts_);
+std::unique_ptr<Filtered<std::string>> Strings::update_sieve(
+    const Sieve<std::string> &sieve
+) const {
+  return std::make_unique<Strings>(lengths_,
+                                   alphabet_,
+                                   sieve);
 }
 }

@@ -55,17 +55,17 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
       auto lower_characters = characters.filter(is_lower);
       auto upper_characters = characters.filter(is_upper);
 
-      auto lower_character = lower_characters();
-      auto upper_character = upper_characters();
+      auto lower_character = (*lower_characters)();
+      auto upper_character = (*upper_characters)();
 
       REQUIRE(is_lower(lower_character));
       REQUIRE(is_upper(upper_character));
     }
 
     SECTION("impossible") {
-      auto invalid_characters = characters.filter(is_lower).filter(is_upper);
+      auto invalid_characters = characters.filter(is_lower)->filter(is_upper);
 
-      REQUIRE_THROWS_AS(invalid_characters(),
+      REQUIRE_THROWS_AS((*invalid_characters)(),
                         strategies::OutOfTries);
     }
   }

@@ -1,5 +1,4 @@
 #include <stdexcept>
-#include <cassert>
 #include "characters.h"
 
 
@@ -12,65 +11,40 @@ void validate_characters(const std::string &characters) {
 
 
 Characters::Characters(const std::string &whitelist_characters,
-                       unsigned max_attempts) {
+                       const Sieve<char> &sieve) :
+    Filtered<char>(sieve) {
   validate_characters(whitelist_characters);
   characters_ = whitelist_characters;
-  max_attempts_ = max_attempts;
 }
 
 
-Characters::Characters(const std::string &whitelist_characters,
-                       const std::vector<utils::Predicate<char>> &predicates,
-                       unsigned int max_attempts) {
-  validate_characters(whitelist_characters);
-  characters_ = whitelist_characters;
-  predicates_ = predicates;
-  max_attempts_ = max_attempts;
-}
-
-
-Characters::Characters(const char whitelist_characters[]) {
+Characters::Characters(const char whitelist_characters[],
+                       const Sieve<char> &sieve) :
+    Filtered<char>(sieve) {
   const auto &characters = std::string(whitelist_characters);
   validate_characters(characters);
   characters_ = characters;
 }
 
 
-Characters Characters::filter(const utils::Predicate<char> &predicate) const {
-  auto predicates = std::vector<utils::Predicate<char>>(predicates_);
-  predicates.push_back(predicate);
-  return Characters(characters_,
-                    predicates,
-                    max_attempts_);
-}
-
-
-bool Characters::satisfactory(char character) const {
-  return utils::primitive_satisfies_predicates<char>(character,
-                                                     predicates_);
-}
-
-
-char Characters::operator()() const {
+char Characters::producer() const {
   if (characters_.length() == 1) {
     return characters_[0];
   }
   /* More at
    * http://www.cplusplus.com/reference/string/string/max_size/
    */
-  auto non_negative_integers = Integers<size_t>(0);
   size_t max_index = characters_.length() - 1;
-  for (unsigned _ = 0; _ < max_attempts_; ++_) {
-    auto non_negative_integer = non_negative_integers();
-    auto index = utils::positive_modulo<size_t>(non_negative_integer,
-                                                max_index);
-    assert(0 <= index <= max_index);
-    char result = characters_[index];
-    if (not satisfactory(result)) {
-      continue;
-    }
-    return result;
-  }
-  throw OutOfTries(max_attempts_);
+  auto indexes = Integers<size_t>(0, max_index);
+  size_t index = indexes();
+  return characters_[index];
+}
+
+
+std::unique_ptr<Filtered<char>> Characters::update_sieve(
+    const Sieve<char> &sieve
+) const {
+  return std::make_unique<Characters>(characters_,
+                                      sieve);
 }
 }

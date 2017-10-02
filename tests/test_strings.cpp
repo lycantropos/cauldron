@@ -81,22 +81,22 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
     auto alphanumeric = non_zero_ascii.filter(is_alphanumeric);
     strategies::Strings strings(
         std::make_shared<strategies::Integers<size_t>>(strings_lengths),
-        std::make_shared<strategies::Characters>(alphanumeric));
+        std::move(alphanumeric));
 
     SECTION("alphanumeric") {
       auto all_digits_strings = strings.filter(all_digits);
       auto all_alphabetic_strings = strings.filter(all_alphabetic);
 
-      auto all_digits_string = all_digits_strings();
-      auto all_alphabetic_string = all_alphabetic_strings();
+      auto all_digits_string = (*all_digits_strings)();
+      auto all_alphabetic_string = (*all_alphabetic_strings)();
 
       REQUIRE(min_length <= all_digits_string.length() <= max_length);
       REQUIRE(all_digits(all_digits_string));
     }
 
     SECTION("impossible") {
-      auto invalid_strings = strings.filter(all_digits).filter(all_alphabetic);
-      REQUIRE_THROWS_AS(invalid_strings(),
+      auto invalid_strings = strings.filter(all_digits)->filter(all_alphabetic);
+      REQUIRE_THROWS_AS((*invalid_strings)(),
                         strategies::OutOfTries);
     }
   }
