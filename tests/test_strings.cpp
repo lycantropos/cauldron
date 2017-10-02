@@ -64,12 +64,12 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
   }
 
   SECTION("filtration") {
-    auto all_digits = [](std::string string) -> bool {
+    auto all_digits = [&](const std::string &string) -> bool {
       return std::all_of(string.begin(),
                          string.end(),
                          is_digit);
     };
-    auto all_alphabetic = [](std::string string) -> bool {
+    auto all_alphabetic = [&](const std::string &string) -> bool {
       return std::all_of(string.begin(),
                          string.end(),
                          is_alphabetic);
@@ -92,6 +92,7 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
 
       REQUIRE(min_length <= all_digits_string.length() <= max_length);
       REQUIRE(all_digits(all_digits_string));
+      REQUIRE(all_alphabetic(all_alphabetic_string));
     }
 
     SECTION("impossible") {
