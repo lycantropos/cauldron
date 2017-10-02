@@ -7,8 +7,8 @@ include(build/conanbuildinfo.cmake)
 conan_basic_setup()
 
 set(HEADER_FILES
+        cauldron/sieve.h
         cauldron/common.h
-        cauldron/utils.h
         cauldron/just.h
         cauldron/booleans.h
         cauldron/integers.h

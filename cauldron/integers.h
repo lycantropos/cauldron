@@ -6,7 +6,6 @@
 #include <limits>
 #include <functional>
 #include "common.h"
-#include "utils.h"
 
 
 namespace strategies {

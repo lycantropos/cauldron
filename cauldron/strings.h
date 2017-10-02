@@ -8,7 +8,6 @@
 #include "common.h"
 #include "integers.h"
 #include "characters.h"
-#include "utils.h"
 
 
 namespace strategies {
