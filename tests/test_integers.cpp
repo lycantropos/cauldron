@@ -30,17 +30,17 @@ void check_strategy() {
       auto even_integers = integers.filter(even);
       auto odd_integers = integers.filter(odd);
 
-      auto even_integer = even_integers();
-      auto odd_integer = odd_integers();
+      auto even_integer = (*even_integers)();
+      auto odd_integer = (*odd_integers)();
 
       REQUIRE(even(even_integer));
       REQUIRE(odd(odd_integer));
     }
 
     SECTION("impossible") {
-      auto non_existent_integers = integers.filter(even).filter(odd);
+      auto non_existent_integers = integers.filter(even)->filter(odd);
 
-      REQUIRE_THROWS_AS(non_existent_integers(),
+      REQUIRE_THROWS_AS((*non_existent_integers)(),
                         strategies::OutOfTries);
     }
   }

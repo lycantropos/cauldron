@@ -11,56 +11,34 @@
 
 namespace strategies {
 template<typename T>
-class Integers: public Generator<T> {
+class Integers : public Filtered<T> {
+  using FilteredT = Filtered<T>;
  public:
   explicit Integers(T min_value = std::numeric_limits<T>::min(),
                     T max_value = std::numeric_limits<T>::max(),
-                    unsigned max_attempts = MAX_ATTEMPTS)
+                    const Sieve<T> &sieve = Sieve<T>())
       : min_value_(min_value),
         max_value_(max_value),
-        max_attempts_(max_attempts) {};
-
-  explicit Integers(T min_value,
-                    T max_value,
-                    const std::vector<utils::Predicate<T>> &predicates,
-                    unsigned max_attempts = MAX_ATTEMPTS)
-      : min_value_(min_value),
-        max_value_(max_value),
-        predicates_(predicates),
-        max_attempts_(max_attempts) {};
-
-  Integers<T> filter(const utils::Predicate<T> &predicate) const {
-    auto predicates = std::vector<utils::Predicate<T>>(predicates_);
-    predicates.push_back(predicate);
-    return Integers<T>(min_value_,
-                       max_value_,
-                       predicates,
-                       max_attempts_);
-  }
-
-  bool satisfactory(T integer) const {
-    return utils::primitive_satisfies_predicates<T>(integer,
-                                                    predicates_);
-  }
-
-  T operator()() const override {
-    std::random_device random_device;
-    auto distribution = std::uniform_int_distribution<T>(min_value_,
-                                                         max_value_);
-    for (unsigned _ = 0; _ < max_attempts_; ++_) {
-      auto result = distribution(random_device);
-      if (not satisfactory(result)) {
-        continue;
-      }
-      return result;
-    }
-    throw OutOfTries(max_attempts_);
-  }
+        Filtered<T>(sieve) {};
 
  private:
   T min_value_;
   T max_value_;
-  std::vector<utils::Predicate<T>> predicates_;
-  unsigned max_attempts_;
+
+  T producer() const override {
+    static std::random_device random_device;
+    auto distribution = std::uniform_int_distribution<T>(min_value_,
+                                                         max_value_);
+    auto result = distribution(random_device);
+    return result;
+  }
+
+  std::unique_ptr<FilteredT> update_sieve(
+      const Sieve<T> &sieve
+  ) const override {
+    return std::make_unique<Integers<T>>(min_value_,
+                                         max_value_,
+                                         sieve);
+  }
 };
 }
