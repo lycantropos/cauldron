@@ -16,11 +16,6 @@ class Strategy {
 template<typename T>
 class Filtered : public Strategy<T> {
  public:
-  Filtered() = default;
-
-  explicit Filtered(const Sieve<T> &sieve) :
-      sieve_(sieve) {};
-
   std::unique_ptr<Filtered<T>> filter(const Requirement<T> &predicate) const {
     auto sieve = sieve_.extend(predicate);
     return update_sieve(sieve);
@@ -33,6 +28,9 @@ class Filtered : public Strategy<T> {
 
  protected:
   Sieve<T> sieve_;
+
+  explicit Filtered(const Sieve<T> &sieve) :
+      sieve_(sieve) {};
 
   virtual T producer() const = 0;
 
