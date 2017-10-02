@@ -1,6 +1,13 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
+
+
+bool identity(bool boolean);;
+
+
+bool negate(bool boolean);;
 
 
 template<typename T>

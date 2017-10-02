@@ -30,3 +30,13 @@ bool is_alphabetic(char character) {
 bool is_alphanumeric(char character) {
   return std::isalnum(character) != 0;
 }
+
+
+bool identity(bool boolean) {
+  return boolean;
+}
+
+
+bool negate(bool boolean) {
+  return not boolean;
+}

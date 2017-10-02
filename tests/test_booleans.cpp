@@ -1,6 +1,7 @@
 #include <catch.hpp>
 #include <iostream>
 #include "../cauldron/booleans.h"
+#include "utils.h"
 
 
 TEST_CASE("\"booleans\" strategy", "[booleans]") {
@@ -13,13 +14,6 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
   }
 
   SECTION("filtration") {
-    auto identity = [=](bool boolean) -> bool {
-      return boolean;
-    };
-    auto negate = [=](bool boolean) -> bool {
-      return not boolean;
-    };
-
     SECTION("identical") {
       auto still_false_values = false_values.filter(negate);
       auto still_true_values = true_values.filter(identity);
