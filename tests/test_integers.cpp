@@ -52,30 +52,39 @@ TEST_CASE("\"integers\" strategy", "[integers]") {
   SECTION("unsigned char") {
     check_strategy<unsigned char>();
   }
+
   SECTION("signed char") {
     check_strategy<signed char>();
   }
+
   SECTION("short int") {
     check_strategy<short>();
   }
+
   SECTION("unsigned short int") {
     check_strategy<unsigned short>();
   }
+
   SECTION("int") {
     check_strategy<int>();
   }
+
   SECTION("unsigned int") {
     check_strategy<unsigned>();
   }
+
   SECTION("long int") {
     check_strategy<long>();
   }
+
   SECTION("unsigned long int") {
     check_strategy<unsigned long>();
   }
+
   SECTION("long long int") {
     check_strategy<long long>();
   }
+
   SECTION("unsigned long long int") {
     check_strategy<unsigned long long>();
   }
