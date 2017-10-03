@@ -48,7 +48,7 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
 
   SECTION("filtration") {
     /* if ``min_length`` equals to zero
-     * than impossible would not raise exception
+     * than "impossible" section would not raise exception
      * since it is possible to avoid filters with empty string.
      */
     size_t min_length = constants::min_capacity;
