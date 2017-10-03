@@ -39,11 +39,11 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
   }
 
   SECTION("filtration") {
-    strategies::Characters characters(non_zero_characters);
+    strategies::Characters non_zero(non_zero_characters);
 
     SECTION("case") {
-      auto lower_characters = characters.filter(is_lower);
-      auto upper_characters = characters.filter(is_upper);
+      auto lower_characters = non_zero.filter(is_lower);
+      auto upper_characters = non_zero.filter(is_upper);
 
       auto lower_character = (*lower_characters)();
       auto upper_character = (*upper_characters)();
@@ -53,7 +53,7 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
     }
 
     SECTION("impossible") {
-      auto invalid_characters = characters.filter(is_lower)->filter(is_upper);
+      auto invalid_characters = non_zero.filter(is_lower)->filter(is_upper);
 
       REQUIRE_THROWS_AS((*invalid_characters)(),
                         strategies::OutOfCycles);
