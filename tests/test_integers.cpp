@@ -5,7 +5,7 @@
 
 
 template<typename T>
-void check_integers_strategy() {
+static void check_strategy() {
   std::random_device random_device;
   auto distribution = std::uniform_int_distribution<T>();
   std::vector<T> borders{distribution(random_device),
@@ -47,33 +47,33 @@ void check_integers_strategy() {
 
 TEST_CASE("\"integers\" strategy", "[integers]") {
   SECTION("unsigned char") {
-    check_integers_strategy<unsigned char>();
+    check_strategy<unsigned char>();
   }
   SECTION("signed char") {
-    check_integers_strategy<signed char>();
+    check_strategy<signed char>();
   }
   SECTION("short int") {
-    check_integers_strategy<short>();
+    check_strategy<short>();
   }
   SECTION("unsigned short int") {
-    check_integers_strategy<unsigned short>();
+    check_strategy<unsigned short>();
   }
   SECTION("int") {
-    check_integers_strategy<int>();
+    check_strategy<int>();
   }
   SECTION("unsigned int") {
-    check_integers_strategy<unsigned>();
+    check_strategy<unsigned>();
   }
   SECTION("long int") {
-    check_integers_strategy<long>();
+    check_strategy<long>();
   }
   SECTION("unsigned long int") {
-    check_integers_strategy<unsigned long>();
+    check_strategy<unsigned long>();
   }
   SECTION("long long int") {
-    check_integers_strategy<long long>();
+    check_strategy<long long>();
   }
   SECTION("unsigned long long int") {
-    check_integers_strategy<unsigned long long>();
+    check_strategy<unsigned long long>();
   }
 }
