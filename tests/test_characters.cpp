@@ -1,7 +1,7 @@
 #include <catch.hpp>
 #include <iostream>
 #include "../cauldron/characters.h"
-#include "utils.h"
+#include "predicates.h"
 
 
 TEST_CASE("\"characters\" strategy", "[characters]") {

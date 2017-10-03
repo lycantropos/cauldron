@@ -1,7 +1,7 @@
 #include <catch.hpp>
 #include <iostream>
 #include "../cauldron/integers.h"
-#include "utils.h"
+#include "predicates.h"
 
 
 template<typename T>
