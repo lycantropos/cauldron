@@ -5,20 +5,22 @@
 
 
 TEST_CASE("\"characters\" strategy", "[characters]") {
-  static size_t min_length = 1;
-  static size_t max_length = 100;
-  auto min_ascii_character = std::numeric_limits<char>::min();
-  auto max_ascii_character = std::numeric_limits<char>::max();
+  size_t min_length = 1;
+  size_t max_length = 100;
+
+  char min_character = std::numeric_limits<char>::min();
+  char max_character = std::numeric_limits<char>::max();
+
   std::string non_zero_ascii_characters;
-  for (char character = min_ascii_character;
-       character < max_ascii_character;
+  for (char character = min_character;
+       character < max_character;
        character = ++character + (character == 0)) {
     non_zero_ascii_characters.push_back(character);
   }
 
   SECTION("single character") {
     for (char single_character: non_zero_ascii_characters) {
-      auto single_character_string = std::string({single_character});
+      std::string single_character_string{single_character};
       strategies::Characters same_character(single_character_string);
 
       auto character = same_character();
@@ -33,7 +35,7 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
     strategies::Integers<char> characters_integers;
     auto length = lengths();
     std::string characters_string;
-    for (unsigned long _ = 0; _ < length; ++_) {
+    for (size_t _ = 0; _ < length; ++_) {
       characters_string.push_back(characters_integers());
     }
     strategies::Characters characters(characters_string);
