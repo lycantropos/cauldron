@@ -7,30 +7,33 @@
 
 bool is_string_from_alphabet(const std::string &string,
                              const std::string &alphabet_characters) {
-  for (auto character: string) {
-    if (not is_character_in_string(character, alphabet_characters)) {
-      return false;
-    }
-  }
-  return true;
+  auto is_character_from_alphabet = [=](char character) -> bool {
+    return is_character_in_string(character, alphabet_characters);
+  };
+  return std::all_of(string.begin(),
+                     string.end(),
+                     is_character_from_alphabet);
 }
 
 
 TEST_CASE("\"strings\" strategy", "[strings]") {
   size_t min_length = 1;
   size_t max_length = 100;
-  auto max_ascii_character = std::numeric_limits<char>::max();
+
+  char min_character = std::numeric_limits<char>::min();
+  char max_character = std::numeric_limits<char>::max();
+
   std::string non_zero_ascii_characters;
-  for (char character = 1;
-       character < max_ascii_character;
-       ++character) {
+  for (char character = min_character;
+       character < max_character;
+       character = ++character + (character == 0)) {
     non_zero_ascii_characters.push_back(character);
   }
 
   SECTION("single character alphabet") {
     strategies::Just<size_t> ones(1);
     for (char single_character: non_zero_ascii_characters) {
-      auto single_character_string = std::string{single_character};
+      std::string single_character_string{single_character};
       strategies::Characters same_character(single_character_string);
       strategies::Strings same_character_strings(
           std::make_shared<strategies::Just<size_t>>(ones),
@@ -46,8 +49,8 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
     strategies::Integers<size_t> alphabets_lengths(min_length, max_length);
     strategies::Integers<size_t> strings_lengths(0, max_length);
     auto alphabet_length = alphabets_lengths();
-    std::string alphabet_characters;
     strategies::Integers<char> characters_integers;
+    std::string alphabet_characters;
     for (size_t _ = 0; _ < alphabet_length; ++_) {
       alphabet_characters.push_back(characters_integers());
     }
