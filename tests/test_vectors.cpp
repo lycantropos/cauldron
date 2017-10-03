@@ -4,145 +4,33 @@
 #include "../cauldron/booleans.h"
 #include "../cauldron/integers.h"
 #include "../cauldron/characters.h"
-#include "../cauldron/vectors.h"
-#include "predicates.h"
-#include "factories.h"
-#include "utils.h"
 #include "../cauldron/strings.h"
-
-
-template<typename T>
-bool is_vector_from_domain(const std::vector<T> &vector,
-                           const std::vector<T> &domain) {
-  auto is_object_from_domain = [=](T object) -> bool {
-    return is_object_in_vector<T>(object, domain);
-  };
-  return std::all_of(vector.begin(),
-                     vector.end(),
-                     is_object_from_domain);
-}
-
-
-template<typename T>
-static void check_integers_vectors_strategy() {
-  static size_t min_size = constants::min_capacity;
-
-  T min_value = std::numeric_limits<T>::min();
-  T max_value = std::numeric_limits<T>::max();
-  const std::shared_ptr<strategies::Integers<T>> &elements =
-      std::make_shared<strategies::Integers<T>>(min_value,
-                                                max_value);
-
-  SECTION("single element domain") {
-    // ``signed char`` is the smallest tested integer type
-    static int min_integer = std::numeric_limits<signed char>::min();
-    static int max_integer = std::numeric_limits<signed char>::max();
-    static const auto integers = factories::integers_range<int>(min_integer,
-                                                                max_integer);
-    strategies::Just<size_t> ones(1);
-    for (T integer: integers) {
-      auto single_element_vector = std::vector<T>{integer};
-      strategies::Just<T> same_integer(integer);
-      strategies::Vectors<T> same_integer_vectors(
-          std::make_shared<strategies::Just<size_t>>(ones),
-          std::make_shared<strategies::Just<T>>(same_integer));
-
-      auto vector = same_integer_vectors();
-
-      bool vectors_are_equal = vector == single_element_vector;
-      REQUIRE(vectors_are_equal);
-    }
-  }
-
-  SECTION("multiple elements domain") {
-    static size_t max_size = constants::max_capacity;
-    static const std::shared_ptr<strategies::Integers<size_t>> &sizes =
-        std::make_shared<strategies::Integers<size_t>>(min_size,
-                                                       max_size);
-    strategies::Vectors<T> vectors(sizes,
-                                   elements);
-    auto stays_in_range = in_range_checker<T>(min_value,
-                                              max_value);
-
-    auto vector = vectors();
-
-    REQUIRE(min_size <= vector.size() <= max_size);
-    REQUIRE(std::all_of(vector.begin(),
-                        vector.end(),
-                        stays_in_range));
-  }
-
-  SECTION("filtration") {
-    static size_t max_size = sufficient_capacity(1, 2, // odd or even
-                                                 strategies::MAX_CYCLES);
-    auto all_even = [&](std::vector<T> vector) -> bool {
-      return std::all_of(vector.begin(),
-                         vector.end(),
-                         even<T>);
-    };
-    auto all_odd = [&](std::vector<T> vector) -> bool {
-      return std::all_of(vector.begin(),
-                         vector.end(),
-                         odd<T>);
-    };
-    static const std::shared_ptr<strategies::Integers<size_t>> &sizes =
-        std::make_shared<strategies::Integers<size_t>>(min_size,
-                                                       max_size);
-    strategies::Vectors<T> vectors(sizes,
-                                   elements);
-
-    SECTION("parity") {
-      auto all_even_vectors = vectors.filter(all_even);
-      auto all_odd_vectors = vectors.filter(all_odd);
-
-      auto all_even_vector = (*all_even_vectors)();
-      auto all_odd_vector = (*all_odd_vectors)();
-      auto stays_in_range = in_range_checker<size_t>(min_size,
-                                                     max_size);
-
-      REQUIRE(stays_in_range(all_even_vector.size()));
-      REQUIRE(stays_in_range(all_odd_vector.size()));
-      REQUIRE(all_even(all_even_vector));
-      REQUIRE(all_odd(all_odd_vector));
-    }
-
-    SECTION("impossible") {
-      auto invalid_vectors = vectors.filter(all_even)->filter(all_odd);
-      REQUIRE_THROWS_AS((*invalid_vectors)(),
-                        strategies::OutOfCycles);
-    }
-  }
-}
+#include "../cauldron/vectors.h"
+#include "factories.h"
+#include "predicates.h"
+#include "utils.h"
 
 
 static void check_booleans_vectors_strategy() {
-  size_t min_size = constants::min_capacity;
-
-  strategies::Booleans false_values(0.);
-  strategies::Booleans true_values(1.);
-
-  SECTION("multiple elements domain") {
+  SECTION("single element domain") {
+    size_t min_size = 0;
     size_t max_size = constants::max_capacity;
-
-    const std::shared_ptr<strategies::Integers<size_t>> &sizes =
-        std::make_shared<strategies::Integers<size_t>>(min_size,
-                                                       max_size);
-    strategies::Vectors<bool> true_vectors(
-        sizes,
-        std::make_shared<strategies::Booleans>(true_values));
-    strategies::Vectors<bool> false_vectors(
-        sizes,
-        std::make_shared<strategies::Booleans>(false_values));
+    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                                max_size);
+    auto true_values = std::make_shared<strategies::Booleans>(1.);
+    auto false_values = std::make_shared<strategies::Booleans>(0.);
+    strategies::Vectors<bool> true_vectors(sizes,
+                                           true_values);
+    strategies::Vectors<bool> false_vectors(sizes,
+                                            false_values);
 
     auto true_vector = true_vectors();
     auto false_vector = false_vectors();
-
     auto stays_in_range = in_range_checker<size_t>(min_size,
                                                    max_size);
 
     REQUIRE(stays_in_range(true_vector.size()));
     REQUIRE(stays_in_range(false_vector.size()));
-
     REQUIRE(std::all_of(true_vector.begin(),
                         true_vector.end(),
                         identity));
@@ -152,45 +40,152 @@ static void check_booleans_vectors_strategy() {
   }
 
   SECTION("filtration") {
-    auto all_true = [&](std::vector<bool> vector) -> bool {
+    auto is_true_vector = [&](std::vector<bool> vector) -> bool {
       return std::all_of(vector.begin(),
                          vector.end(),
                          identity);
     };
-    auto all_false = [&](std::vector<bool> vector) -> bool {
+    auto is_false_vector = [&](std::vector<bool> vector) -> bool {
       return std::all_of(vector.begin(),
                          vector.end(),
                          negate);
     };
 
+    /* if `min_size`` equals to zero
+     * than "impossible" section would not raise exception
+     * since it is possible to avoid filters with empty vector.
+     */
+    size_t min_size = constants::min_capacity;
     size_t max_size = sufficient_capacity(1, 2, // true or false
                                           strategies::MAX_CYCLES);
-    const std::shared_ptr<strategies::Integers<size_t>> &sizes =
-        std::make_shared<strategies::Integers<size_t>>(min_size,
-                                                       max_size);
-    const std::shared_ptr<strategies::Booleans> &elements =
-        std::make_shared<strategies::Booleans>();
-    strategies::Vectors<bool> vectors(sizes,
-                                      elements);
+    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                                max_size);
+    auto booleans = std::make_shared<strategies::Booleans>();
+    strategies::Vectors<bool> booleans_vectors(sizes,
+                                               booleans);
 
     SECTION("truthfulness") {
-      auto all_true_vectors = vectors.filter(all_true);
-      auto all_false_vectors = vectors.filter(all_false);
+      auto true_vectors = booleans_vectors.filter(is_true_vector);
+      auto false_vectors = booleans_vectors.filter(is_false_vector);
 
-      auto all_true_vector = (*all_true_vectors)();
-      auto all_false_vector = (*all_false_vectors)();
-
+      auto true_vector = (*true_vectors)();
+      auto false_vector = (*false_vectors)();
       auto stays_in_range = in_range_checker(min_size,
                                              max_size);
 
-      REQUIRE(stays_in_range(all_true_vector.size()));
-      REQUIRE(stays_in_range(all_false_vector.size()));
-      REQUIRE(all_true(all_true_vector));
-      REQUIRE(all_false(all_false_vector));
+      REQUIRE(stays_in_range(true_vector.size()));
+      REQUIRE(stays_in_range(false_vector.size()));
+      REQUIRE(is_true_vector(true_vector));
+      REQUIRE(is_false_vector(false_vector));
     }
 
     SECTION("impossible") {
-      auto invalid_vectors = vectors.filter(all_true)->filter(all_false);
+      auto invalid_vectors =
+          booleans_vectors.filter(is_true_vector)->filter(is_false_vector);
+      REQUIRE_THROWS_AS((*invalid_vectors)(),
+                        strategies::OutOfCycles);
+    }
+  }
+}
+
+
+template<typename T>
+static void check_integers_vectors_strategy() {
+  T min_value = std::numeric_limits<T>::min();
+  T max_value = std::numeric_limits<T>::max();
+  auto integers = std::make_shared<strategies::Integers<T>>(min_value,
+                                                            max_value);
+  auto integer_stays_in_range = in_range_checker<T>(min_value,
+                                                    max_value);
+  auto integers_stay_in_range =
+      [&](const std::vector<T> &integers_vector) -> bool {
+        return std::all_of(integers_vector.begin(),
+                           integers_vector.end(),
+                           integer_stays_in_range);
+      };
+
+  SECTION("single element domain") {
+    // ``signed char`` is the smallest tested integer type
+    static int min_integer = std::numeric_limits<signed char>::min();
+    static int max_integer = std::numeric_limits<signed char>::max();
+    static const auto integers_range = factories::integers_range<int>(
+        min_integer,
+        max_integer);
+    strategies::Just<size_t> ones(1);
+    for (T integer: integers_range) {
+      auto single_integer_vector = std::vector<T>{integer};
+      strategies::Just<T> same_integer(integer);
+      strategies::Vectors<T> same_integer_vectors(
+          std::make_shared<strategies::Just<size_t>>(ones),
+          std::make_shared<strategies::Just<T>>(same_integer));
+
+      auto vector = same_integer_vectors();
+
+      bool vectors_are_equal = vector == single_integer_vector;
+      REQUIRE(vectors_are_equal);
+    }
+  }
+
+  SECTION("multiple elements domain") {
+    static size_t min_size = 0;
+    static size_t max_size = constants::max_capacity;
+    static const std::shared_ptr<strategies::Integers<size_t>> &sizes =
+        std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                       max_size);
+    strategies::Vectors<T> integers_vectors(sizes,
+                                            integers);
+    auto size_stays_in_range = in_range_checker<size_t>(min_size,
+                                                        max_size);
+    auto vector = integers_vectors();
+
+    REQUIRE(size_stays_in_range(vector.size()));
+    REQUIRE(integers_stay_in_range(vector));
+  }
+
+  SECTION("filtration") {
+    auto is_even_vector = [&](std::vector<T> vector) -> bool {
+      return std::all_of(vector.begin(),
+                         vector.end(),
+                         even<T>);
+    };
+    auto is_odd_vector = [&](std::vector<T> vector) -> bool {
+      return std::all_of(vector.begin(),
+                         vector.end(),
+                         odd<T>);
+    };
+
+    /* if `min_size`` equals to zero
+     * than "impossible" section would not raise exception
+     * since it is possible to avoid filters with empty vector.
+     */
+    static size_t min_size = constants::min_capacity;
+    static size_t max_size = sufficient_capacity(1, 2, // odd or even
+                                                 strategies::MAX_CYCLES);
+    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                                max_size);
+    strategies::Vectors<T> vectors(sizes,
+                                   integers);
+
+    SECTION("parity") {
+      auto even_vectors = vectors.filter(is_even_vector);
+      auto odd_vectors = vectors.filter(is_odd_vector);
+
+      auto even_vector = (*even_vectors)();
+      auto odd_vector = (*odd_vectors)();
+      auto size_stays_in_range = in_range_checker<size_t>(min_size,
+                                                          max_size);
+
+      REQUIRE(size_stays_in_range(even_vector.size()));
+      REQUIRE(size_stays_in_range(odd_vector.size()));
+      REQUIRE(integers_stay_in_range(even_vector));
+      REQUIRE(integers_stay_in_range(odd_vector));
+      REQUIRE(is_even_vector(even_vector));
+      REQUIRE(is_odd_vector(odd_vector));
+    }
+
+    SECTION("impossible") {
+      auto invalid_vectors =
+          vectors.filter(is_even_vector)->filter(is_odd_vector);
       REQUIRE_THROWS_AS((*invalid_vectors)(),
                         strategies::OutOfCycles);
     }
@@ -230,13 +225,24 @@ static void check_characters_vectors_strategy() {
         characters_string);
     strategies::Vectors<char> characters_vectors(sizes,
                                                  characters);
-
-    auto characters_vector = characters_vectors();
     std::vector<char> characters_domain(characters_string.begin(),
                                         characters_string.end());
 
-    REQUIRE(is_vector_from_domain(characters_vector,
-                                  characters_domain));
+    auto characters_vector = characters_vectors();
+    auto stays_in_range = in_range_checker<size_t>(min_size,
+                                                   max_size);
+    auto is_character_from_domain = [=](char character) -> bool {
+      return is_object_in_vector<char>(character, characters_domain);
+    };
+    auto is_vector_from_characters_domain =
+        [&](const std::vector<char> &vector) -> bool {
+          return std::all_of(vector.begin(),
+                             vector.end(),
+                             is_character_from_domain);
+        };
+
+    REQUIRE(stays_in_range(characters_vector.size()));
+    REQUIRE(is_vector_from_characters_domain(characters_vector));
   }
   SECTION("filtration") {
     size_t min_size = constants::min_capacity;
@@ -246,12 +252,12 @@ static void check_characters_vectors_strategy() {
         strategies::MAX_CYCLES);
     auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
                                                                 max_size);
-    auto all_lower = [&](const std::vector<char> vector) -> bool {
+    auto is_lower_vector = [&](const std::vector<char> vector) -> bool {
       return std::all_of(vector.begin(),
                          vector.end(),
                          is_lower);
     };
-    auto all_upper = [&](const std::vector<char> vector) -> bool {
+    auto is_upper_vector = [&](const std::vector<char> vector) -> bool {
       return std::all_of(vector.begin(),
                          vector.end(),
                          is_upper);
@@ -263,19 +269,23 @@ static void check_characters_vectors_strategy() {
                                                non_zero);
 
     SECTION("case") {
-      auto all_lower_vectors = non_zero_vectors.filter(all_lower);
-      auto all_upper_vectors = non_zero_vectors.filter(all_upper);
+      auto lower_vectors = non_zero_vectors.filter(is_lower_vector);
+      auto upper_vectors = non_zero_vectors.filter(is_upper_vector);
 
-      auto all_lower_vector = (*all_lower_vectors)();
-      auto all_upper_vector = (*all_upper_vectors)();
+      auto lower_vector = (*lower_vectors)();
+      auto upper_vector = (*upper_vectors)();
+      auto stays_in_range = in_range_checker<size_t>(min_size,
+                                                     max_size);
 
-      REQUIRE(all_lower(all_lower_vector));
-      REQUIRE(all_upper(all_upper_vector));
+      REQUIRE(stays_in_range(lower_vector.size()));
+      REQUIRE(stays_in_range(upper_vector.size()));
+      REQUIRE(is_lower_vector(lower_vector));
+      REQUIRE(is_upper_vector(upper_vector));
     }
 
     SECTION("impossible") {
       auto invalid_vectors =
-          non_zero_vectors.filter(all_lower)->filter(all_upper);
+          non_zero_vectors.filter(is_lower_vector)->filter(is_upper_vector);
 
       REQUIRE_THROWS_AS((*invalid_vectors)(),
                         strategies::OutOfCycles);
@@ -366,7 +376,7 @@ static void check_strings_vectors_strategy() {
         };
 
     /* if ``min_length``/``min_size`` equals to zero
-     * than impossible would not raise exception
+     * than "impossible" section would not raise exception
      * since it is possible to avoid filters with empty string/vector.
      */
     size_t min_size = constants::min_capacity;
@@ -430,39 +440,51 @@ TEST_CASE("\"vectors\" strategy", "[vectors]") {
   SECTION("bool") {
     check_booleans_vectors_strategy();
   }
+
   SECTION("unsigned char") {
     check_integers_vectors_strategy<unsigned char>();
   }
+
   SECTION("signed char") {
     check_integers_vectors_strategy<signed char>();
   }
+
   SECTION("short int") {
     check_integers_vectors_strategy<short>();
   }
+
   SECTION("unsigned short int") {
     check_integers_vectors_strategy<unsigned short>();
   }
+
   SECTION("int") {
     check_integers_vectors_strategy<int>();
   }
+
   SECTION("unsigned int") {
     check_integers_vectors_strategy<unsigned>();
   }
+
   SECTION("long int") {
     check_integers_vectors_strategy<long>();
   }
+
   SECTION("unsigned long int") {
     check_integers_vectors_strategy<unsigned long>();
   }
+
   SECTION("long long int") {
     check_integers_vectors_strategy<long long>();
   }
+
   SECTION("unsigned long long int") {
     check_integers_vectors_strategy<unsigned long long>();
   }
+
   SECTION("characters") {
     check_characters_vectors_strategy();
   }
+
   SECTION("strings") {
     check_strings_vectors_strategy();
   }
