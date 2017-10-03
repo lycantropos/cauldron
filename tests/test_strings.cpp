@@ -7,8 +7,8 @@
 #include "utils.h"
 
 
-bool is_string_from_alphabet(const std::string &string,
-                             const std::string &alphabet_characters) {
+static bool is_string_from_alphabet(const std::string &string,
+                                    const std::string &alphabet_characters) {
   auto is_character_from_alphabet = [=](char character) -> bool {
     return is_character_in_string(character, alphabet_characters);
   };
@@ -42,9 +42,7 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
 
     auto lengths = std::make_shared<strategies::Integers<size_t>>(min_length,
                                                                   max_length);
-    std::string alphabet_characters = factories::characters_string(
-        constants::min_capacity,
-        constants::max_capacity);
+    std::string alphabet_characters = factories::characters_string();
     auto alphabet = std::make_shared<strategies::Characters>(
         alphabet_characters);
     strategies::Strings strings(lengths,
