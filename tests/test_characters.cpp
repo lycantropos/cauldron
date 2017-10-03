@@ -6,11 +6,12 @@
 
 TEST_CASE("\"characters\" strategy", "[characters]") {
   unsigned maximum_length = 100;
+  auto min_ascii_character = std::numeric_limits<char>::min();
   auto max_ascii_character = std::numeric_limits<char>::max();
   std::string non_zero_ascii_characters;
-  for (char character = 1;
+  for (char character = min_ascii_character;
        character < max_ascii_character;
-       ++character) {
+       character = ++character + (character == 0)) {
     non_zero_ascii_characters.push_back(character);
   }
 
