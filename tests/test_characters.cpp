@@ -5,7 +5,8 @@
 
 
 TEST_CASE("\"characters\" strategy", "[characters]") {
-  unsigned maximum_length = 100;
+  static size_t min_length = 1;
+  static size_t max_length = 100;
   auto min_ascii_character = std::numeric_limits<char>::min();
   auto max_ascii_character = std::numeric_limits<char>::max();
   std::string non_zero_ascii_characters;
@@ -27,7 +28,8 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
   }
 
   SECTION("multiple characters") {
-    strategies::Integers<unsigned long> lengths(1, maximum_length);
+    strategies::Integers<size_t> lengths(min_length,
+                                         max_length);
     strategies::Integers<char> characters_integers;
     auto length = lengths();
     std::string characters_string;
