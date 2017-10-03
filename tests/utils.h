@@ -2,12 +2,22 @@
 
 #include <iostream>
 #include <vector>
+#include <functional>
 
 
 bool identity(bool boolean);;
 
 
 bool negate(bool boolean);;
+
+
+template<typename T>
+std::function<bool(T)> in_range_checker(T min_value,
+                                        T max_value) {
+  return [=](T value) -> bool {
+    return min_value <= value <= max_value;
+  };
+}
 
 
 template<typename T>

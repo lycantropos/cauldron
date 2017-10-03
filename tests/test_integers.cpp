@@ -6,21 +6,24 @@
 
 template<typename T>
 static void check_strategy() {
-  std::random_device random_device;
+  static std::random_device random_device;
+
   auto distribution = std::uniform_int_distribution<T>();
   std::vector<T> borders{distribution(random_device),
                          distribution(random_device)};
-  auto min_value = *std::min_element(borders.begin(),
-                                     borders.end());
-  auto max_value = *std::max_element(borders.begin(),
-                                     borders.end());
-  strategies::Integers<T> integers(min_value, max_value);
+  T min_value = *std::min_element(borders.begin(),
+                                  borders.end());
+  T max_value = *std::max_element(borders.begin(),
+                                  borders.end());
+  strategies::Integers<T> integers(min_value,
+                                   max_value);
 
   SECTION("stays in range") {
     T integer = integers();
+    auto stays_in_range = in_range_checker<T>(min_value,
+                                              max_value);
 
-    bool stays_in_range = min_value <= integer <= max_value;
-    REQUIRE(stays_in_range);
+    REQUIRE(stays_in_range(integer));
   }
 
   SECTION("filtration") {
