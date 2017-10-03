@@ -22,13 +22,14 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
   std::string non_zero_characters = factories::non_zero_characters();
 
   SECTION("single character alphabet") {
-    strategies::Just<size_t> ones(1);
+    const std::shared_ptr<strategies::Just<size_t>> &ones =
+        std::make_shared<strategies::Just<size_t>>(1);
     for (char single_character: non_zero_characters) {
       std::string single_character_string{single_character};
-      strategies::Characters same_character(single_character_string);
-      strategies::Strings same_character_strings(
-          std::make_shared<strategies::Just<size_t>>(ones),
-          std::make_shared<strategies::Characters>(same_character));
+      const std::shared_ptr<strategies::Characters> &same_character =
+          std::make_shared<strategies::Characters>(single_character_string);
+      strategies::Strings same_character_strings(ones,
+                                                 same_character);
 
       auto string = same_character_strings();
 
@@ -77,14 +78,14 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
         constants::alphanumeric_characters_count,
         constants::non_zero_characters_count,
         strategies::MAX_CYCLES);
+    const std::shared_ptr<strategies::Integers<size_t>> &lengths =
+        std::make_shared<strategies::Integers<size_t>>(min_length,
+                                                       max_length);
 
-    strategies::Integers<size_t> strings_lengths(min_length,
-                                                 max_length);
     strategies::Characters non_zero(non_zero_characters);
     auto alphanumeric = non_zero.filter(is_alphanumeric);
-    strategies::Strings strings(
-        std::make_shared<strategies::Integers<size_t>>(strings_lengths),
-        std::move(alphanumeric));
+    strategies::Strings strings(lengths,
+                                std::move(alphanumeric));
 
     SECTION("alphanumeric") {
       auto all_digits_strings = strings.filter(all_digits);
