@@ -38,6 +38,20 @@ bool is_alphanumeric(char character) {
 }
 
 
+bool is_digits_string(const std::string &string) {
+  return std::all_of(string.begin(),
+                     string.end(),
+                     is_digit);
+}
+
+
+bool is_alphabetic_string(const std::string &string) {
+  return std::all_of(string.begin(),
+                     string.end(),
+                     is_alphabetic);
+}
+
+
 bool is_character_in_string(char character,
                             const std::string &string) {
   return string.find(character) != -1;

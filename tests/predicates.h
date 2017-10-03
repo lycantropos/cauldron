@@ -53,3 +53,9 @@ bool is_alphabetic(char character);
 
 
 bool is_alphanumeric(char character);
+
+
+bool is_digits_string(const std::string &string);;
+
+
+bool is_alphabetic_string(const std::string &string);;

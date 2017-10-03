@@ -47,17 +47,10 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
   }
 
   SECTION("filtration") {
-    auto all_digits = [&](const std::string &string) -> bool {
-      return std::all_of(string.begin(),
-                         string.end(),
-                         is_digit);
-    };
-    auto all_alphabetic = [&](const std::string &string) -> bool {
-      return std::all_of(string.begin(),
-                         string.end(),
-                         is_alphabetic);
-    };
-
+    /* if ``min_length`` equals to zero
+     * than impossible would not raise exception
+     * since it is possible to avoid filters with empty string.
+     */
     size_t min_length = constants::min_capacity;
     size_t max_length = sufficient_capacity(
         constants::alphanumeric_characters_count,
@@ -67,28 +60,28 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
                                                                   max_length);
 
     strategies::Characters non_zero(non_zero_characters);
-    auto alphanumeric = non_zero.filter(is_alphanumeric);
-    strategies::Strings strings(lengths,
-                                std::move(alphanumeric));
+    auto alphanumeric_characters = non_zero.filter(is_alphanumeric);
+    strategies::Strings alphanumeric(lengths,
+                                     std::move(alphanumeric_characters));
 
     SECTION("alphanumeric") {
-      auto all_digits_strings = strings.filter(all_digits);
-      auto all_alphabetic_strings = strings.filter(all_alphabetic);
+      auto digits_strings = alphanumeric.filter(is_digits_string);
+      auto alphabetic_strings = alphanumeric.filter(is_alphabetic_string);
 
-      auto all_digits_string = (*all_digits_strings)();
-      auto all_alphabetic_string = (*all_alphabetic_strings)();
+      auto digits_string = (*digits_strings)();
+      auto alphabetic_string = (*alphabetic_strings)();
       auto stays_in_range = in_range_checker(min_length,
                                              max_length);
 
-      REQUIRE(stays_in_range(all_digits_string.length()));
-      REQUIRE(stays_in_range(all_alphabetic_string.length()));
-      REQUIRE(all_digits(all_digits_string));
-      REQUIRE(all_alphabetic(all_alphabetic_string));
+      REQUIRE(stays_in_range(digits_string.length()));
+      REQUIRE(stays_in_range(alphabetic_string.length()));
+      REQUIRE(is_digits_string(digits_string));
+      REQUIRE(is_alphabetic_string(alphabetic_string));
     }
 
     SECTION("impossible") {
       auto invalid_strings =
-          strings.filter(all_digits)->filter(all_alphabetic);
+          alphanumeric.filter(is_digits_string)->filter(is_alphabetic_string);
       REQUIRE_THROWS_AS((*invalid_strings)(),
                         strategies::OutOfCycles);
     }
