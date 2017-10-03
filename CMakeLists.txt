@@ -14,11 +14,13 @@ set(HEADER_FILES
         cauldron/integers.h
         cauldron/characters.h
         cauldron/strings.h
-        tests/predicates.h)
+        tests/predicates.h
+        tests/factories.h)
 set(SOURCE_FILES
         cauldron/characters.cpp
         cauldron/strings.cpp
         tests/predicates.cpp
+        tests/factories.cpp
         tests/main.cpp
         tests/test_just.cpp
         tests/test_booleans.cpp

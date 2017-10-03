@@ -3,6 +3,7 @@
 #include "../cauldron/just.h"
 #include "../cauldron/strings.h"
 #include "predicates.h"
+#include "factories.h"
 
 
 bool is_string_from_alphabet(const std::string &string,
@@ -20,19 +21,11 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
   size_t min_length = 1;
   size_t max_length = 100;
 
-  char min_character = std::numeric_limits<char>::min();
-  char max_character = std::numeric_limits<char>::max();
-
-  std::string non_zero_ascii_characters;
-  for (char character = min_character;
-       character < max_character;
-       character = ++character + (character == 0)) {
-    non_zero_ascii_characters.push_back(character);
-  }
+  std::string non_zero_characters = factories::non_zero_characters();
 
   SECTION("single character alphabet") {
     strategies::Just<size_t> ones(1);
-    for (char single_character: non_zero_ascii_characters) {
+    for (char single_character: non_zero_characters) {
       std::string single_character_string{single_character};
       strategies::Characters same_character(single_character_string);
       strategies::Strings same_character_strings(
@@ -80,8 +73,8 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
     size_t max_length = 3;
     strategies::Integers<size_t> strings_lengths(min_length,
                                                  max_length);
-    strategies::Characters non_zero_ascii(non_zero_ascii_characters);
-    auto alphanumeric = non_zero_ascii.filter(is_alphanumeric);
+    strategies::Characters non_zero(non_zero_characters);
+    auto alphanumeric = non_zero.filter(is_alphanumeric);
     strategies::Strings strings(
         std::make_shared<strategies::Integers<size_t>>(strings_lengths),
         std::move(alphanumeric));
