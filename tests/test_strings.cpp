@@ -4,6 +4,7 @@
 #include "../cauldron/strings.h"
 #include "predicates.h"
 #include "factories.h"
+#include "utils.h"
 
 
 bool is_string_from_alphabet(const std::string &string,
@@ -18,9 +19,6 @@ bool is_string_from_alphabet(const std::string &string,
 
 
 TEST_CASE("\"strings\" strategy", "[strings]") {
-  size_t min_length = 1;
-  size_t max_length = 100;
-
   std::string non_zero_characters = factories::non_zero_characters();
 
   SECTION("single character alphabet") {
@@ -39,22 +37,25 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
   }
 
   SECTION("multiple characters alphabet") {
-    strategies::Integers<size_t> alphabets_lengths(min_length, max_length);
-    strategies::Integers<size_t> strings_lengths(0, max_length);
-    auto alphabet_length = alphabets_lengths();
-    strategies::Integers<char> characters_integers;
-    std::string alphabet_characters;
-    for (size_t _ = 0; _ < alphabet_length; ++_) {
-      alphabet_characters.push_back(characters_integers());
-    }
-    strategies::Characters alphabet(alphabet_characters);
-    strategies::Strings strings(
-        std::make_shared<strategies::Integers<size_t>>(strings_lengths),
-        std::make_shared<strategies::Characters>(alphabet));
+    size_t min_length = 0;
+    size_t max_length = constants::max_capacity;
+
+    const std::shared_ptr<strategies::Integers<size_t>> &lengths =
+        std::make_shared<strategies::Integers<size_t>>(min_length,
+                                                       max_length);
+    std::string alphabet_characters = factories::characters_string(
+        constants::min_capacity,
+        constants::max_capacity);
+    const std::shared_ptr<strategies::Characters> &alphabet =
+        std::make_shared<strategies::Characters>(alphabet_characters);
+    strategies::Strings strings(lengths,
+                                alphabet);
 
     auto string = strings();
+    auto stays_in_range = in_range_checker<size_t>(min_length,
+                                                   max_length);
 
-    REQUIRE(min_length <= string.length() <= max_length);
+    REQUIRE(stays_in_range(string.length()));
     REQUIRE(is_string_from_alphabet(string,
                                     alphabet_characters));
   }
@@ -70,7 +71,13 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
                          string.end(),
                          is_alphabetic);
     };
-    size_t max_length = 3;
+
+    size_t min_length = constants::min_capacity;
+    size_t max_length = sufficient_capacity(
+        constants::alphanumeric_characters_count,
+        constants::non_zero_characters_count,
+        strategies::MAX_CYCLES);
+
     strategies::Integers<size_t> strings_lengths(min_length,
                                                  max_length);
     strategies::Characters non_zero(non_zero_characters);
@@ -85,8 +92,11 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
 
       auto all_digits_string = (*all_digits_strings)();
       auto all_alphabetic_string = (*all_alphabetic_strings)();
+      auto stays_in_range = in_range_checker(min_length,
+                                             max_length);
 
-      REQUIRE(min_length <= all_digits_string.length() <= max_length);
+      REQUIRE(stays_in_range(all_digits_string.length()));
+      REQUIRE(stays_in_range(all_alphabetic_string.length()));
       REQUIRE(all_digits(all_digits_string));
       REQUIRE(all_alphabetic(all_alphabetic_string));
     }
