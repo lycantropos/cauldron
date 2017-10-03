@@ -18,10 +18,8 @@ std::string factories::characters_string(size_t min_length,
 }
 
 
-std::string factories::non_zero_characters() {
-  char min_character = ::std::numeric_limits<char>::min();
-  char max_character = ::std::numeric_limits<char>::max();
-
+std::string factories::non_zero_characters(char min_character,
+                                           char max_character) {
   std::string non_zero_characters;
   for (char character = min_character;
        character < max_character;
