@@ -36,6 +36,10 @@ bool is_character_in_string(char character,
                             const std::string &string);
 
 
+bool is_string_from_alphabet(const std::string &string,
+                             const std::string &alphabet_characters);
+
+
 bool is_lower(char character);
 
 

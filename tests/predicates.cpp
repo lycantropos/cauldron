@@ -1,9 +1,15 @@
+#include <iostream>
+#include <catch.hpp>
 #include "predicates.h"
 
 
-bool is_character_in_string(char character,
-                            const std::string &string) {
-  return string.find(character) != -1;
+bool identity(bool boolean) {
+  return boolean;
+}
+
+
+bool negate(bool boolean) {
+  return not boolean;
 }
 
 
@@ -32,11 +38,18 @@ bool is_alphanumeric(char character) {
 }
 
 
-bool identity(bool boolean) {
-  return boolean;
+bool is_character_in_string(char character,
+                            const std::string &string) {
+  return string.find(character) != -1;
 }
 
 
-bool negate(bool boolean) {
-  return not boolean;
+bool is_string_from_alphabet(const std::string &string,
+                             const std::string &alphabet_characters) {
+  auto is_character_from_alphabet = [=](char character) -> bool {
+    return is_character_in_string(character, alphabet_characters);
+  };
+  return all_of(string.begin(),
+                string.end(),
+                is_character_from_alphabet);
 }

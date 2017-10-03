@@ -7,17 +7,6 @@
 #include "utils.h"
 
 
-static bool is_string_from_alphabet(const std::string &string,
-                                    const std::string &alphabet_characters) {
-  auto is_character_from_alphabet = [=](char character) -> bool {
-    return is_character_in_string(character, alphabet_characters);
-  };
-  return std::all_of(string.begin(),
-                     string.end(),
-                     is_character_from_alphabet);
-}
-
-
 TEST_CASE("\"strings\" strategy", "[strings]") {
   std::string non_zero_characters = factories::non_zero_characters();
 
