@@ -59,3 +59,10 @@ bool is_digits_string(const std::string &string);;
 
 
 bool is_alphabetic_string(const std::string &string);;
+
+
+template<typename T>
+bool is_object_in_vector(T object,
+                         const std::vector<T> &vector) {
+  return std::find(vector.begin(), vector.end(), object) != vector.end();
+};

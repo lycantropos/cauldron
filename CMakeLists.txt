@@ -14,6 +14,7 @@ set(HEADER_FILES
         cauldron/integers.h
         cauldron/characters.h
         cauldron/strings.h
+        cauldron/vectors.h
         tests/globals.h
         tests/factories.h
         tests/predicates.h
@@ -30,6 +31,7 @@ set(SOURCE_FILES
         tests/test_booleans.cpp
         tests/test_integers.cpp
         tests/test_characters.cpp
-        tests/test_strings.cpp)
+        tests/test_strings.cpp
+        tests/test_vectors.cpp)
 add_executable(main ${HEADER_FILES} ${SOURCE_FILES})
 target_link_libraries(main ${CONAN_LIBS})
