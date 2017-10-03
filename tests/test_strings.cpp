@@ -22,12 +22,11 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
   std::string non_zero_characters = factories::non_zero_characters();
 
   SECTION("single character alphabet") {
-    const std::shared_ptr<strategies::Just<size_t>> &ones =
-        std::make_shared<strategies::Just<size_t>>(1);
+    auto ones = std::make_shared<strategies::Just<size_t>>(1);
     for (char single_character: non_zero_characters) {
       std::string single_character_string{single_character};
-      const std::shared_ptr<strategies::Characters> &same_character =
-          std::make_shared<strategies::Characters>(single_character_string);
+      auto same_character = std::make_shared<strategies::Characters>(
+          single_character_string);
       strategies::Strings same_character_strings(ones,
                                                  same_character);
 
@@ -41,14 +40,13 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
     size_t min_length = 0;
     size_t max_length = constants::max_capacity;
 
-    const std::shared_ptr<strategies::Integers<size_t>> &lengths =
-        std::make_shared<strategies::Integers<size_t>>(min_length,
-                                                       max_length);
+    auto lengths = std::make_shared<strategies::Integers<size_t>>(min_length,
+                                                                  max_length);
     std::string alphabet_characters = factories::characters_string(
         constants::min_capacity,
         constants::max_capacity);
-    const std::shared_ptr<strategies::Characters> &alphabet =
-        std::make_shared<strategies::Characters>(alphabet_characters);
+    auto alphabet = std::make_shared<strategies::Characters>(
+        alphabet_characters);
     strategies::Strings strings(lengths,
                                 alphabet);
 
@@ -78,9 +76,8 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
         constants::alphanumeric_characters_count,
         constants::non_zero_characters_count,
         strategies::MAX_CYCLES);
-    const std::shared_ptr<strategies::Integers<size_t>> &lengths =
-        std::make_shared<strategies::Integers<size_t>>(min_length,
-                                                       max_length);
+    auto lengths = std::make_shared<strategies::Integers<size_t>>(min_length,
+                                                                  max_length);
 
     strategies::Characters non_zero(non_zero_characters);
     auto alphanumeric = non_zero.filter(is_alphanumeric);
