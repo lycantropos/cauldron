@@ -6,9 +6,6 @@
 
 
 TEST_CASE("\"characters\" strategy", "[characters]") {
-  size_t min_length = 1;
-  size_t max_length = 100;
-
   std::string non_zero_characters = factories::non_zero_characters();
 
   SECTION("single character") {
@@ -23,8 +20,9 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
   }
 
   SECTION("multiple characters") {
-    std::string characters_string = factories::characters_string(min_length,
-                                                                 max_length);
+    std::string characters_string = factories::characters_string(
+        constants::min_capacity,
+        constants::max_capacity);
     strategies::Characters characters(characters_string);
 
     auto character = characters();
