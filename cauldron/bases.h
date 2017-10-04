@@ -16,8 +16,9 @@ class Strategy {
 template<typename T>
 class Filtered : public Strategy<T> {
  public:
-  std::unique_ptr<Filtered<T>> filter(const Requirement<T> &predicate) const {
-    auto sieve = sieve_.extend(predicate);
+  std::unique_ptr<Filtered<T>> filter(
+      const Requirement<T> &requirement) const {
+    auto sieve = sieve_.extend(requirement);
     return update_sieve(sieve);
   }
 

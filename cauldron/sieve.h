@@ -40,8 +40,9 @@ class Sieve {
       max_cycles_(max_cycles) {}
 
   bool satisfactory(T product) const {
-    for (const auto &predicate: requirements_) {
-      if (not predicate(product)) {
+    for (const auto &requirement: requirements_) {
+      bool satisfies_requirement = requirement(product);
+      if (not satisfies_requirement) {
         return false;
       }
     }
