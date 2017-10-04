@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <cmath>
 #include "utils.h"
 
 
@@ -8,13 +9,12 @@ size_t sufficient_capacity(size_t favorable_outcomes_count,
   /**
    * Returns maximum possible capacity
    * for which all container's elements will be favorable
-   * assuming that attempts are dependent.
+   * assuming that attempts are dependent by formula
+   *    attempts_count * (probability ^ sufficient_capacity) >= 1
+   * where
+   *    probability = favorable_outcomes_count / total_outcomes_count
    * */
-  double probability = double(favorable_outcomes_count) / total_outcomes_count;
-  size_t result = 0;
-  double step = 1.;
-  while ((step *= probability) * attempts_count >= 1.) {
-    result++;
-  }
-  return result;
+  // base equals to inverse probability
+  double base = double(total_outcomes_count) / favorable_outcomes_count;
+  return size_t((log(attempts_count) / log(base)));
 }
