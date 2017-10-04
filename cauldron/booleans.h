@@ -19,11 +19,10 @@ class Booleans : public Filtered<bool> {
  private:
   double probability_;
 
-  bool producer() const {
+  bool producer() const override {
     static std::random_device random_device;
     auto distribution = std::bernoulli_distribution(probability_);
-    auto result = distribution(random_device);
-    return result;
+    return distribution(random_device);
   }
 
   std::unique_ptr<Filtered<bool>> update_sieve(
