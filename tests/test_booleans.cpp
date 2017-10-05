@@ -31,6 +31,7 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
                         strategies::OutOfCycles);
     }
   }
+
   SECTION("mapping") {
     auto still_false_values = false_values.map(identity);
     auto still_true_values = true_values.map(identity);
