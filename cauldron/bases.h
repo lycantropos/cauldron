@@ -12,9 +12,21 @@ class Filtered;
 
 
 template<typename T>
+class Mapped;
+
+
+template<typename T>
 class Strategy {
  public:
   virtual T operator()() const = 0;
+
+  virtual std::unique_ptr<Mapped<T>> map(
+      const Converter<T> &converter
+  ) const {
+    auto facility = Facility<T>().expand(converter);
+    return std::make_unique<Mapped<T>>(facility,
+                                       std::move(clone()));
+  }
 
   virtual std::unique_ptr<Filtered<T>> filter(
       const Requirement<T> &requirement
@@ -62,6 +74,33 @@ class Filtered : public CloneHelper<T, Filtered<T>> {
 
  protected:
   Sieve<T> sieve_;
+  std::shared_ptr<Strategy<T>> strategy_;
+};
+
+
+template<typename T>
+class Mapped : public CloneHelper<T, Mapped<T>> {
+ public:
+  explicit Mapped(const Facility<T> &facility,
+                  std::shared_ptr<Strategy<T>> strategy) :
+      facility_(facility),
+      strategy_(std::move(strategy)) {};
+
+  std::unique_ptr<Mapped<T>> map(
+      const Converter<T> &converter
+  ) const override {
+    auto facility = facility_.expand(converter);
+    return std::make_unique<Mapped>(facility,
+                                    strategy_);
+  }
+
+  T operator()() const override {
+    T product = (*strategy_)();
+    return facility_.convert(product);
+  }
+
+ protected:
+  Facility<T> facility_;
   std::shared_ptr<Strategy<T>> strategy_;
 };
 }
