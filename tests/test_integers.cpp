@@ -2,6 +2,7 @@
 #include <iostream>
 #include "../cauldron/integers.h"
 #include "predicates.h"
+#include "operators.h"
 
 
 template<typename T>
@@ -39,9 +40,32 @@ static void check_strategy() {
     }
 
     SECTION("impossible") {
-      auto non_existent_integers = integers.filter(even<T>)->filter(odd<T>);
+      auto invalid_integers = integers.filter(even<T>)->filter(odd<T>);
 
-      REQUIRE_THROWS_AS((*non_existent_integers)(),
+      REQUIRE_THROWS_AS((*invalid_integers)(),
+                        strategies::OutOfCycles);
+    }
+  }
+
+  SECTION("mapping") {
+    SECTION("parity") {
+      auto even_integers = integers.map(to_even<T>);
+      auto odd_integers = integers.map(to_odd<T>);
+
+      auto even_integer = (*even_integers)();
+      auto odd_integer = (*odd_integers)();
+
+      REQUIRE(even(even_integer));
+      REQUIRE(odd(odd_integer));
+    }
+
+    SECTION("impossible") {
+      auto invalid_even_integers = integers.map(to_odd<T>)->filter(even<T>);
+      auto invalid_odd_integers = integers.map(to_even<T>)->filter(odd<T>);
+
+      REQUIRE_THROWS_AS((*invalid_odd_integers)(),
+                        strategies::OutOfCycles);
+      REQUIRE_THROWS_AS((*invalid_even_integers)(),
                         strategies::OutOfCycles);
     }
   }
