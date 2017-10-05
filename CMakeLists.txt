@@ -18,6 +18,7 @@ set(HEADER_FILES
         cauldron/vectors.h
         tests/globals.h
         tests/factories.h
+        tests/operators.h
         tests/predicates.h
         tests/utils.h)
 set(SOURCE_FILES
@@ -25,6 +26,7 @@ set(SOURCE_FILES
         cauldron/strings.cpp
         tests/globals.cpp
         tests/factories.cpp
+        tests/operators.cpp
         tests/predicates.cpp
         tests/utils.cpp
         tests/main.cpp
