@@ -13,7 +13,7 @@ char to_lower(char character) {
 }
 
 
-std::string to_upper_string(std::string string) {
+std::string to_upper_string(const std::string &string) {
   std::string result;
   std::transform(string.begin(),
                  string.end(),
@@ -23,7 +23,7 @@ std::string to_upper_string(std::string string) {
 }
 
 
-std::string to_lower_string(std::string string) {
+std::string to_lower_string(const std::string &string) {
   std::string result;
   std::transform(string.begin(),
                  string.end(),
