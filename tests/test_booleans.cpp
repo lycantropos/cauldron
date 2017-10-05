@@ -1,5 +1,4 @@
 #include <catch.hpp>
-#include <iostream>
 #include "../cauldron/booleans.h"
 #include "predicates.h"
 
@@ -31,5 +30,16 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
       REQUIRE_THROWS_AS((*invalid_true_values)(),
                         strategies::OutOfCycles);
     }
+  }
+  SECTION("mapping") {
+    auto still_false_values = false_values.map(identity);
+    auto still_true_values = true_values.map(identity);
+    auto now_true_values = still_false_values->map(negate);
+    auto now_false_values = still_true_values->map(negate);
+
+    REQUIRE((*still_false_values)() == false_values());
+    REQUIRE((*still_true_values)() == true_values());
+    REQUIRE((*now_true_values)() != false_values());
+    REQUIRE((*now_false_values)() != true_values());
   }
 }
