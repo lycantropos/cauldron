@@ -63,5 +63,9 @@ TEST_CASE("\"just\" strategy", "[just]") {
     SECTION("string") {
       check_strategy<std::string>();
     }
+
+    SECTION("vector") {
+      check_strategy<std::vector<std::string>>();
+    }
   }
 }
