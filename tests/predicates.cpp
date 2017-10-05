@@ -1,5 +1,4 @@
-#include <iostream>
-#include <catch.hpp>
+#include <algorithm>
 #include "predicates.h"
 
 
@@ -13,6 +12,11 @@ bool negate(bool boolean) {
 }
 
 
+bool is_alphabetic(char character) {
+  return std::isalpha(character) != 0;
+}
+
+
 bool is_lower(char character) {
   return std::islower(character) != 0;
 }
@@ -23,32 +27,17 @@ bool is_upper(char character) {
 }
 
 
-bool is_digit(char character) {
-  return std::isdigit(character) != 0;
-}
-
-
-bool is_alphabetic(char character) {
-  return std::isalpha(character) != 0;
-}
-
-
-bool is_alphanumeric(char character) {
-  return std::isalnum(character) != 0;
-}
-
-
-bool is_digits_string(const std::string &string) {
+bool is_lower_string(const std::string &string) {
   return std::all_of(string.begin(),
                      string.end(),
-                     is_digit);
+                     is_lower);
 }
 
 
-bool is_alphabetic_string(const std::string &string) {
+bool is_upper_string(const std::string &string) {
   return std::all_of(string.begin(),
                      string.end(),
-                     is_alphabetic);
+                     is_upper);
 }
 
 

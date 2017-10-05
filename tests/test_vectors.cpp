@@ -9,9 +9,21 @@
 #include "factories.h"
 #include "predicates.h"
 #include "utils.h"
+#include "operators.h"
 
 
 static void check_booleans_vectors_strategy() {
+  auto is_false_vector = [&](std::vector<bool> vector) -> bool {
+    return std::all_of(vector.begin(),
+                       vector.end(),
+                       negate);
+  };
+  auto is_true_vector = [&](std::vector<bool> vector) -> bool {
+    return std::all_of(vector.begin(),
+                       vector.end(),
+                       identity);
+  };
+
   SECTION("single element domain") {
     size_t min_size = 0;
     size_t max_size = constants::max_capacity;
@@ -40,17 +52,6 @@ static void check_booleans_vectors_strategy() {
   }
 
   SECTION("filtration") {
-    auto is_true_vector = [&](std::vector<bool> vector) -> bool {
-      return std::all_of(vector.begin(),
-                         vector.end(),
-                         identity);
-    };
-    auto is_false_vector = [&](std::vector<bool> vector) -> bool {
-      return std::all_of(vector.begin(),
-                         vector.end(),
-                         negate);
-    };
-
     /* if `min_size`` equals to zero
      * than "impossible" section would not raise exception
      * since it is possible to avoid filters with empty vector.
@@ -86,11 +87,79 @@ static void check_booleans_vectors_strategy() {
                         strategies::OutOfCycles);
     }
   }
+
+  SECTION("mapping") {
+    strategies::Converter<std::vector<bool>> to_false_vector(
+        [&](const std::vector<bool> &vector) -> std::vector<bool> {
+          auto result = std::vector<bool>(vector.size());
+          std::fill(result.begin(),
+                    result.end(),
+                    false);
+          return result;
+        });
+    strategies::Converter<std::vector<bool>> to_true_vector(
+        [&](const std::vector<bool> &vector) -> std::vector<bool> {
+          auto result = std::vector<bool>(vector.size());
+          std::fill(result.begin(),
+                    result.end(),
+                    true);
+          return result;
+        });
+
+    /* if `min_size`` equals to zero
+     * than "impossible" section would not raise exception
+     * since it is possible to avoid filters with empty vector.
+     */
+    size_t min_size = constants::min_capacity;
+    size_t max_size = constants::max_capacity;
+    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                                max_size);
+    auto booleans = std::make_shared<strategies::Booleans>();
+    strategies::Vectors<bool> booleans_vectors(sizes,
+                                               booleans);
+
+    SECTION("truthfulness") {
+      auto false_vectors = booleans_vectors.map(to_false_vector);
+      auto true_vectors = booleans_vectors.map(to_true_vector);
+
+      auto false_vector = (*false_vectors)();
+      auto true_vector = (*true_vectors)();
+      auto stays_in_range = in_range_checker(min_size,
+                                             max_size);
+
+      REQUIRE(stays_in_range(false_vector.size()));
+      REQUIRE(stays_in_range(true_vector.size()));
+      REQUIRE(is_false_vector(false_vector));
+      REQUIRE(is_true_vector(true_vector));
+    }
+
+    SECTION("impossible") {
+      auto invalid_false_vectors =
+          booleans_vectors.map(to_false_vector)->filter(is_true_vector);
+      auto invalid_true_vectors =
+          booleans_vectors.map(to_false_vector)->filter(is_true_vector);
+      REQUIRE_THROWS_AS((*invalid_false_vectors)(),
+                        strategies::OutOfCycles);
+      REQUIRE_THROWS_AS((*invalid_true_vectors)(),
+                        strategies::OutOfCycles);
+    }
+  }
 }
 
 
 template<typename T>
 static void check_integers_vectors_strategy() {
+  auto is_even_vector = [&](std::vector<T> vector) -> bool {
+    return std::all_of(vector.begin(),
+                       vector.end(),
+                       even<T>);
+  };
+  auto is_odd_vector = [&](std::vector<T> vector) -> bool {
+    return std::all_of(vector.begin(),
+                       vector.end(),
+                       odd<T>);
+  };
+
   T min_value = std::numeric_limits<T>::min();
   T max_value = std::numeric_limits<T>::max();
   auto integers = std::make_shared<strategies::Integers<T>>(min_value,
@@ -143,17 +212,6 @@ static void check_integers_vectors_strategy() {
   }
 
   SECTION("filtration") {
-    auto is_even_vector = [&](std::vector<T> vector) -> bool {
-      return std::all_of(vector.begin(),
-                         vector.end(),
-                         even<T>);
-    };
-    auto is_odd_vector = [&](std::vector<T> vector) -> bool {
-      return std::all_of(vector.begin(),
-                         vector.end(),
-                         odd<T>);
-    };
-
     /* if `min_size`` equals to zero
      * than "impossible" section would not raise exception
      * since it is possible to avoid filters with empty vector.
@@ -186,7 +244,70 @@ static void check_integers_vectors_strategy() {
     SECTION("impossible") {
       auto invalid_vectors =
           vectors.filter(is_even_vector)->filter(is_odd_vector);
+
       REQUIRE_THROWS_AS((*invalid_vectors)(),
+                        strategies::OutOfCycles);
+    }
+  }
+
+  SECTION("mapping") {
+    strategies::Converter<std::vector<T>> to_even_vector(
+        [&](const std::vector<T> &vector) -> std::vector<T> {
+          auto result = std::vector<T>(vector.size());
+          std::transform(vector.begin(),
+                         vector.end(),
+                         result.begin(),
+                         to_even<T>);
+          return result;
+        });
+    strategies::Converter<std::vector<T>> to_odd_vector(
+        [&](const std::vector<T> &vector) -> std::vector<T> {
+          auto result = std::vector<T>(vector.size());
+          std::transform(vector.begin(),
+                         vector.end(),
+                         result.begin(),
+                         to_odd<T>);
+          return result;
+        });
+
+    /* if `min_size`` equals to zero
+     * than "impossible" section would not raise exception
+     * since it is possible to avoid filters with empty vector.
+     */
+    static size_t min_size = constants::min_capacity;
+    static size_t max_size = sufficient_capacity(1, 2, // odd or even
+                                                 strategies::MAX_CYCLES);
+    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                                max_size);
+    strategies::Vectors<T> vectors(sizes,
+                                   integers);
+
+    SECTION("parity") {
+      auto even_vectors = vectors.map(to_even_vector);
+      auto odd_vectors = vectors.map(to_odd_vector);
+
+      auto even_vector = (*even_vectors)();
+      auto odd_vector = (*odd_vectors)();
+      auto size_stays_in_range = in_range_checker<size_t>(min_size,
+                                                          max_size);
+
+      REQUIRE(size_stays_in_range(even_vector.size()));
+      REQUIRE(size_stays_in_range(odd_vector.size()));
+      REQUIRE(integers_stay_in_range(even_vector));
+      REQUIRE(integers_stay_in_range(odd_vector));
+      REQUIRE(is_even_vector(even_vector));
+      REQUIRE(is_odd_vector(odd_vector));
+    }
+
+    SECTION("impossible") {
+      auto invalid_even_vectors =
+          vectors.map(to_odd_vector)->filter(is_even_vector);
+      auto invalid_odd_vectors =
+          vectors.map(to_even_vector)->filter(is_odd_vector);
+
+      REQUIRE_THROWS_AS((*invalid_even_vectors)(),
+                        strategies::OutOfCycles);
+      REQUIRE_THROWS_AS((*invalid_odd_vectors)(),
                         strategies::OutOfCycles);
     }
   }
@@ -194,6 +315,17 @@ static void check_integers_vectors_strategy() {
 
 
 static void check_characters_vectors_strategy() {
+  auto is_lower_vector = [&](const std::vector<char> vector) -> bool {
+    return std::all_of(vector.begin(),
+                       vector.end(),
+                       is_lower);
+  };
+  auto is_upper_vector = [&](const std::vector<char> vector) -> bool {
+    return std::all_of(vector.begin(),
+                       vector.end(),
+                       is_upper);
+  };
+
   std::string non_zero_characters = factories::non_zero_characters();
 
   SECTION("single character") {
@@ -244,33 +376,24 @@ static void check_characters_vectors_strategy() {
     REQUIRE(stays_in_range(characters_vector.size()));
     REQUIRE(is_vector_from_characters_domain(characters_vector));
   }
+
   SECTION("filtration") {
+    /* if `min_size`` equals to zero
+     * than "impossible" section would not raise exception
+     * since it is possible to avoid filters with empty vector.
+     */
     size_t min_size = constants::min_capacity;
-    size_t max_size = sufficient_capacity(
-        constants::alphanumeric_characters_count,
-        constants::non_zero_characters_count,
-        strategies::MAX_CYCLES);
+    size_t max_size = constants::max_capacity;
     auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
                                                                 max_size);
-    auto is_lower_vector = [&](const std::vector<char> vector) -> bool {
-      return std::all_of(vector.begin(),
-                         vector.end(),
-                         is_lower);
-    };
-    auto is_upper_vector = [&](const std::vector<char> vector) -> bool {
-      return std::all_of(vector.begin(),
-                         vector.end(),
-                         is_upper);
-    };
-
-    auto non_zero = std::make_shared<strategies::Characters>(
-        non_zero_characters);
-    strategies::Vectors<char> non_zero_vectors(sizes,
-                                               non_zero);
+    auto alphabetic_characters =
+        strategies::Characters(non_zero_characters).filter(is_alphabetic);
+    strategies::Vectors<char> alphabetic(sizes,
+                                         std::move(alphabetic_characters));
 
     SECTION("case") {
-      auto lower_vectors = non_zero_vectors.filter(is_lower_vector);
-      auto upper_vectors = non_zero_vectors.filter(is_upper_vector);
+      auto lower_vectors = alphabetic.filter(is_lower_vector);
+      auto upper_vectors = alphabetic.filter(is_upper_vector);
 
       auto lower_vector = (*lower_vectors)();
       auto upper_vector = (*upper_vectors)();
@@ -285,9 +408,70 @@ static void check_characters_vectors_strategy() {
 
     SECTION("impossible") {
       auto invalid_vectors =
-          non_zero_vectors.filter(is_lower_vector)->filter(is_upper_vector);
+          alphabetic.filter(is_lower_vector)->filter(is_upper_vector);
 
       REQUIRE_THROWS_AS((*invalid_vectors)(),
+                        strategies::OutOfCycles);
+    }
+  }
+
+  SECTION("mapping") {
+    strategies::Converter<std::vector<char>> to_lower_vector(
+        [&](const std::vector<char> &vector) -> std::vector<char> {
+          auto result = std::vector<char>(vector.size());
+          std::transform(vector.begin(),
+                         vector.end(),
+                         result.begin(),
+                         to_lower);
+          return result;
+        });
+    strategies::Converter<std::vector<char>> to_upper_vector(
+        [&](const std::vector<char> &vector) -> std::vector<char> {
+          auto result = std::vector<char>(vector.size());
+          std::transform(vector.begin(),
+                         vector.end(),
+                         result.begin(),
+                         to_upper);
+          return result;
+        });
+
+    /* if `min_size`` equals to zero
+     * than "impossible" section would not raise exception
+     * since it is possible to avoid filters with empty vector.
+     */
+    size_t min_size = constants::min_capacity;
+    size_t max_size = constants::max_capacity;
+    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                                max_size);
+    auto alphabetic_characters =
+        strategies::Characters(non_zero_characters).filter(is_alphabetic);
+    strategies::Vectors<char> alphabetic(sizes,
+                                         std::move(alphabetic_characters));
+
+    SECTION("case") {
+      auto lower_vectors = alphabetic.map(to_lower_vector);
+      auto upper_vectors = alphabetic.map(to_upper_vector);
+
+      auto lower_vector = (*lower_vectors)();
+      auto upper_vector = (*upper_vectors)();
+      auto stays_in_range = in_range_checker<size_t>(min_size,
+                                                     max_size);
+
+      REQUIRE(stays_in_range(lower_vector.size()));
+      REQUIRE(stays_in_range(upper_vector.size()));
+      REQUIRE(is_lower_vector(lower_vector));
+      REQUIRE(is_upper_vector(upper_vector));
+    }
+
+    SECTION("impossible") {
+      auto invalid_lower_vectors =
+          alphabetic.map(to_upper_vector)->filter(is_lower_vector);
+      auto invalid_upper_vectors =
+          alphabetic.map(to_lower_vector)->filter(is_upper_vector);
+
+      REQUIRE_THROWS_AS((*invalid_lower_vectors)(),
+                        strategies::OutOfCycles);
+      REQUIRE_THROWS_AS((*invalid_upper_vectors)(),
                         strategies::OutOfCycles);
     }
   }
@@ -295,11 +479,26 @@ static void check_characters_vectors_strategy() {
 
 
 static void check_strings_vectors_strategy() {
-  std::string non_zero_characters = factories::non_zero_characters();
+  auto is_lower_vector =
+      [&](const std::vector<std::string> &vector) -> bool {
+        return std::all_of(vector.begin(),
+                           vector.end(),
+                           is_lower_string);
+      };
+  auto is_upper_vector =
+      [&](const std::vector<std::string> &vector) -> bool {
+        return std::all_of(vector.begin(),
+                           vector.end(),
+                           is_upper_string);
+      };
+
+  size_t max_length = constants::max_capacity;
+
+  std::string non_zero_characters_string = factories::non_zero_characters();
 
   SECTION("single character alphabet") {
     auto ones = std::make_shared<strategies::Just<size_t>>(1);
-    for (char single_character: non_zero_characters) {
+    for (char single_character: non_zero_characters_string) {
       std::string single_character_string{single_character};
       auto same_character = std::make_shared<strategies::Characters>(
           single_character_string);
@@ -317,11 +516,11 @@ static void check_strings_vectors_strategy() {
       REQUIRE(vector == single_character_string_vector);
     }
   }
+
   SECTION("multiple characters alphabet") {
     size_t min_size = 0;
     size_t max_size = constants::max_capacity;
     size_t min_length = 0;
-    size_t max_length = constants::max_capacity;
     auto lengths = std::make_shared<strategies::Integers<size_t>>(min_length,
                                                                   max_length);
 
@@ -361,20 +560,8 @@ static void check_strings_vectors_strategy() {
                                                          alphabet_characters);
                         }));
   }
-  SECTION("filtration") {
-    auto is_digits_vector =
-        [&](const std::vector<std::string> &vector) -> bool {
-          return std::all_of(vector.begin(),
-                             vector.end(),
-                             is_digits_string);
-        };
-    auto is_alphabetic_vector =
-        [&](const std::vector<std::string> &vector) -> bool {
-          return std::all_of(vector.begin(),
-                             vector.end(),
-                             is_alphabetic_string);
-        };
 
+  SECTION("filtration") {
     /* if ``min_length``/``min_size`` equals to zero
      * than "impossible" section would not raise exception
      * since it is possible to avoid filters with empty string/vector.
@@ -382,29 +569,26 @@ static void check_strings_vectors_strategy() {
     size_t min_size = constants::min_capacity;
     size_t max_size = min_size + 1;
     size_t min_length = constants::min_capacity;
-    size_t max_length = sufficient_capacity(
-        constants::alphanumeric_characters_count,
-        constants::non_zero_characters_count,
-        strategies::MAX_CYCLES / max_size);
     auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
                                                                 max_size);
     auto lengths = std::make_shared<strategies::Integers<size_t>>(min_length,
                                                                   max_length);
 
-    strategies::Characters non_zero(non_zero_characters);
-    auto alphanumeric_characters = non_zero.filter(is_alphanumeric);
-    auto alphanumeric_strings = std::make_shared<strategies::Strings>(
+    auto alphabetic_characters =
+        strategies::Characters(non_zero_characters_string)
+            .filter(is_alphabetic);
+    auto alphabetic_strings = std::make_shared<strategies::Strings>(
         lengths,
-        std::move(alphanumeric_characters));
-    strategies::Vectors<std::string> alphanumeric(sizes,
-                                                  alphanumeric_strings);
+        std::move(alphabetic_characters));
+    strategies::Vectors<std::string> alphabetic(sizes,
+                                                alphabetic_strings);
 
-    SECTION("alphanumeric") {
-      auto digits_vectors = alphanumeric.filter(is_digits_vector);
-      auto alphabetic_vectors = alphanumeric.filter(is_alphabetic_vector);
+    SECTION("case") {
+      auto lower_vectors = alphabetic.filter(is_lower_vector);
+      auto upper_vectors = alphabetic.filter(is_upper_vector);
 
-      auto digits_vector = (*digits_vectors)();
-      auto alphabetic_vector = (*alphabetic_vectors)();
+      auto lower_vector = (*lower_vectors)();
+      auto upper_vector = (*upper_vectors)();
       auto sizes_stays_in_range = in_range_checker<size_t>(min_size,
                                                            max_size);
       auto length_stays_in_range = in_range_checker<size_t>(min_length,
@@ -418,18 +602,100 @@ static void check_strings_vectors_strategy() {
                         });
           };
 
-      REQUIRE(sizes_stays_in_range(digits_vector.size()));
-      REQUIRE(sizes_stays_in_range(alphabetic_vector.size()));
-      REQUIRE(lengths_stay_in_range(digits_vector));
-      REQUIRE(lengths_stay_in_range(alphabetic_vector));
-      REQUIRE(is_digits_vector(digits_vector));
-      REQUIRE(is_alphabetic_vector(alphabetic_vector));
+      REQUIRE(sizes_stays_in_range(lower_vector.size()));
+      REQUIRE(sizes_stays_in_range(upper_vector.size()));
+      REQUIRE(lengths_stay_in_range(lower_vector));
+      REQUIRE(lengths_stay_in_range(upper_vector));
+      REQUIRE(is_lower_vector(lower_vector));
+      REQUIRE(is_upper_vector(upper_vector));
     }
 
     SECTION("impossible") {
       auto invalid_vectors =
-          alphanumeric.filter(is_digits_vector)->filter(is_alphabetic_vector);
+          alphabetic.filter(is_lower_vector)->filter(is_upper_vector);
+
       REQUIRE_THROWS_AS((*invalid_vectors)(),
+                        strategies::OutOfCycles);
+    }
+  }
+
+  SECTION("mapping") {
+    strategies::Converter<std::vector<std::string>> to_lower_vector(
+        [&](const std::vector<std::string> &vector) -> std::vector<std::string> {
+          auto result = std::vector<std::string>(vector.size());
+          std::transform(vector.begin(),
+                         vector.end(),
+                         result.begin(),
+                         to_lower_string);
+          return result;
+        });
+    strategies::Converter<std::vector<std::string>> to_upper_vector(
+        [&](const std::vector<std::string> &vector) -> std::vector<std::string> {
+          auto result = std::vector<std::string>(vector.size());
+          std::transform(vector.begin(),
+                         vector.end(),
+                         result.begin(),
+                         to_upper_string);
+          return result;
+        });
+
+    /* if ``min_length``/``min_size`` equals to zero
+     * than "impossible" section would not raise exception
+     * since it is possible to avoid filters with empty string/vector.
+     */
+    size_t min_size = constants::min_capacity;
+    size_t max_size = min_size + 1;
+    size_t min_length = constants::min_capacity;
+    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                                max_size);
+    auto lengths = std::make_shared<strategies::Integers<size_t>>(min_length,
+                                                                  max_length);
+
+    auto alphabetic_characters =
+        strategies::Characters(non_zero_characters_string)
+            .filter(is_alphabetic);
+    auto alphabetic_strings = std::make_shared<strategies::Strings>(
+        lengths,
+        std::move(alphabetic_characters));
+    strategies::Vectors<std::string> alphabetic(sizes,
+                                                alphabetic_strings);
+
+    SECTION("case") {
+      auto lower_vectors = alphabetic.map(to_lower_vector);
+      auto upper_vectors = alphabetic.map(to_upper_vector);
+
+      auto lower_vector = (*lower_vectors)();
+      auto upper_vector = (*upper_vectors)();
+      auto sizes_stays_in_range = in_range_checker<size_t>(min_size,
+                                                           max_size);
+      auto length_stays_in_range = in_range_checker<size_t>(min_length,
+                                                            max_length);
+      auto lengths_stay_in_range =
+          [&](const std::vector<std::string> &vector) -> bool {
+            std::all_of(vector.begin(),
+                        vector.end(),
+                        [&](const std::string &string) -> bool {
+                          return length_stays_in_range(string.length());
+                        });
+          };
+
+      REQUIRE(sizes_stays_in_range(lower_vector.size()));
+      REQUIRE(sizes_stays_in_range(upper_vector.size()));
+      REQUIRE(lengths_stay_in_range(lower_vector));
+      REQUIRE(lengths_stay_in_range(upper_vector));
+      REQUIRE(is_lower_vector(lower_vector));
+      REQUIRE(is_upper_vector(upper_vector));
+    }
+
+    SECTION("impossible") {
+      auto invalid_lower_vectors =
+          alphabetic.map(to_upper_vector)->filter(is_lower_vector);
+      auto invalid_upper_vectors =
+          alphabetic.map(to_lower_vector)->filter(is_upper_vector);
+
+      REQUIRE_THROWS_AS((*invalid_lower_vectors)(),
+                        strategies::OutOfCycles);
+      REQUIRE_THROWS_AS((*invalid_upper_vectors)(),
                         strategies::OutOfCycles);
     }
   }

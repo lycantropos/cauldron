@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <vector>
 #include <functional>
 
@@ -46,19 +45,13 @@ bool is_lower(char character);
 bool is_upper(char character);
 
 
-bool is_digit(char character);
-
-
 bool is_alphabetic(char character);
 
 
-bool is_alphanumeric(char character);
+bool is_lower_string(const std::string &string);
 
 
-bool is_digits_string(const std::string &string);;
-
-
-bool is_alphabetic_string(const std::string &string);;
+bool is_upper_string(const std::string &string);
 
 
 template<typename T>
