@@ -11,20 +11,15 @@
 
 
 namespace strategies {
-class Strings : public Filtered<std::string> {
+class Strings : public CloneHelper<std::string, Strings> {
  public:
   Strings(std::shared_ptr<Strategy<size_t>> lengths,
-          std::shared_ptr<Strategy<char>> alphabet,
-          const Sieve<std::string> &sieve = Sieve<std::string>());
+          std::shared_ptr<Strategy<char>> alphabet);
+
+  std::string operator()() const override;
 
  private:
   std::shared_ptr<Strategy<size_t>> lengths_;
   std::shared_ptr<Strategy<char>> alphabet_;
-
-  std::string producer() const override;
-
-  std::unique_ptr<Filtered<std::string>> update_sieve(
-      const Sieve<std::string> &sieve
-  ) const override;
 };
 }

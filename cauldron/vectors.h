@@ -6,7 +6,7 @@
 
 namespace strategies {
 template<typename T>
-class Vectors : public Filtered<std::vector<T>> {
+class Vectors : public CloneHelper<std::vector<T>, Vectors<T>> {
   using Product = std::vector<T>;
   using ElementsStrategy = Strategy<T>;
   using SizesStrategy = Strategy<size_t>;
@@ -14,17 +14,11 @@ class Vectors : public Filtered<std::vector<T>> {
 
  public:
   Vectors(std::shared_ptr<SizesStrategy> sizes,
-          std::shared_ptr<ElementsStrategy> elements,
-          const Sieve<Product> &sieve = Sieve<Product>()) :
+          std::shared_ptr<ElementsStrategy> elements) :
       sizes_(std::move(sizes)),
-      elements_(std::move(elements)),
-      Filtered<std::vector<T>>(sieve) {};
+      elements_(std::move(elements)) {};
 
- private:
-  std::shared_ptr<SizesStrategy> sizes_;
-  std::shared_ptr<ElementsStrategy> elements_;
-
-  std::vector<T> producer() const override {
+  std::vector<T> operator()() const override {
     auto size = (*sizes_)();
     std::vector<T> result(size);
     // FIXME: workaround using lambda to get producer from strategy
@@ -35,12 +29,8 @@ class Vectors : public Filtered<std::vector<T>> {
     return result;
   }
 
-  std::unique_ptr<FilteredProduct> update_sieve(
-      const Sieve<std::vector<T>> &sieve
-  ) const override {
-    return std::make_unique<Vectors>(sizes_,
-                                     elements_,
-                                     sieve);
-  }
+ private:
+  std::shared_ptr<SizesStrategy> sizes_;
+  std::shared_ptr<ElementsStrategy> elements_;
 };
 }

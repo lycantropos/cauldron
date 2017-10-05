@@ -5,7 +5,7 @@
 
 namespace strategies {
 template<typename T>
-class Just : public Strategy<T> {
+class Just : public CloneHelper<T, Just<T>> {
  public:
   explicit Just(T value) :
       value_(value) {};

@@ -9,27 +9,18 @@
 
 
 namespace strategies {
-class Booleans : public Filtered<bool> {
+class Booleans : public CloneHelper<bool, Booleans> {
  public:
-  explicit Booleans(double probability = 0.5,
-                    const Sieve<bool> &sieve = Sieve<bool>())
-      : probability_(probability),
-        Filtered<bool>(sieve) {};
+  explicit Booleans(double probability = 0.5)
+      : probability_(probability) {};
 
- private:
-  double probability_;
-
-  bool producer() const override {
+  bool operator()() const override {
     static std::random_device random_device;
     auto distribution = std::bernoulli_distribution(probability_);
     return distribution(random_device);
   }
 
-  std::unique_ptr<Filtered<bool>> update_sieve(
-      const Sieve<bool> &sieve
-  ) const override {
-    return std::make_unique<Booleans>(probability_,
-                                      sieve);
-  }
+ private:
+  double probability_;
 };
 }

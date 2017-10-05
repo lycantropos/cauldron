@@ -49,7 +49,7 @@ class Sieve {
     return true;
   }
 
-  Sieve<T> extend(const Requirement<T> &requirement) const {
+  Sieve<T> expand(const Requirement<T> &requirement) const {
     auto requirements = std::vector<Requirement<T>>
         (requirements_);
     requirements.push_back(requirement);

@@ -10,21 +10,14 @@
 
 namespace strategies {
 template<typename T>
-class Integers : public Filtered<T> {
-  using FilteredT = Filtered<T>;
+class Integers : public CloneHelper<T, Integers<T>> {
  public:
   explicit Integers(T min_value = std::numeric_limits<T>::min(),
-                    T max_value = std::numeric_limits<T>::max(),
-                    const Sieve<T> &sieve = Sieve<T>())
+                    T max_value = std::numeric_limits<T>::max())
       : min_value_(min_value),
-        max_value_(max_value),
-        Filtered<T>(sieve) {};
+        max_value_(max_value) {};
 
- private:
-  T min_value_;
-  T max_value_;
-
-  T producer() const override {
+  T operator()() const override {
     static std::random_device random_device;
     auto distribution = std::uniform_int_distribution<T>(min_value_,
                                                          max_value_);
@@ -32,12 +25,8 @@ class Integers : public Filtered<T> {
     return result;
   }
 
-  std::unique_ptr<FilteredT> update_sieve(
-      const Sieve<T> &sieve
-  ) const override {
-    return std::make_unique<Integers<T>>(min_value_,
-                                         max_value_,
-                                         sieve);
-  }
+ private:
+  T min_value_;
+  T max_value_;
 };
 }

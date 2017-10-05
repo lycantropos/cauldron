@@ -3,14 +3,12 @@
 
 namespace strategies {
 Strings::Strings(std::shared_ptr<Strategy<size_t>> lengths,
-                 std::shared_ptr<Strategy<char>> alphabet,
-                 const Sieve<std::string> &sieve) :
+                 std::shared_ptr<Strategy<char>> alphabet) :
     lengths_(std::move(lengths)),
-    alphabet_(std::move(alphabet)),
-    Filtered<std::string>(sieve) {}
+    alphabet_(std::move(alphabet)) {}
 
 
-std::string Strings::producer() const {
+std::string Strings::operator()() const {
   auto length = (*lengths_)();
   std::string result(length, 0);
   // FIXME: workaround using lambda to get producer from strategy
@@ -19,14 +17,5 @@ std::string Strings::producer() const {
                   length,
                   characters_producer);
   return result;
-}
-
-
-std::unique_ptr<Filtered<std::string>> Strings::update_sieve(
-    const Sieve<std::string> &sieve
-) const {
-  return std::make_unique<Strings>(lengths_,
-                                   alphabet_,
-                                   sieve);
 }
 }
