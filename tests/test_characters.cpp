@@ -1,6 +1,7 @@
 #include <catch.hpp>
 #include <iostream>
 #include "../cauldron/characters.h"
+#include "operators.h"
 #include "predicates.h"
 #include "factories.h"
 
@@ -54,6 +55,29 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
 
     SECTION("impossible") {
       auto invalid_characters = non_zero.filter(is_lower)->filter(is_upper);
+
+      REQUIRE_THROWS_AS((*invalid_characters)(),
+                        strategies::OutOfCycles);
+    }
+  }
+
+  SECTION("mapping") {
+    strategies::Characters non_zero(non_zero_characters);
+    auto alphabetic = non_zero.filter(is_alphabetic);
+
+    SECTION("case") {
+      auto lower_characters = alphabetic->map(to_lower);
+      auto upper_characters = alphabetic->map(to_upper);
+
+      auto lower_character = (*lower_characters)();
+      auto upper_character = (*upper_characters)();
+
+      REQUIRE(is_lower(lower_character));
+      REQUIRE(is_upper(upper_character));
+    }
+
+    SECTION("impossible") {
+      auto invalid_characters = non_zero.map(to_upper)->filter(is_lower);
 
       REQUIRE_THROWS_AS((*invalid_characters)(),
                         strategies::OutOfCycles);
