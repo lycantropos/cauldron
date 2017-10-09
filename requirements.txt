@@ -1,0 +1,2 @@
+# Sphinx extensions
+breathe>=4.7.2
