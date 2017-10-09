@@ -23,7 +23,7 @@ class Booleans : public CloneHelper<bool, Booleans> {
       : probability_(probability) {};
 
   /**
-   * Generates pseudo-random ``bool`` values.
+   * Generates pseudo-random ``bool`` value.
    */
   bool operator()() const override {
     static std::random_device random_device;

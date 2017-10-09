@@ -19,7 +19,7 @@ class Characters : public CloneHelper<char, Characters> {
   explicit Characters(const char domain[]);
 
   /**
-   * Generates pseudo-random ``char`` values.
+   * Generates pseudo-random ``char`` value.
    */
   char operator()() const override;
 

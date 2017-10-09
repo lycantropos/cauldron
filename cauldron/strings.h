@@ -25,7 +25,7 @@ class Strings : public CloneHelper<std::string, Strings> {
           std::shared_ptr<Strategy<char>> alphabet);
 
   /**
-   * Generates pseudo-random ``std::string`` values.
+   * Generates pseudo-random ``std::string`` value.
    */
   std::string operator()() const override;
 

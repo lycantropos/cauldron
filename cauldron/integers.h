@@ -26,7 +26,7 @@ class Integers : public CloneHelper<T, Integers<T>> {
         max_value_(max_value) {};
 
   /**
-   * Generates pseudo-random ``T`` integer values.
+   * Generates pseudo-random ``T`` integer value.
    */
   T operator()() const override {
     static std::random_device random_device;

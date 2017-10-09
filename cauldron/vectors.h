@@ -28,7 +28,7 @@ class Vectors : public CloneHelper<std::vector<T>, Vectors<T>> {
       elements_(std::move(elements)) {};
 
   /**
-   * Generates pseudo-random ``std::vector`` values.
+   * Generates pseudo-random ``std::vector`` value.
    */
   std::vector<T> operator()() const override {
     auto size = (*sizes_)();
