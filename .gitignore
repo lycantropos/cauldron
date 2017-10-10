@@ -73,3 +73,8 @@ cmake-build-*/
 
 ### conan
 build/
+
+
+### docs
+docs/html/
+docs/xml/
