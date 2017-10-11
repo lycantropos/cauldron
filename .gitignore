@@ -73,6 +73,7 @@ cmake-build-*/
 
 ### conan
 build/
+__pycache__/
 
 
 ### docs
