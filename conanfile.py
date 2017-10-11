@@ -2,12 +2,13 @@ import os
 from conans import (ConanFile,
                     CMake)
 
+__version__ = '0.0.0'
 PROJECT_DIRECTORY = 'cauldron'
 
 
 class CauldronConan(ConanFile):
     name = 'cauldron'
-    version = '0.0.0'
+    version = __version__
     license = 'MIT'
     url = 'https://github.com/lycantropos/cauldron'
     description = 'Property-based testing inspired by "hypothesis".'
