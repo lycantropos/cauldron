@@ -2,8 +2,7 @@
 
 set -ex
 
-cd build && conan install .. && cd -
-
+conan install ..
 cmake -G "CodeBlocks - Unix Makefiles" .
 cmake --build . --target all -- -j 2
 
