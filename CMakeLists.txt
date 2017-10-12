@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.8)
 project(cauldron)
 
-set(CMAKE_CXX_STANDARD 14)
-
-include(build/conanbuildinfo.cmake)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
+
+set(CMAKE_CXX_STANDARD 14)
 
 set(HEADER_FILES
         cauldron/sieve.h
@@ -38,3 +38,17 @@ set(SOURCE_FILES
         tests/test_vectors.cpp)
 add_executable(main ${HEADER_FILES} ${SOURCE_FILES})
 target_link_libraries(main ${CONAN_LIBS})
+
+set(LIBRARY_FILES
+        cauldron/sieve.h
+        cauldron/facility.h
+        cauldron/bases.h
+        cauldron/just.h
+        cauldron/booleans.h
+        cauldron/integers.h
+        cauldron/characters.h
+        cauldron/strings.h
+        cauldron/vectors.h
+        cauldron/characters.cpp
+        cauldron/strings.cpp)
+add_library(cauldron ${LIBRARY_FILES})

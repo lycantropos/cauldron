@@ -19,7 +19,9 @@ COPY CMakeLists.txt .
 COPY cauldron/ ./cauldron/
 COPY tests/ ./tests/
 
-RUN cmake -G "CodeBlocks - Unix Makefiles" . && \
+WORKDIR build
+
+RUN cmake -G "CodeBlocks - Unix Makefiles" .. && \
     cmake --build . --target all -- -j 2
 
 CMD ["./bin/main"]
