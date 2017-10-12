@@ -15,16 +15,18 @@ set(HEADER_FILES
         cauldron/integers.h
         cauldron/characters.h
         cauldron/strings.h
-        cauldron/vectors.h
+        cauldron/vectors.h)
+set(SOURCE_FILES
+        cauldron/booleans.cpp
+        cauldron/characters.cpp
+        cauldron/strings.cpp)
+set(TESTS_HEADER_FILES
         tests/globals.h
         tests/factories.h
         tests/operators.h
         tests/predicates.h
         tests/utils.h)
-set(SOURCE_FILES
-        cauldron/booleans.cpp
-        cauldron/characters.cpp
-        cauldron/strings.cpp
+set(TESTS_SOURCE_FILES
         tests/globals.cpp
         tests/factories.cpp
         tests/operators.cpp
@@ -37,19 +39,8 @@ set(SOURCE_FILES
         tests/test_characters.cpp
         tests/test_strings.cpp
         tests/test_vectors.cpp)
-add_executable(main ${HEADER_FILES} ${SOURCE_FILES})
+add_executable(main
+        ${HEADER_FILES} ${SOURCE_FILES}
+        ${TESTS_HEADER_FILES} ${TESTS_SOURCE_FILES})
 target_link_libraries(main ${CONAN_LIBS})
-
-set(LIBRARY_FILES
-        cauldron/sieve.h
-        cauldron/facility.h
-        cauldron/bases.h
-        cauldron/just.h
-        cauldron/booleans.h
-        cauldron/integers.h
-        cauldron/characters.h
-        cauldron/strings.h
-        cauldron/vectors.h
-        cauldron/characters.cpp
-        cauldron/strings.cpp)
-add_library(cauldron ${LIBRARY_FILES})
+add_library(cauldron ${HEADER_FILES} ${SOURCE_FILES})
