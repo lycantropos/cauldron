@@ -22,6 +22,7 @@ set(HEADER_FILES
         tests/predicates.h
         tests/utils.h)
 set(SOURCE_FILES
+        cauldron/booleans.cpp
         cauldron/characters.cpp
         cauldron/strings.cpp
         tests/globals.cpp

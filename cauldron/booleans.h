@@ -19,17 +19,12 @@ class Booleans : public CloneHelper<bool, Booleans> {
    * @param probability: how often ``true`` values will be generated
    * compared to ``false`` values.
    */
-  explicit Booleans(double probability = 0.5)
-      : probability_(probability) {};
+  explicit Booleans(double probability = 0.5);
 
   /**
    * Generates pseudo-random ``bool`` value.
    */
-  bool operator()() const override {
-    static std::random_device random_device;
-    auto distribution = std::bernoulli_distribution(probability_);
-    return distribution(random_device);
-  }
+  bool operator()() const override;
 
  private:
   double probability_;
