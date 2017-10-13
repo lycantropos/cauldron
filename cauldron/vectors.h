@@ -12,11 +12,8 @@ namespace strategies {
  */
 template<typename T>
 class Vectors : public CloneHelper<std::vector<T>, Vectors<T>> {
-  using Product = std::vector<T>;
   using ElementsStrategy = Strategy<T>;
   using SizesStrategy = Strategy<size_t>;
-  using FilteredProduct = Filtered<Product>;
-
  public:
   /**
    * @param sizes: strategy to generate vectors sizes from.
