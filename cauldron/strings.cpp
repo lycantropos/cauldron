@@ -9,10 +9,11 @@ Strings::Strings(std::shared_ptr<Strategy<size_t>> lengths,
 
 
 std::string Strings::operator()() const {
-  auto length = (*lengths_)();
+  size_t length = (*lengths_)();
   std::string result(length, 0);
-  // FIXME: workaround using lambda to get producer from strategy
-  auto characters_producer = [&]() -> char { return (*alphabet_)(); };
+  // FIXME: workaround using bind to get producer from strategy
+  auto characters_producer = std::bind(&Strategy<char>::operator(),
+                                       alphabet_);
   std::generate_n(result.begin(),
                   length,
                   characters_producer);

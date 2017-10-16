@@ -28,10 +28,11 @@ class Vectors : public CloneHelper<std::vector<T>, Vectors<T>> {
    * Generates pseudo-random ``std::vector`` value.
    */
   std::vector<T> operator()() const override {
-    auto size = (*sizes_)();
+    size_t size = (*sizes_)();
     std::vector<T> result(size);
-    // FIXME: workaround using lambda to get producer from strategy
-    auto elements_producer = [&]() -> T { return (*elements_)(); };
+    // FIXME: workaround using bind to get producer from strategy
+    auto elements_producer = std::bind(&ElementsStrategy::operator(),
+                                       elements_);
     std::generate_n(result.begin(),
                     size,
                     elements_producer);
