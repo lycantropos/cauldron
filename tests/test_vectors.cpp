@@ -43,12 +43,8 @@ static void check_booleans_vectors_strategy() {
 
     REQUIRE(stays_in_range(true_vector.size()));
     REQUIRE(stays_in_range(false_vector.size()));
-    REQUIRE(std::all_of(true_vector.begin(),
-                        true_vector.end(),
-                        identity));
-    REQUIRE(std::all_of(false_vector.begin(),
-                        false_vector.end(),
-                        negate));
+    REQUIRE(is_true_vector(true_vector));
+    REQUIRE(is_false_vector(false_vector));
   }
 
   SECTION("filtration") {
