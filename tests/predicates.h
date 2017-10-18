@@ -2,10 +2,10 @@
 
 #include <vector>
 #include <functional>
+#include <set>
 
 
 bool identity(bool boolean);;
-
 
 bool negate(bool boolean);;
 
@@ -30,26 +30,19 @@ bool odd(T number) {
   return number % 2 != 0;
 };
 
-
 bool is_character_in_string(char character,
                             const std::string &string);
-
 
 bool is_string_from_alphabet(const std::string &string,
                              const std::string &alphabet_characters);
 
-
 bool is_lower(char character);
-
 
 bool is_upper(char character);
 
-
 bool is_alphabetic(char character);
 
-
 bool is_lower_string(const std::string &string);
-
 
 bool is_upper_string(const std::string &string);
 
