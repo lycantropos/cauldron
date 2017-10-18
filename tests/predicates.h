@@ -52,3 +52,10 @@ bool is_object_in_vector(T object,
                          const std::vector<T> &vector) {
   return std::find(vector.begin(), vector.end(), object) != vector.end();
 };
+
+
+template<typename T>
+bool is_object_in_set(T object,
+                      const std::set<T> &set) {
+  return set.find(object) != set.end();
+};

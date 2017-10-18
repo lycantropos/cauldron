@@ -15,7 +15,8 @@ set(HEADER_FILES
         cauldron/integers.h
         cauldron/characters.h
         cauldron/strings.h
-        cauldron/vectors.h)
+        cauldron/vectors.h
+        cauldron/sets.h)
 set(SOURCE_FILES
         cauldron/booleans.cpp
         cauldron/characters.cpp
@@ -38,7 +39,8 @@ set(TESTS_SOURCE_FILES
         tests/test_integers.cpp
         tests/test_characters.cpp
         tests/test_strings.cpp
-        tests/test_vectors.cpp)
+        tests/test_vectors.cpp
+        tests/test_sets.cpp)
 add_executable(main
         ${HEADER_FILES} ${SOURCE_FILES}
         ${TESTS_HEADER_FILES} ${TESTS_SOURCE_FILES})
