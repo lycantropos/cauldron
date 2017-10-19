@@ -34,6 +34,11 @@ class Sieve {
   explicit Sieve(unsigned max_cycles = MAX_CYCLES) :
       max_cycles_(max_cycles) {};
 
+  Sieve(std::initializer_list<Requirement<Product>> requirements,
+        unsigned max_cycles = MAX_CYCLES) :
+      requirements_(requirements),
+      max_cycles_(max_cycles) {}
+
   explicit Sieve(const std::vector<Requirement<Product>> &requirements,
                  unsigned max_cycles = MAX_CYCLES) :
       requirements_(requirements),
@@ -54,7 +59,7 @@ class Sieve {
         (requirements_);
     requirements.push_back(requirement);
     return Sieve<Product>(requirements,
-                    max_cycles_);
+                          max_cycles_);
   }
 
   Product sift(std::function<Product()> producer) const {

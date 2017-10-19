@@ -15,6 +15,9 @@ class Facility {
  public:
   Facility() = default;
 
+  Facility(std::initializer_list<Converter<Product>> converters) :
+  converters_(converters) {}
+
   explicit Facility(const std::vector<Converter<Product>> &converters) :
       converters_(converters) {}
 

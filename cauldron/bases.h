@@ -39,7 +39,7 @@ class Strategy {
   virtual std::unique_ptr<Mapped<Value>> map(
       const Converter<Value> &converter
   ) const {
-    auto facility = Facility<Value>().expand(converter);
+    Facility<Value> facility{converter};
     return std::make_unique<Mapped<Value>>(facility,
                                            std::move(clone()));
   }
@@ -55,7 +55,7 @@ class Strategy {
   virtual std::unique_ptr<Filtered<Value>> filter(
       const Requirement<Value> &requirement
   ) const {
-    auto sieve = Sieve<Value>().expand(requirement);
+    Sieve<Value> sieve{requirement};
     return std::make_unique<Filtered<Value>>(sieve,
                                              std::move(clone()));
   }
@@ -109,7 +109,7 @@ class Filtered : public CloneHelper<Value, Filtered<Value>> {
   ) const override {
     auto sieve = sieve_.expand(requirement);
     return std::make_unique<Filtered<Value>>(sieve,
-                                         strategy_);
+                                             strategy_);
   }
 
   /**
