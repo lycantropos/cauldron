@@ -503,11 +503,11 @@ static void check_strings_sets_strategy() {
 
   size_t max_length = constants::max_capacity;
 
-  std::string non_zero_characters_string = factories::non_zero_characters();
+  std::string non_zero_characters = factories::non_zero_characters();
 
   SECTION("single character alphabet") {
     auto ones = std::make_shared<strategies::Just<size_t>>(1);
-    for (char single_character: non_zero_characters_string) {
+    for (char single_character: non_zero_characters) {
       std::string single_character_string{single_character};
       auto same_character = std::make_shared<strategies::Characters>(
           single_character_string);
@@ -584,8 +584,7 @@ static void check_strings_sets_strategy() {
                                                                   max_length);
 
     auto alphabetic_characters =
-        strategies::Characters(non_zero_characters_string)
-            .filter(is_alphabetic);
+        strategies::Characters(non_zero_characters).filter(is_alphabetic);
     auto alphabetic_strings = std::make_shared<strategies::Strings>(
         lengths,
         std::move(alphabetic_characters));
@@ -665,8 +664,7 @@ static void check_strings_sets_strategy() {
                                                                   max_length);
 
     auto alphabetic_characters =
-        strategies::Characters(non_zero_characters_string)
-            .filter(is_alphabetic);
+        strategies::Characters(non_zero_characters).filter(is_alphabetic);
     auto alphabetic_strings = std::make_shared<strategies::Strings>(
         lengths,
         std::move(alphabetic_characters));
