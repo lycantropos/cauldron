@@ -28,18 +28,18 @@ class OutOfCycles : public std::exception {
 };
 
 
-template<typename T>
+template<typename Product>
 class Sieve {
  public:
   explicit Sieve(unsigned max_cycles = MAX_CYCLES) :
       max_cycles_(max_cycles) {};
 
-  explicit Sieve(const std::vector<Requirement<T>> &requirements,
+  explicit Sieve(const std::vector<Requirement<Product>> &requirements,
                  unsigned max_cycles = MAX_CYCLES) :
       requirements_(requirements),
       max_cycles_(max_cycles) {}
 
-  bool satisfactory(T product) const {
+  bool satisfactory(Product product) const {
     for (const auto &requirement: requirements_) {
       bool satisfies_requirement = requirement(product);
       if (not satisfies_requirement) {
@@ -49,17 +49,17 @@ class Sieve {
     return true;
   }
 
-  Sieve<T> expand(const Requirement<T> &requirement) const {
-    auto requirements = std::vector<Requirement<T>>
+  Sieve<Product> expand(const Requirement<Product> &requirement) const {
+    auto requirements = std::vector<Requirement<Product>>
         (requirements_);
     requirements.push_back(requirement);
-    return Sieve<T>(requirements,
+    return Sieve<Product>(requirements,
                     max_cycles_);
   }
 
-  T sift(std::function<T()> producer) const {
+  Product sift(std::function<Product()> producer) const {
     for (unsigned _ = 0; _ < max_cycles_; ++_) {
-      T product = producer();
+      Product product = producer();
       if (not satisfactory(product)) {
         continue;
       }
@@ -69,7 +69,7 @@ class Sieve {
   }
 
  protected:
-  std::vector<Requirement<T>> requirements_;
+  std::vector<Requirement<Product>> requirements_;
   unsigned max_cycles_;
 };
 }
