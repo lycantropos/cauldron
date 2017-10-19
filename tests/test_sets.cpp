@@ -112,7 +112,7 @@ static void check_booleans_sets_strategy() {
      * since it is possible to avoid filters with empty set.
      */
     size_t min_size = constants::min_capacity;
-    size_t max_size = 2;
+    size_t max_size = 2; // true or false;
     auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
                                                                 max_size);
     auto booleans = std::make_shared<strategies::Booleans>();
@@ -354,7 +354,7 @@ static void check_characters_sets_strategy() {
 
   SECTION("multiple characters") {
     size_t min_size = 0;
-    size_t max_size = 2;
+    size_t max_size = constants::max_capacity / 4;
     auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
                                                                 max_size);
     std::string characters_string = factories::characters_string();
@@ -388,7 +388,7 @@ static void check_characters_sets_strategy() {
      * since it is possible to avoid filters with empty set.
      */
     size_t min_size = constants::min_capacity;
-    size_t max_size = 2;
+    size_t max_size = constants::alphabetic_characters_count / 4;
     auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
                                                                 max_size);
     auto alphabetic_characters =
@@ -449,7 +449,7 @@ static void check_characters_sets_strategy() {
      * since it is possible to avoid filters with empty set.
      */
     size_t min_size = constants::min_capacity;
-    size_t max_size = 2;
+    size_t max_size = constants::max_capacity / 4;
     auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
                                                                 max_size);
     auto alphabetic_characters =
@@ -766,4 +766,3 @@ TEST_CASE("\"sets\" strategy", "[sets]") {
     check_strings_sets_strategy();
   }
 }
-
