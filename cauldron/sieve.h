@@ -2,14 +2,13 @@
 
 #include <functional>
 #include <vector>
-#include <memory>
 
 
 namespace strategies {
 static const unsigned MAX_CYCLES = 1'000;
 
-template<typename T>
-using Requirement = std::function<bool(T)>;
+template<typename Product>
+using Requirement = std::function<bool(Product)>;
 
 
 class OutOfCycles : public std::exception {
@@ -55,8 +54,7 @@ class Sieve {
   }
 
   Sieve<Product> expand(const Requirement<Product> &requirement) const {
-    auto requirements = std::vector<Requirement<Product>>
-        (requirements_);
+    std::vector<Requirement<Product>> requirements(requirements_);
     requirements.push_back(requirement);
     return Sieve<Product>(requirements,
                           max_cycles_);

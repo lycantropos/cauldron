@@ -16,13 +16,13 @@ class Facility {
   Facility() = default;
 
   Facility(std::initializer_list<Converter<Product>> converters) :
-  converters_(converters) {}
+      converters_(converters) {}
 
   explicit Facility(const std::vector<Converter<Product>> &converters) :
       converters_(converters) {}
 
   Facility<Product> expand(const Converter<Product> &converter) const {
-    auto converters = std::vector<Converter<Product>>(converters_);
+    std::vector<Converter<Product>> converters(converters_);
     converters.push_back(converter);
     return Facility<Product>(converters);
   }
