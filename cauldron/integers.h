@@ -15,6 +15,8 @@ namespace strategies {
  */
 template<typename Value>
 class Integers : public CloneHelper<Value, Integers<Value>> {
+  static_assert(std::is_integral<Value>::value,
+                "``Value`` should have integral type");
  public:
   /**
    * @param min_value: minimum possible integer value.
@@ -31,7 +33,7 @@ class Integers : public CloneHelper<Value, Integers<Value>> {
   Value operator()() const override {
     static std::random_device random_device;
     auto distribution = std::uniform_int_distribution<Value>(min_value_,
-                                                         max_value_);
+                                                             max_value_);
     auto result = distribution(random_device);
     return result;
   }
