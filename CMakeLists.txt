@@ -39,7 +39,10 @@ set(TESTS_SOURCE_FILES
         tests/test_integers.cpp
         tests/test_characters.cpp
         tests/test_strings.cpp
-        tests/vectors_tests/fundamental/test_vectors.cpp
+        tests/vectors_tests/fundamental/test_booleans.cpp
+        tests/vectors_tests/fundamental/test_integers.cpp
+        tests/vectors_tests/fundamental/test_characters.cpp
+        tests/vectors_tests/compound/test_strings.cpp
         tests/sets_tests/fundamental/test_booleans.cpp
         tests/sets_tests/fundamental/test_integers.cpp
         tests/sets_tests/fundamental/test_characters.cpp
