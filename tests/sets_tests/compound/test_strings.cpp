@@ -8,7 +8,6 @@
 #include "../../predicates.h"
 #include "../../operators.h"
 
-
 TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
   auto is_lower_set =
       [&](const std::set<std::string> &set) -> bool {
@@ -75,11 +74,11 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
                                                           max_length);
     auto lengths_stay_in_range =
         [&](const std::set<std::string> &set) -> bool {
-          std::all_of(set.begin(),
-                      set.end(),
-                      [&](const std::string &string) -> bool {
-                        return length_stays_in_range(string.length());
-                      });
+          return std::all_of(set.begin(),
+                             set.end(),
+                             [&](const std::string &string) -> bool {
+                               return length_stays_in_range(string.length());
+                             });
         };
 
     REQUIRE(size_stays_in_range(strings_set.size()));
@@ -125,11 +124,11 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
                                                             max_length);
       auto lengths_stay_in_range =
           [&](const std::set<std::string> &set) -> bool {
-            std::all_of(set.begin(),
-                        set.end(),
-                        [&](const std::string &string) -> bool {
-                          return length_stays_in_range(string.length());
-                        });
+            return std::all_of(set.begin(),
+                               set.end(),
+                               [&](const std::string &string) -> bool {
+                                 return length_stays_in_range(string.length());
+                               });
           };
 
       REQUIRE(sizes_stays_in_range(lower_set.size()));
@@ -205,11 +204,11 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
                                                             max_length);
       auto lengths_stay_in_range =
           [&](const std::set<std::string> &set) -> bool {
-            std::all_of(set.begin(),
-                        set.end(),
-                        [&](const std::string &string) -> bool {
-                          return length_stays_in_range(string.length());
-                        });
+            return std::all_of(set.begin(),
+                               set.end(),
+                               [&](const std::string &string) -> bool {
+                                 return length_stays_in_range(string.length());
+                               });
           };
 
       REQUIRE(sizes_stays_in_range(lower_set.size()));

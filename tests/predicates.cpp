@@ -52,7 +52,7 @@ bool is_string_from_alphabet(const std::string &string,
   auto is_character_from_alphabet = [=](char character) -> bool {
     return is_character_in_string(character, alphabet_characters);
   };
-  return all_of(string.begin(),
-                string.end(),
-                is_character_from_alphabet);
+  return std::all_of(string.begin(),
+                     string.end(),
+                     is_character_from_alphabet);
 }
