@@ -14,8 +14,8 @@ namespace strategies {
  */
 template<typename Element>
 class Sets : public CloneHelper<std::set<Element>, Sets<Element>> {
-  using ElementsStrategy = Strategy<Element>;
   using SizesStrategy = Strategy<size_t>;
+  using ElementsStrategy = Strategy<Element>;
  public:
   /**
    * @param sizes: strategy to generate sets sizes from.

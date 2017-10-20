@@ -39,8 +39,11 @@ set(TESTS_SOURCE_FILES
         tests/test_integers.cpp
         tests/test_characters.cpp
         tests/test_strings.cpp
-        tests/test_vectors.cpp
-        tests/test_sets.cpp)
+        tests/vectors_tests/fundamental/test_vectors.cpp
+        tests/sets_tests/fundamental/test_booleans.cpp
+        tests/sets_tests/fundamental/test_integers.cpp
+        tests/sets_tests/fundamental/test_characters.cpp
+        tests/sets_tests/compound/test_strings.cpp)
 add_executable(main
         ${HEADER_FILES} ${SOURCE_FILES}
         ${TESTS_HEADER_FILES} ${TESTS_SOURCE_FILES})
