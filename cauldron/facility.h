@@ -6,25 +6,28 @@
 
 
 namespace strategies {
-template<typename T>
-using Converter = std::function<T(T)>;
+template<typename Product>
+using Converter = std::function<Product(Product)>;
 
 
-template<typename T>
+template<typename Product>
 class Facility {
  public:
   Facility() = default;
 
-  explicit Facility(const std::vector<Converter<T>> &converters) :
+  Facility(std::initializer_list<Converter<Product>> converters) :
       converters_(converters) {}
 
-  Facility<T> expand(const Converter<T> &converter) const {
-    auto converters = std::vector<Converter<T>>(converters_);
+  explicit Facility(const std::vector<Converter<Product>> &converters) :
+      converters_(converters) {}
+
+  Facility<Product> expand(const Converter<Product> &converter) const {
+    std::vector<Converter<Product>> converters(converters_);
     converters.push_back(converter);
-    return Facility<T>(converters);
+    return Facility<Product>(converters);
   }
 
-  T convert(T product) const {
+  Product convert(Product product) const {
     for (const auto &converter: converters_) {
       product = converter(product);
     }
@@ -32,6 +35,6 @@ class Facility {
   }
 
  protected:
-  std::vector<Converter<T>> converters_;
+  std::vector<Converter<Product>> converters_;
 };
 }
