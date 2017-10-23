@@ -4,7 +4,7 @@
 template<typename T>
 T to_even(T number) {
   return (number / 2) * 2;
-};
+}
 
 
 template<typename T>
@@ -14,7 +14,7 @@ T to_odd(T number) {
   }
   T sign = number < 0 ? -1 : 1;
   return (number / 2) * 2 - sign;
-};
+}
 
 char to_upper(char character);
 
