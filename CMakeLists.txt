@@ -16,7 +16,8 @@ set(HEADER_FILES
         cauldron/characters.h
         cauldron/strings.h
         cauldron/vectors.h
-        cauldron/sets.h)
+        cauldron/sets.h
+        cauldron/builder.h)
 set(SOURCE_FILES
         cauldron/booleans.cpp
         cauldron/characters.cpp
@@ -26,7 +27,8 @@ set(TESTS_HEADER_FILES
         tests/factories.h
         tests/operators.h
         tests/predicates.h
-        tests/utils.h)
+        tests/utils.h
+        tests/builder_tests/wrapper.h)
 set(TESTS_SOURCE_FILES
         tests/globals.cpp
         tests/factories.cpp
@@ -46,7 +48,11 @@ set(TESTS_SOURCE_FILES
         tests/sets_tests/fundamental/test_booleans.cpp
         tests/sets_tests/fundamental/test_integers.cpp
         tests/sets_tests/fundamental/test_characters.cpp
-        tests/sets_tests/compound/test_strings.cpp)
+        tests/sets_tests/compound/test_strings.cpp
+        tests/builder_tests/fundamental/test_booleans.cpp
+        tests/builder_tests/fundamental/test_integers.cpp
+        tests/builder_tests/fundamental/test_characters.cpp
+        tests/builder_tests/compound/test_strings.cpp)
 add_executable(main
         ${HEADER_FILES} ${SOURCE_FILES}
         ${TESTS_HEADER_FILES} ${TESTS_SOURCE_FILES})
