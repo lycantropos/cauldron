@@ -8,19 +8,20 @@
 #include "../../predicates.h"
 #include "../../operators.h"
 
+
 TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
-  auto is_lower_set =
+  strategies::Requirement<std::set<std::string>> is_lower_set(
       [&](const std::set<std::string> &set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
                            is_lower_string);
-      };
-  auto is_upper_set =
+      });
+  strategies::Requirement<std::set<std::string>> is_upper_set(
       [&](const std::set<std::string> &set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
                            is_upper_string);
-      };
+      });
 
   size_t max_length = constants::max_capacity;
 

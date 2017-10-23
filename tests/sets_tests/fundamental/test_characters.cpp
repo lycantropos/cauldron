@@ -11,16 +11,18 @@
 
 
 TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
-  auto is_lower_set = [&](const std::set<char> set) -> bool {
-    return std::all_of(set.begin(),
-                       set.end(),
-                       is_lower);
-  };
-  auto is_upper_set = [&](const std::set<char> set) -> bool {
-    return std::all_of(set.begin(),
-                       set.end(),
-                       is_upper);
-  };
+  strategies::Requirement<std::set<char>> is_lower_set(
+      [&](const std::set<char> &set) -> bool {
+        return std::all_of(set.begin(),
+                           set.end(),
+                           is_lower);
+      });
+  strategies::Requirement<std::set<char>> is_upper_set(
+      [&](const std::set<char> &set) -> bool {
+        return std::all_of(set.begin(),
+                           set.end(),
+                           is_upper);
+      });
 
   std::string non_zero_characters = factories::non_zero_characters();
 

@@ -7,16 +7,18 @@
 
 
 TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
-  auto is_false_set = [&](std::set<bool> set) -> bool {
-    return std::all_of(set.begin(),
-                       set.end(),
-                       negate);
-  };
-  auto is_true_set = [&](std::set<bool> set) -> bool {
-    return std::all_of(set.begin(),
-                       set.end(),
-                       identity);
-  };
+  strategies::Requirement<std::set<bool>> is_false_set(
+      [&](std::set<bool> set) -> bool {
+        return std::all_of(set.begin(),
+                           set.end(),
+                           negate);
+      });
+  strategies::Requirement<std::set<bool>> is_true_set(
+      [&](std::set<bool> set) -> bool {
+        return std::all_of(set.begin(),
+                           set.end(),
+                           identity);
+      });
 
   SECTION("single element domain") {
     size_t min_size = 0;
