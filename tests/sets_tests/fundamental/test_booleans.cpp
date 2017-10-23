@@ -21,9 +21,8 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
   SECTION("single element domain") {
     size_t min_size = 0;
     size_t max_size = 1;
-    auto sizes = std::make_shared<strategies::Integers<size_t>>
-        (min_size,
-         max_size);
+    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                                max_size);
     auto true_values = std::make_shared<strategies::Booleans>(1.);
     auto false_values = std::make_shared<strategies::Booleans>(0.);
     strategies::Sets<bool> true_sets(sizes,
@@ -38,12 +37,8 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
 
     REQUIRE(stays_in_range(true_set.size()));
     REQUIRE(stays_in_range(false_set.size()));
-    REQUIRE(std::all_of(true_set.begin(),
-                        true_set.end(),
-                        identity));
-    REQUIRE(std::all_of(false_set.begin(),
-                        false_set.end(),
-                        negate));
+    REQUIRE(is_true_set(true_set));
+    REQUIRE(is_false_set(false_set));
   }
 
   SECTION("filtration") {
@@ -53,9 +48,8 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
      */
     size_t min_size = constants::min_capacity;
     size_t max_size = 2; // true or false;
-    auto sizes = std::make_shared<strategies::Integers<size_t>>
-        (min_size,
-         max_size);
+    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                                max_size);
     auto booleans = std::make_shared<strategies::Booleans>();
     strategies::Sets<bool> booleans_sets(sizes,
                                          booleans);
@@ -109,9 +103,8 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
      */
     size_t min_size = constants::min_capacity;
     size_t max_size = 2; // true or false;
-    auto sizes = std::make_shared<strategies::Integers<size_t>>
-        (min_size,
-         max_size);
+    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                                max_size);
     auto booleans = std::make_shared<strategies::Booleans>();
     strategies::Sets<bool> booleans_sets(sizes,
                                          booleans);
