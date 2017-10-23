@@ -1,5 +1,5 @@
-bases module
-~~~~~~~~~~~~
+sets module
+~~~~~~~~~~~
 
 .. doxygenfile:: sets.h
    :project: cauldron

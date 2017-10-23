@@ -1,5 +1,5 @@
-bases module
-~~~~~~~~~~~~
+builder module
+~~~~~~~~~~~~~~
 
 .. doxygenfile:: builder.h
    :project: cauldron
