@@ -9,7 +9,6 @@
 #include "../../predicates.h"
 #include "../../operators.h"
 
-
 TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
   auto is_lower_vector =
       [&](const std::vector<std::string> &vector) -> bool {
@@ -76,11 +75,11 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
                                                           max_length);
     auto lengths_stay_in_range =
         [&](const std::vector<std::string> &vector) -> bool {
-          std::all_of(vector.begin(),
-                      vector.end(),
-                      [&](const std::string &string) -> bool {
-                        return length_stays_in_range(string.length());
-                      });
+          return std::all_of(vector.begin(),
+                             vector.end(),
+                             [&](const std::string &string) -> bool {
+                               return length_stays_in_range(string.length());
+                             });
         };
 
     REQUIRE(size_stays_in_range(strings_vector.size()));
@@ -127,11 +126,11 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
                                                             max_length);
       auto lengths_stay_in_range =
           [&](const std::vector<std::string> &vector) -> bool {
-            std::all_of(vector.begin(),
-                        vector.end(),
-                        [&](const std::string &string) -> bool {
-                          return length_stays_in_range(string.length());
-                        });
+            return std::all_of(vector.begin(),
+                               vector.end(),
+                               [&](const std::string &string) -> bool {
+                                 return length_stays_in_range(string.length());
+                               });
           };
 
       REQUIRE(sizes_stays_in_range(lower_vector.size()));
@@ -204,11 +203,11 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
                                                             max_length);
       auto lengths_stay_in_range =
           [&](const std::vector<std::string> &vector) -> bool {
-            std::all_of(vector.begin(),
-                        vector.end(),
-                        [&](const std::string &string) -> bool {
-                          return length_stays_in_range(string.length());
-                        });
+            return std::all_of(vector.begin(),
+                               vector.end(),
+                               [&](const std::string &string) -> bool {
+                                 return length_stays_in_range(string.length());
+                               });
           };
 
       REQUIRE(sizes_stays_in_range(lower_vector.size()));

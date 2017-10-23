@@ -7,19 +7,22 @@
 #include "../../factories.h"
 #include "../../predicates.h"
 #include "../../operators.h"
+#include "../../utils.h"
 
 
 TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
-  auto is_lower_set = [&](const std::set<char> set) -> bool {
-    return std::all_of(set.begin(),
-                       set.end(),
-                       is_lower);
-  };
-  auto is_upper_set = [&](const std::set<char> set) -> bool {
-    return std::all_of(set.begin(),
-                       set.end(),
-                       is_upper);
-  };
+  strategies::Requirement<std::set<char>> is_lower_set(
+      [&](const std::set<char> &set) -> bool {
+        return std::all_of(set.begin(),
+                           set.end(),
+                           is_lower);
+      });
+  strategies::Requirement<std::set<char>> is_upper_set(
+      [&](const std::set<char> &set) -> bool {
+        return std::all_of(set.begin(),
+                           set.end(),
+                           is_upper);
+      });
 
   std::string non_zero_characters = factories::non_zero_characters();
 
@@ -43,11 +46,12 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
   }
 
   SECTION("multiple characters") {
+    std::string characters_string = factories::characters_string();
     size_t min_size = 0;
-    size_t max_size = constants::max_capacity / 4;
+    size_t max_size = sufficient_set_size(characters_string.length(),
+                                          strategies::MAX_CYCLES);
     auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
                                                                 max_size);
-    std::string characters_string = factories::characters_string();
     auto characters = std::make_shared<strategies::Characters>(
         characters_string);
     strategies::Sets<char> characters_sets(sizes,
@@ -78,7 +82,9 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
      * since it is possible to avoid filters with empty set.
      */
     size_t min_size = constants::min_capacity;
-    size_t max_size = constants::alphabetic_characters_count / 4;
+    size_t max_size = sufficient_set_size(
+        constants::alphabetic_characters_count,
+        strategies::MAX_CYCLES);
     auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
                                                                 max_size);
     auto alphabetic_characters =
@@ -139,7 +145,9 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
      * since it is possible to avoid filters with empty set.
      */
     size_t min_size = constants::min_capacity;
-    size_t max_size = constants::max_capacity / 4;
+    size_t max_size = sufficient_set_size(
+        constants::alphabetic_characters_count,
+        strategies::MAX_CYCLES);
     auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
                                                                 max_size);
     auto alphabetic_characters =

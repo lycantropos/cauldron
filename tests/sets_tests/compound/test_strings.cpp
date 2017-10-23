@@ -10,18 +10,18 @@
 
 
 TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
-  auto is_lower_set =
+  strategies::Requirement<std::set<std::string>> is_lower_set(
       [&](const std::set<std::string> &set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
                            is_lower_string);
-      };
-  auto is_upper_set =
+      });
+  strategies::Requirement<std::set<std::string>> is_upper_set(
       [&](const std::set<std::string> &set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
                            is_upper_string);
-      };
+      });
 
   size_t max_length = constants::max_capacity;
 
@@ -75,11 +75,11 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
                                                           max_length);
     auto lengths_stay_in_range =
         [&](const std::set<std::string> &set) -> bool {
-          std::all_of(set.begin(),
-                      set.end(),
-                      [&](const std::string &string) -> bool {
-                        return length_stays_in_range(string.length());
-                      });
+          return std::all_of(set.begin(),
+                             set.end(),
+                             [&](const std::string &string) -> bool {
+                               return length_stays_in_range(string.length());
+                             });
         };
 
     REQUIRE(size_stays_in_range(strings_set.size()));
@@ -125,11 +125,11 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
                                                             max_length);
       auto lengths_stay_in_range =
           [&](const std::set<std::string> &set) -> bool {
-            std::all_of(set.begin(),
-                        set.end(),
-                        [&](const std::string &string) -> bool {
-                          return length_stays_in_range(string.length());
-                        });
+            return std::all_of(set.begin(),
+                               set.end(),
+                               [&](const std::string &string) -> bool {
+                                 return length_stays_in_range(string.length());
+                               });
           };
 
       REQUIRE(sizes_stays_in_range(lower_set.size()));
@@ -205,11 +205,11 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
                                                             max_length);
       auto lengths_stay_in_range =
           [&](const std::set<std::string> &set) -> bool {
-            std::all_of(set.begin(),
-                        set.end(),
-                        [&](const std::string &string) -> bool {
-                          return length_stays_in_range(string.length());
-                        });
+            return std::all_of(set.begin(),
+                               set.end(),
+                               [&](const std::string &string) -> bool {
+                                 return length_stays_in_range(string.length());
+                               });
           };
 
       REQUIRE(sizes_stays_in_range(lower_set.size()));

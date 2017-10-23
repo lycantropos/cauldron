@@ -10,16 +10,18 @@
 
 template<typename T>
 static void check_integers_sets_strategy() {
-  auto is_even_set = [&](std::set<T> set) -> bool {
-    return std::all_of(set.begin(),
-                       set.end(),
-                       even<T>);
-  };
-  auto is_odd_set = [&](std::set<T> set) -> bool {
-    return std::all_of(set.begin(),
-                       set.end(),
-                       odd<T>);
-  };
+  strategies::Requirement<std::set<T>> is_even_set(
+      [&](std::set<T> set) -> bool {
+        return std::all_of(set.begin(),
+                           set.end(),
+                           even<T>);
+      });
+  strategies::Requirement<std::set<T>> is_odd_set(
+      [&](std::set<T> set) -> bool {
+        return std::all_of(set.begin(),
+                           set.end(),
+                           odd<T>);
+      });
 
   T min_value = std::numeric_limits<T>::min();
   T max_value = std::numeric_limits<T>::max();
@@ -102,8 +104,7 @@ static void check_integers_sets_strategy() {
     }
 
     SECTION("impossible") {
-      auto invalid_sets =
-          sets.filter(is_even_set)->filter(is_odd_set);
+      auto invalid_sets = sets.filter(is_even_set)->filter(is_odd_set);
 
       REQUIRE_THROWS_AS((*invalid_sets)(),
                         strategies::OutOfCycles);
@@ -164,10 +165,8 @@ static void check_integers_sets_strategy() {
     }
 
     SECTION("impossible") {
-      auto invalid_even_sets =
-          sets.map(to_odd_set)->filter(is_even_set);
-      auto invalid_odd_sets =
-          sets.map(to_even_set)->filter(is_odd_set);
+      auto invalid_even_sets = sets.map(to_odd_set)->filter(is_even_set);
+      auto invalid_odd_sets = sets.map(to_even_set)->filter(is_odd_set);
 
       REQUIRE_THROWS_AS((*invalid_even_sets)(),
                         strategies::OutOfCycles);
