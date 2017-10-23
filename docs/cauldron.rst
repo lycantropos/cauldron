@@ -10,5 +10,6 @@ Submodules
     cauldron.characters
     cauldron.strings
     cauldron.vectors
+    cauldron.builder
     cauldron.sieve
     cauldron.facility
