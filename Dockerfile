@@ -15,6 +15,10 @@ RUN mkdir build && \
     cd build && \
     conan install ..
 
+RUN apt-get update && \
+    apt-get install -y lcov
+
+COPY CMakeModules ./CMakeModules/
 COPY CMakeLists.txt .
 COPY cauldron/ ./cauldron/
 COPY tests/ ./tests/
