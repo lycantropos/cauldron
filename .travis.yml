@@ -16,8 +16,7 @@ script:
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
       source update-coverage.sh
-    else
-      echo 'Not on master branch'
+    fi
 
 after_script:
   - ./cleanup.sh
