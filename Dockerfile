@@ -25,7 +25,7 @@ COPY tests/ ./tests/
 
 WORKDIR build
 
-RUN cmake -G "CodeBlocks - Unix Makefiles" .. && \
+RUN cmake .. && \
     cmake --build . --target all -- -j 2
 
 CMD ["./bin/main"]
