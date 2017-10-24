@@ -22,8 +22,9 @@ size_t sufficient_capacity(size_t favorable_outcomes_count,
 size_t sufficient_set_size(size_t total_count, size_t attempts_count) {
   size_t result = 1;
   size_t total_count_exponent = total_count;
-  while (combinations(total_count,
-                      result) * attempts_count >= total_count_exponent) {
+  while (result < total_count and
+      combinations(total_count,
+                   result) * attempts_count >= total_count_exponent) {
     result++;
     total_count_exponent *= total_count;
   }
