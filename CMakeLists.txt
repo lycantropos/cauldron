@@ -21,9 +21,6 @@ string(CONCAT
         # for code coverage
         "-g -O0 -fprofile-arcs -ftest-coverage")
 
-# exclude /tests from coverage analysis
-set(LCOV_REMOVE_EXTRA "'tests/*'")
-
 # cmake code coverage module target
 setup_target_for_coverage(${PROJECT_NAME}_coverage main coverage)
 
