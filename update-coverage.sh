@@ -3,7 +3,7 @@
 set -ex
 
 # copying report from container
-docker container cp cauldron:/opt/cauldron/build/coverage.info coverage.info
+sudo docker container cp cauldron:/opt/cauldron/build/coverage.info coverage.info
 
 # debug info
 lcov --list coverage.info
