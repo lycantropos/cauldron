@@ -14,8 +14,10 @@ script:
   - ./run-tests.sh
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ];
-    then source update-coverage.sh
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      source update-coverage.sh
+    else
+      echo 'Not on master branch'
 
 after_script:
   - ./cleanup.sh
