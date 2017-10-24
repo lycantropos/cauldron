@@ -15,6 +15,10 @@ RUN mkdir build && \
     cd build && \
     conan install ..
 
+RUN apt-get update && \
+    apt-get install -y lcov
+
+COPY CMakeModules ./CMakeModules/
 COPY CMakeLists.txt .
 COPY cauldron/ ./cauldron/
 COPY tests/ ./tests/
@@ -23,5 +27,13 @@ WORKDIR build
 
 RUN cmake -G "CodeBlocks - Unix Makefiles" .. && \
     cmake --build . --target all -- -j 2
+
+RUN ./bin/main && \
+    lcov --directory . --capture --output-file coverage.info && \
+    lcov --remove coverage.info '/usr/*' \
+                                '/opt/cauldron/tests/*' \
+                                '/root/.conan/*' \
+                                --output-file coverage.info && \
+    lcov --list coverage.info
 
 CMD ["./bin/main"]

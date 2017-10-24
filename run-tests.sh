@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
 docker-compose up --exit-code-from cauldron
-STATUS=$?
 
-docker-compose down
+STATUS=$?
 
 if [ "$STATUS" -eq "0" ]; then
 	echo "Tests passed";

@@ -4,9 +4,11 @@ services:
   cauldron:
     build: .
     image: lycantropos/cauldron:0.0.0
+    container_name: cauldron
     entrypoint: /opt/cauldron/docker-entrypoint.sh
     volumes:
       - ./conanfile.txt:/opt/cauldron/conanfile.txt
+      - ./CMakeModules:/opt/cauldron/CMakeModules
       - ./CMakeLists.txt:/opt/cauldron/CMakeLists.txt
       - ./cauldron:/opt/cauldron/cauldron
       - ./tests:/opt/cauldron/tests

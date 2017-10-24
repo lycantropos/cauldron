@@ -4,7 +4,25 @@ project(cauldron)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
+# add the project specific cmake modules directory to the cmake module path
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
+# include the cmake code coverage module
+include(CodeCoverage)
+
 set(CMAKE_CXX_STANDARD 14)
+
+string(CONCAT
+        CMAKE_CXX_FLAGS
+        "${CMAKE_CXX_FLAGS} "
+        # for WARNING
+        "-Wall "
+        # for warnings between C and C++
+        "-pedantic "
+        # for code coverage
+        "-g -O0 -fprofile-arcs -ftest-coverage")
+
+# cmake code coverage module target
+setup_target_for_coverage(${PROJECT_NAME}_coverage main coverage)
 
 set(HEADER_FILES
         cauldron/sieve.h
@@ -22,6 +40,9 @@ set(SOURCE_FILES
         cauldron/booleans.cpp
         cauldron/characters.cpp
         cauldron/strings.cpp)
+
+add_library(cauldron ${HEADER_FILES} ${SOURCE_FILES})
+
 set(TESTS_HEADER_FILES
         tests/globals.h
         tests/factories.h
@@ -57,4 +78,6 @@ add_executable(main
         ${HEADER_FILES} ${SOURCE_FILES}
         ${TESTS_HEADER_FILES} ${TESTS_SOURCE_FILES})
 target_link_libraries(main ${CONAN_LIBS})
-add_library(cauldron ${HEADER_FILES} ${SOURCE_FILES})
+
+enable_testing()
+add_test(NAME cauldron_tests COMMAND main)

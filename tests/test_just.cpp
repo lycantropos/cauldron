@@ -5,7 +5,7 @@
 
 template<typename T>
 static void check_strategy() {
-  T value;
+  T value{};
   strategies::Just<T> just_value(value);
   bool values_are_equal = just_value() == value;
   REQUIRE(values_are_equal);

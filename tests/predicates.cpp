@@ -43,7 +43,7 @@ bool is_upper_string(const std::string &string) {
 
 bool is_character_in_string(char character,
                             const std::string &string) {
-  return string.find(character) != -1;
+  return string.find(character) != std::string::npos;
 }
 
 
