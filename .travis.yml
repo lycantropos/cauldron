@@ -14,6 +14,7 @@ script:
   - ./run-tests.sh
 
 after_success:
+  - docker ps -a
   # Copying report from container
   - docker container cp cauldron:/opt/cauldron/build/coverage.info coverage.info
   - lcov --list coverage.info #debug info
