@@ -14,7 +14,7 @@ script:
   - ./run-tests.sh
 
 after_success:
-  - ./update-coverage.sh
+  - sudo ./update-coverage.sh
 
 after_script:
   - ./cleanup.sh
