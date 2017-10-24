@@ -14,7 +14,7 @@ script:
   - ./run-tests.sh
 
 after_success:
-  - if [ $TRAVIS_BRANCH == 'master' ];
+  - if [ "$TRAVIS_BRANCH" == 'master' ];
     then source update-coverage.sh;
     fi
 
