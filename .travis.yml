@@ -14,7 +14,8 @@ script:
   - ./run-tests.sh
 
 after_success:
-  - ./update-coverage.sh
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    ./update-coverage.sh
 
 after_script:
   - ./cleanup.sh
