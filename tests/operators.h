@@ -1,18 +1,24 @@
 #pragma once
 
 
-template<typename T>
-T to_even(T number) {
+template<typename Number>
+Number to_even(Number number) {
+  static_assert(std::is_integral<Number>::value,
+                "``Number`` should have integral type.");
   return (number / 2) * 2;
 }
 
 
-template<typename T>
-T to_odd(T number) {
-  if (number == 0 or number == 1) {
+template<typename Number>
+Number to_odd(Number number) {
+  static_assert(std::is_integral<Number>::value,
+                "``Number`` should have integral type.");
+  if (number == 0) {
     return 1;
+  } else if (number == 1 or number == -1) {
+    return number;
   }
-  T sign = number < 0 ? -1 : 1;
+  Number sign = number < 0 ? -1 : 1;
   return (number / 2) * 2 - sign;
 }
 
