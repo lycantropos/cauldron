@@ -36,6 +36,22 @@ bool odd(Number number) {
 }
 
 
+template<typename Number>
+bool positive(Number number) {
+  static_assert(std::is_signed<Number>(),
+                "``Number`` should be signed arithmetic type.");
+  return number > 0;
+}
+
+
+template<typename Number>
+bool non_positive(Number number) {
+  static_assert(std::is_signed<Number>(),
+                "``Number`` should be signed arithmetic type.");
+  return number <= 0;
+}
+
+
 bool is_character_in_string(char character,
                             const std::string &string);
 
