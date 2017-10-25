@@ -13,7 +13,7 @@ namespace strategies {
 template<typename Value>
 class Integers : public CloneHelper<Value, Integers<Value>> {
   static_assert(std::is_integral<Value>(),
-                "``Value`` should have integral type.");
+                "``Value`` should be integral type.");
   static_assert(not std::is_same<Value, bool>(),
                 "``Value`` should not be ``bool`` type, "
                     "use ``strategies::Booleans`` instead.");

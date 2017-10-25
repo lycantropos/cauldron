@@ -4,7 +4,7 @@
 template<typename Number>
 Number to_even(Number number) {
   static_assert(std::is_integral<Number>(),
-                "``Number`` should have integral type.");
+                "``Number`` should be integral type.");
   return Number(number / 2) * 2;
 }
 
@@ -12,7 +12,7 @@ Number to_even(Number number) {
 template<typename Number>
 Number to_odd(Number number) {
   static_assert(std::is_integral<Number>(),
-                "``Number`` should have integral type.");
+                "``Number`` should be integral type.");
   Number sign = number < 0 ? -1 : 1;
   return Number(number / 2 - sign) * 2 + sign;
 }
