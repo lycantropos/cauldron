@@ -16,63 +16,63 @@ static void check_strategy() {
                                   borders.end());
   T max_value = *std::max_element(borders.begin(),
                                   borders.end());
-  strategies::Integers<T> integers(min_value,
-                                   max_value);
+  strategies::Integers<T> numbers(min_value,
+                                  max_value);
 
   SECTION("stays in range") {
-    T integer = integers();
+    T number = numbers();
     auto stays_in_range = in_range_checker<T>(min_value,
                                               max_value);
 
-    REQUIRE(stays_in_range(integer));
+    REQUIRE(stays_in_range(number));
   }
 
   SECTION("filtration") {
     SECTION("parity") {
-      auto even_integers = integers.filter(even<T>);
-      auto odd_integers = integers.filter(odd<T>);
+      auto even_numbers = numbers.filter(even<T>);
+      auto odd_numbers = numbers.filter(odd<T>);
 
-      auto even_integer = (*even_integers)();
-      auto odd_integer = (*odd_integers)();
+      auto even_number = (*even_numbers)();
+      auto odd_number = (*odd_numbers)();
 
-      REQUIRE(even(even_integer));
-      REQUIRE(odd(odd_integer));
+      REQUIRE(even(even_number));
+      REQUIRE(odd(odd_number));
     }
 
     SECTION("impossible") {
-      auto invalid_integers = integers.filter(even<T>)->filter(odd<T>);
+      auto invalid_numbers = numbers.filter(even<T>)->filter(odd<T>);
 
-      REQUIRE_THROWS_AS((*invalid_integers)(),
+      REQUIRE_THROWS_AS((*invalid_numbers)(),
                         strategies::OutOfCycles);
     }
   }
 
   SECTION("mapping") {
     SECTION("parity") {
-      auto even_integers = integers.map(to_even<T>);
-      auto odd_integers = integers.map(to_odd<T>);
+      auto even_numbers = numbers.map(to_even<T>);
+      auto odd_numbers = numbers.map(to_odd<T>);
 
-      auto even_integer = (*even_integers)();
-      auto odd_integer = (*odd_integers)();
+      auto even_number = (*even_numbers)();
+      auto odd_number = (*odd_numbers)();
 
-      REQUIRE(even(even_integer));
-      REQUIRE(odd(odd_integer));
+      REQUIRE(even(even_number));
+      REQUIRE(odd(odd_number));
     }
 
     SECTION("impossible") {
-      auto invalid_even_integers = integers.map(to_odd<T>)->filter(even<T>);
-      auto invalid_odd_integers = integers.map(to_even<T>)->filter(odd<T>);
+      auto invalid_even_numbers = numbers.map(to_odd<T>)->filter(even<T>);
+      auto invalid_odd_numbers = numbers.map(to_even<T>)->filter(odd<T>);
 
-      REQUIRE_THROWS_AS((*invalid_odd_integers)(),
+      REQUIRE_THROWS_AS((*invalid_odd_numbers)(),
                         strategies::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_even_integers)(),
+      REQUIRE_THROWS_AS((*invalid_even_numbers)(),
                         strategies::OutOfCycles);
     }
   }
 }
 
 
-TEST_CASE("\"integers\" strategy", "[integers]") {
+TEST_CASE("\"Integers\" strategy", "[Integers]") {
   SECTION("unsigned char") {
     check_strategy<unsigned char>();
   }
