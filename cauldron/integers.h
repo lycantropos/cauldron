@@ -12,8 +12,11 @@ namespace strategies {
  */
 template<typename Value>
 class Integers : public CloneHelper<Value, Integers<Value>> {
-  static_assert(std::is_integral<Value>::value,
-                "``Value`` should have integral type");
+  static_assert(std::is_integral<Value>(),
+                "``Value`` should have integral type.");
+  static_assert(not std::is_same<Value, bool>(),
+                "``Value`` should not be ``bool`` type, "
+                    "use ``strategies::Booleans`` instead.");
  public:
   /**
    * @param min_value: minimum possible integer value.
