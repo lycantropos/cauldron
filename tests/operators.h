@@ -18,6 +18,25 @@ Number to_odd(Number number) {
 }
 
 
+template<typename Number>
+Number to_positive(Number number) {
+  static_assert(std::is_signed<Number>(),
+                "``Number`` should be signed arithmetic type.");
+  if (number == 0) {
+    return 1;
+  }
+  return std::abs(number);
+}
+
+
+template<typename Number>
+Number to_non_positive(Number number) {
+  static_assert(std::is_signed<Number>(),
+                "``Number`` should be signed arithmetic type.");
+  return -std::abs(number);
+}
+
+
 char to_upper(char character);
 
 char to_lower(char character);
