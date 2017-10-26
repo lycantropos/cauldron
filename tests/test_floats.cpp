@@ -7,13 +7,17 @@
 
 template<typename T>
 static void check_strategy() {
+  T min_possible_value = std::numeric_limits<T>::lowest();
+  T min_possible_positive_value = std::numeric_limits<T>::min();
+  T max_possible_value = std::numeric_limits<T>::max();
+
   static std::random_device random_device;
 
   auto distribution = std::uniform_real_distribution<T>(
-      std::numeric_limits<T>::lowest(),
-      -std::numeric_limits<T>::min());
+      min_possible_value,
+      -min_possible_positive_value);
   T min_value = distribution(random_device);
-  T max_value = std::numeric_limits<T>::max() + min_value;
+  T max_value = max_possible_value + min_value;
   strategies::Floats<T> numbers(min_value,
                                 max_value);
 
@@ -23,6 +27,12 @@ static void check_strategy() {
                                               max_value);
 
     REQUIRE(stays_in_range(number));
+  }
+
+  SECTION("invalid min/max values") {
+    REQUIRE_THROWS_AS(strategies::Floats<T>(min_value,
+                                            max_possible_value),
+                      std::invalid_argument);
   }
 
   SECTION("filtration") {
