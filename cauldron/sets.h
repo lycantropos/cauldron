@@ -1,8 +1,6 @@
 #pragma once
 
 #include <set>
-#include <algorithm>
-#include <functional>
 #include "bases.h"
 
 

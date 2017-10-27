@@ -1,10 +1,7 @@
 #pragma once
 
 #include <random>
-#include <string>
-#include <algorithm>
 #include <limits>
-#include <functional>
 #include "bases.h"
 
 
