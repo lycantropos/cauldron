@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <random>
 #include "characters.h"
 
 
@@ -27,12 +28,10 @@ char Characters::operator()() const {
   if (domain_.length() == 1) {
     return domain_[0];
   }
-  /* More at
-   * http://www.cplusplus.com/reference/string/string/max_size/
-   */
+  static std::random_device random_device;
   size_t max_index = domain_.length() - 1;
-  auto indexes = Integers<size_t>(0, max_index);
-  size_t index = indexes();
+  auto distribution = std::uniform_int_distribution<size_t>(0, max_index);
+  auto index = distribution(random_device);
   return domain_[index];
 }
 }

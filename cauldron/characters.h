@@ -1,11 +1,6 @@
 #pragma once
 
-#include <random>
-#include <string>
-#include <algorithm>
-#include <limits>
 #include "bases.h"
-#include "integers.h"
 
 
 namespace strategies {
