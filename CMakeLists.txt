@@ -31,6 +31,7 @@ set(HEADER_FILES
         cauldron/just.h
         cauldron/booleans.h
         cauldron/integers.h
+        cauldron/floats.h
         cauldron/characters.h
         cauldron/strings.h
         cauldron/vectors.h
@@ -60,6 +61,7 @@ set(TESTS_SOURCE_FILES
         tests/test_just.cpp
         tests/test_booleans.cpp
         tests/test_integers.cpp
+        tests/test_floats.cpp
         tests/test_characters.cpp
         tests/test_strings.cpp
         tests/vectors_tests/fundamental/test_booleans.cpp

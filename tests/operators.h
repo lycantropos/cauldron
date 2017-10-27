@@ -1,20 +1,41 @@
 #pragma once
 
 
-template<typename T>
-T to_even(T number) {
-  return (number / 2) * 2;
+template<typename Number>
+Number to_even(Number number) {
+  static_assert(std::is_integral<Number>(),
+                "``Number`` should be integral type.");
+  return Number(number / 2) * 2;
 }
 
 
-template<typename T>
-T to_odd(T number) {
-  if (number == 0 or number == 1) {
+template<typename Number>
+Number to_odd(Number number) {
+  static_assert(std::is_integral<Number>(),
+                "``Number`` should be integral type.");
+  Number sign = number < 0 ? -1 : 1;
+  return Number(number / 2 - sign) * 2 + sign;
+}
+
+
+template<typename Number>
+Number to_positive(Number number) {
+  static_assert(std::is_signed<Number>(),
+                "``Number`` should be signed arithmetic type.");
+  if (number == 0) {
     return 1;
   }
-  T sign = number < 0 ? -1 : 1;
-  return (number / 2) * 2 - sign;
+  return std::abs(number);
 }
+
+
+template<typename Number>
+Number to_non_positive(Number number) {
+  static_assert(std::is_signed<Number>(),
+                "``Number`` should be signed arithmetic type.");
+  return -std::abs(number);
+}
+
 
 char to_upper(char character);
 

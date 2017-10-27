@@ -20,16 +20,37 @@ std::function<bool(T)> in_range_checker(T min_value,
 }
 
 
-template<typename T>
-bool even(T number) {
+template<typename Number>
+bool even(Number number) {
+  static_assert(std::is_integral<Number>(),
+                "``Number`` should be integral type.");
   return number % 2 == 0;
 }
 
 
-template<typename T>
-bool odd(T number) {
+template<typename Number>
+bool odd(Number number) {
+  static_assert(std::is_integral<Number>(),
+                "``Number`` should be integral type.");
   return number % 2 != 0;
 }
+
+
+template<typename Number>
+bool positive(Number number) {
+  static_assert(std::is_signed<Number>(),
+                "``Number`` should be signed arithmetic type.");
+  return number > 0;
+}
+
+
+template<typename Number>
+bool non_positive(Number number) {
+  static_assert(std::is_signed<Number>(),
+                "``Number`` should be signed arithmetic type.");
+  return number <= 0;
+}
+
 
 bool is_character_in_string(char character,
                             const std::string &string);
