@@ -3,7 +3,7 @@
 #include "bases.h"
 
 
-namespace strategies {
+namespace cauldron {
 /**
  * Strategy which generates ``std::string`` instances
  * with lengths and characters generated from corresponding strategies.

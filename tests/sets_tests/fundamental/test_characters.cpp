@@ -11,13 +11,13 @@
 
 
 TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
-  strategies::Requirement<std::set<char>> is_lower_set(
+  cauldron::Requirement<std::set<char>> is_lower_set(
       [&](const std::set<char> &set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
                            is_lower);
       });
-  strategies::Requirement<std::set<char>> is_upper_set(
+  cauldron::Requirement<std::set<char>> is_upper_set(
       [&](const std::set<char> &set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
@@ -27,12 +27,12 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
   std::string non_zero_characters = factories::non_zero_characters();
 
   SECTION("single character") {
-    auto ones = std::make_shared<strategies::Just<size_t>>(1);
+    auto ones = std::make_shared<cauldron::Just<size_t>>(1);
     for (char single_character: non_zero_characters) {
       std::string single_character_string{single_character};
-      auto same_character = std::make_shared<strategies::Characters>(
+      auto same_character = std::make_shared<cauldron::Characters>(
           single_character_string);
-      strategies::Sets<char> same_character_sets(ones,
+      cauldron::Sets<char> same_character_sets(ones,
                                                  same_character);
 
       auto same_character_set = same_character_sets();
@@ -49,12 +49,12 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
     std::string characters_string = factories::characters_string();
     size_t min_size = 0;
     size_t max_size = sufficient_set_size(characters_string.length(),
-                                          strategies::MAX_CYCLES);
-    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                          cauldron::MAX_CYCLES);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                                 max_size);
-    auto characters = std::make_shared<strategies::Characters>(
+    auto characters = std::make_shared<cauldron::Characters>(
         characters_string);
-    strategies::Sets<char> characters_sets(sizes,
+    cauldron::Sets<char> characters_sets(sizes,
                                            characters);
     std::set<char> characters_domain(characters_string.begin(),
                                      characters_string.end());
@@ -84,12 +84,12 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
     size_t min_size = constants::min_capacity;
     size_t max_size = sufficient_set_size(
         constants::alphabetic_characters_count,
-        strategies::MAX_CYCLES);
-    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+        cauldron::MAX_CYCLES);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                                 max_size);
     auto alphabetic_characters =
-        strategies::Characters(non_zero_characters).filter(is_alphabetic);
-    strategies::Sets<char> alphabetic(sizes,
+        cauldron::Characters(non_zero_characters).filter(is_alphabetic);
+    cauldron::Sets<char> alphabetic(sizes,
                                       std::move(alphabetic_characters));
 
     SECTION("case") {
@@ -112,12 +112,12 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
           alphabetic.filter(is_lower_set)->filter(is_upper_set);
 
       REQUIRE_THROWS_AS((*invalid_sets)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 
   SECTION("mapping") {
-    strategies::Converter<std::set<char>> to_lower_set(
+    cauldron::Converter<std::set<char>> to_lower_set(
         [&](const std::set<char> &set) -> std::set<char> {
           std::vector<char> vector;
           vector.reserve(set.size());
@@ -128,7 +128,7 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
           return std::set<char>(vector.begin(),
                                 vector.end());
         });
-    strategies::Converter<std::set<char>> to_upper_set(
+    cauldron::Converter<std::set<char>> to_upper_set(
         [&](const std::set<char> &set) -> std::set<char> {
           std::vector<char> vector;
           vector.reserve(set.size());
@@ -147,12 +147,12 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
     size_t min_size = constants::min_capacity;
     size_t max_size = sufficient_set_size(
         constants::alphabetic_characters_count,
-        strategies::MAX_CYCLES);
-    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+        cauldron::MAX_CYCLES);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                                 max_size);
     auto alphabetic_characters =
-        strategies::Characters(non_zero_characters).filter(is_alphabetic);
-    strategies::Sets<char> alphabetic(sizes,
+        cauldron::Characters(non_zero_characters).filter(is_alphabetic);
+    cauldron::Sets<char> alphabetic(sizes,
                                       std::move(alphabetic_characters));
 
     SECTION("case") {
@@ -177,9 +177,9 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
           alphabetic.map(to_lower_set)->filter(is_upper_set);
 
       REQUIRE_THROWS_AS((*invalid_lower_sets)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
       REQUIRE_THROWS_AS((*invalid_upper_sets)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 }

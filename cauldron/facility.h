@@ -5,7 +5,7 @@
 #include <memory>
 
 
-namespace strategies {
+namespace cauldron {
 template<typename Product>
 using Converter = std::function<Product(Product)>;
 

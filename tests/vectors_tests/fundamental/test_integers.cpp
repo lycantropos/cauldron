@@ -26,7 +26,7 @@ static void check_integers_vectors_strategy() {
 
   T min_value = std::numeric_limits<T>::min();
   T max_value = std::numeric_limits<T>::max();
-  auto integers = std::make_shared<strategies::Integers<T>>(min_value,
+  auto integers = std::make_shared<cauldron::Integers<T>>(min_value,
                                                             max_value);
   auto integer_stays_in_range = in_range_checker<T>(min_value,
                                                     max_value);
@@ -44,13 +44,13 @@ static void check_integers_vectors_strategy() {
     static const auto integers_range = factories::integers_range<int>(
         min_integer,
         max_integer);
-    strategies::Just<size_t> ones(1);
+    cauldron::Just<size_t> ones(1);
     for (T integer: integers_range) {
       auto single_integer_vector = std::vector<T>{integer};
-      strategies::Just<T> same_integer(integer);
-      strategies::Vectors<T> same_integer_vectors(
-          std::make_shared<strategies::Just<size_t>>(ones),
-          std::make_shared<strategies::Just<T>>(same_integer));
+      cauldron::Just<T> same_integer(integer);
+      cauldron::Vectors<T> same_integer_vectors(
+          std::make_shared<cauldron::Just<size_t>>(ones),
+          std::make_shared<cauldron::Just<T>>(same_integer));
 
       auto vector = same_integer_vectors();
 
@@ -62,10 +62,10 @@ static void check_integers_vectors_strategy() {
   SECTION("multiple elements domain") {
     static size_t min_size = 0;
     static size_t max_size = constants::max_capacity;
-    static const std::shared_ptr<strategies::Integers<size_t>> &sizes =
-        std::make_shared<strategies::Integers<size_t>>(min_size,
+    static const std::shared_ptr<cauldron::Integers<size_t>> &sizes =
+        std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                        max_size);
-    strategies::Vectors<T> integers_vectors(sizes,
+    cauldron::Vectors<T> integers_vectors(sizes,
                                             integers);
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
@@ -82,10 +82,10 @@ static void check_integers_vectors_strategy() {
      */
     static size_t min_size = constants::min_capacity;
     static size_t max_size = sufficient_capacity(1, 2, // odd or even
-                                                 strategies::MAX_CYCLES);
-    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                 cauldron::MAX_CYCLES);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                                 max_size);
-    strategies::Vectors<T> vectors(sizes,
+    cauldron::Vectors<T> vectors(sizes,
                                    integers);
 
     SECTION("parity") {
@@ -110,12 +110,12 @@ static void check_integers_vectors_strategy() {
           vectors.filter(is_even_vector)->filter(is_odd_vector);
 
       REQUIRE_THROWS_AS((*invalid_vectors)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 
   SECTION("mapping") {
-    strategies::Converter<std::vector<T>> to_even_vector(
+    cauldron::Converter<std::vector<T>> to_even_vector(
         [&](const std::vector<T> &vector) -> std::vector<T> {
           auto result = std::vector<T>(vector.size());
           std::transform(vector.begin(),
@@ -124,7 +124,7 @@ static void check_integers_vectors_strategy() {
                          to_even<T>);
           return result;
         });
-    strategies::Converter<std::vector<T>> to_odd_vector(
+    cauldron::Converter<std::vector<T>> to_odd_vector(
         [&](const std::vector<T> &vector) -> std::vector<T> {
           auto result = std::vector<T>(vector.size());
           std::transform(vector.begin(),
@@ -140,10 +140,10 @@ static void check_integers_vectors_strategy() {
      */
     static size_t min_size = constants::min_capacity;
     static size_t max_size = sufficient_capacity(1, 2, // odd or even
-                                                 strategies::MAX_CYCLES);
-    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                 cauldron::MAX_CYCLES);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                                 max_size);
-    strategies::Vectors<T> vectors(sizes,
+    cauldron::Vectors<T> vectors(sizes,
                                    integers);
 
     SECTION("parity") {
@@ -170,9 +170,9 @@ static void check_integers_vectors_strategy() {
           vectors.map(to_even_vector)->filter(is_odd_vector);
 
       REQUIRE_THROWS_AS((*invalid_even_vectors)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
       REQUIRE_THROWS_AS((*invalid_odd_vectors)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 }

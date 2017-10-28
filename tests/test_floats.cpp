@@ -18,7 +18,7 @@ static void check_strategy() {
       -min_possible_positive_value);
   T min_value = distribution(random_device);
   T max_value = max_possible_value + min_value;
-  strategies::Floats<T> numbers(min_value,
+  cauldron::Floats<T> numbers(min_value,
                                 max_value);
 
   SECTION("stays in range") {
@@ -30,7 +30,7 @@ static void check_strategy() {
   }
 
   SECTION("invalid min/max values") {
-    REQUIRE_THROWS_AS(strategies::Floats<T>(min_value,
+    REQUIRE_THROWS_AS(cauldron::Floats<T>(min_value,
                                             max_possible_value),
                       std::invalid_argument);
   }
@@ -52,7 +52,7 @@ static void check_strategy() {
           numbers.filter(positive<T>)->filter(non_positive<T>);
 
       REQUIRE_THROWS_AS((*invalid_numbers)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 
@@ -75,9 +75,9 @@ static void check_strategy() {
           numbers.map(to_positive<T>)->filter(non_positive<T>);
 
       REQUIRE_THROWS_AS((*invalid_non_positive_numbers)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
       REQUIRE_THROWS_AS((*invalid_positive_numbers)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 }

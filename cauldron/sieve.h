@@ -1,10 +1,11 @@
 #pragma once
 
 #include <functional>
+#include <string>
 #include <vector>
 
 
-namespace strategies {
+namespace cauldron {
 static const unsigned MAX_CYCLES = 1'000;
 
 template<typename Product>

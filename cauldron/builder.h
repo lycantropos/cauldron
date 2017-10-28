@@ -3,7 +3,7 @@
 #include "bases.h"
 
 
-namespace strategies {
+namespace cauldron {
 /**
  * Strategy which generates ``Object`` instances
  * with constructor arguments generated from corresponding strategies.
@@ -14,7 +14,7 @@ namespace strategies {
 template<class Object, class ...Value>
 class Builder : public CloneHelper<Object, Builder<Object, Value...>> {
  public:
-  explicit Builder(std::shared_ptr<strategies::Strategy<Value>>... strategy) :
+  explicit Builder(std::shared_ptr<cauldron::Strategy<Value>>... strategy) :
       strategies_(std::make_tuple(strategy...)) {}
 
   /**
@@ -27,7 +27,7 @@ class Builder : public CloneHelper<Object, Builder<Object, Value...>> {
   }
 
  private:
-  std::tuple<std::shared_ptr<strategies::Strategy<Value>>...> strategies_;
+  std::tuple<std::shared_ptr<cauldron::Strategy<Value>>...> strategies_;
 
   /**
    * Helper function for unpacking ``Builder::strategies_`` tuple
@@ -35,7 +35,7 @@ class Builder : public CloneHelper<Object, Builder<Object, Value...>> {
    */
   template<std::size_t... Indices>
   Object produce(
-      std::tuple<std::shared_ptr<strategies::Strategy<Value>>...> tuple,
+      std::tuple<std::shared_ptr<cauldron::Strategy<Value>>...> tuple,
       std::index_sequence<Indices...>
   ) const {
     return produce(std::get<Indices>(tuple)...);
@@ -46,7 +46,7 @@ class Builder : public CloneHelper<Object, Builder<Object, Value...>> {
    * from variadic ``Strategy`` instances.
    */
   Object produce(
-      std::shared_ptr<strategies::Strategy<Value>>... strategy
+      std::shared_ptr<cauldron::Strategy<Value>>... strategy
   ) const {
     return Object(strategy->operator()()...);
   }

@@ -6,7 +6,7 @@
 #include "facility.h"
 
 
-namespace strategies {
+namespace cauldron {
 template<typename Value>
 class Filtered;
 

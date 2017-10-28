@@ -12,7 +12,7 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
   SECTION("single character") {
     for (char single_character: non_zero_characters) {
       std::string single_character_string{single_character};
-      strategies::Characters same_character(single_character_string);
+      cauldron::Characters same_character(single_character_string);
 
       auto character = same_character();
 
@@ -24,7 +24,7 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
     std::string characters_string = factories::characters_string(
         constants::min_capacity,
         constants::max_capacity);
-    strategies::Characters characters(characters_string);
+    cauldron::Characters characters(characters_string);
 
     auto character = characters();
 
@@ -33,14 +33,14 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
   }
 
   SECTION("invalid whitelist characters") {
-    REQUIRE_THROWS_AS(strategies::Characters(""),
+    REQUIRE_THROWS_AS(cauldron::Characters(""),
                       std::invalid_argument);
-    REQUIRE_THROWS_AS(strategies::Characters("\0"),
+    REQUIRE_THROWS_AS(cauldron::Characters("\0"),
                       std::invalid_argument);
   }
 
   SECTION("filtration") {
-    strategies::Characters non_zero(non_zero_characters);
+    cauldron::Characters non_zero(non_zero_characters);
 
     SECTION("case") {
       auto lower_characters = non_zero.filter(is_lower);
@@ -57,12 +57,12 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
       auto invalid_characters = non_zero.filter(is_lower)->filter(is_upper);
 
       REQUIRE_THROWS_AS((*invalid_characters)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 
   SECTION("mapping") {
-    strategies::Characters non_zero(non_zero_characters);
+    cauldron::Characters non_zero(non_zero_characters);
     auto alphabetic = non_zero.filter(is_alphabetic);
 
     SECTION("case") {
@@ -80,7 +80,7 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
       auto invalid_characters = non_zero.map(to_upper)->filter(is_lower);
 
       REQUIRE_THROWS_AS((*invalid_characters)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 }

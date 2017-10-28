@@ -16,7 +16,7 @@ static void check_strategy() {
                                   borders.end());
   T max_value = *std::max_element(borders.begin(),
                                   borders.end());
-  strategies::Integers<T> numbers(min_value,
+  cauldron::Integers<T> numbers(min_value,
                                   max_value);
 
   SECTION("stays in range") {
@@ -43,7 +43,7 @@ static void check_strategy() {
       auto invalid_numbers = numbers.filter(even<T>)->filter(odd<T>);
 
       REQUIRE_THROWS_AS((*invalid_numbers)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 
@@ -64,9 +64,9 @@ static void check_strategy() {
       auto invalid_odd_numbers = numbers.map(to_even<T>)->filter(odd<T>);
 
       REQUIRE_THROWS_AS((*invalid_odd_numbers)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
       REQUIRE_THROWS_AS((*invalid_even_numbers)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 }

@@ -3,7 +3,7 @@
 #include "bases.h"
 
 
-namespace strategies {
+namespace cauldron {
 /**
  * Strategy which generates pseudo-random ``char`` values.
  */

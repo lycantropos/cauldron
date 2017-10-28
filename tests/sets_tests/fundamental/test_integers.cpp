@@ -10,13 +10,13 @@
 
 template<typename T>
 static void check_integers_sets_strategy() {
-  strategies::Requirement<std::set<T>> is_even_set(
+  cauldron::Requirement<std::set<T>> is_even_set(
       [&](std::set<T> set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
                            even<T>);
       });
-  strategies::Requirement<std::set<T>> is_odd_set(
+  cauldron::Requirement<std::set<T>> is_odd_set(
       [&](std::set<T> set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
@@ -25,7 +25,7 @@ static void check_integers_sets_strategy() {
 
   T min_value = std::numeric_limits<T>::min();
   T max_value = std::numeric_limits<T>::max();
-  auto integers = std::make_shared<strategies::Integers<T>>(min_value,
+  auto integers = std::make_shared<cauldron::Integers<T>>(min_value,
                                                             max_value);
   auto integer_stays_in_range = in_range_checker<T>(min_value,
                                                     max_value);
@@ -43,11 +43,11 @@ static void check_integers_sets_strategy() {
     static const auto integers_range =
         factories::integers_range<int>(min_integer,
                                        max_integer);
-    auto ones = std::make_shared<strategies::Just<size_t>>(1);
+    auto ones = std::make_shared<cauldron::Just<size_t>>(1);
     for (T integer: integers_range) {
       auto single_integer_set = std::set<T>{integer};
-      auto same_integer = std::make_shared<strategies::Just<T>>(integer);
-      strategies::Sets<T> same_integer_sets(ones,
+      auto same_integer = std::make_shared<cauldron::Just<T>>(integer);
+      cauldron::Sets<T> same_integer_sets(ones,
                                             same_integer);
 
       auto set = same_integer_sets();
@@ -61,9 +61,9 @@ static void check_integers_sets_strategy() {
     static size_t min_size = 0;
     static size_t max_size = constants::max_capacity;
     static const auto sizes =
-        std::make_shared<strategies::Integers<size_t>>(min_size,
+        std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                        max_size);
-    strategies::Sets<T> integers_sets(sizes,
+    cauldron::Sets<T> integers_sets(sizes,
                                       integers);
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
@@ -80,10 +80,10 @@ static void check_integers_sets_strategy() {
      */
     static size_t min_size = constants::min_capacity;
     static size_t max_size = sufficient_capacity(1, 2, // odd or even
-                                                 strategies::MAX_CYCLES);
-    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                 cauldron::MAX_CYCLES);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                                 max_size);
-    strategies::Sets<T> sets(sizes,
+    cauldron::Sets<T> sets(sizes,
                              integers);
 
     SECTION("parity") {
@@ -107,12 +107,12 @@ static void check_integers_sets_strategy() {
       auto invalid_sets = sets.filter(is_even_set)->filter(is_odd_set);
 
       REQUIRE_THROWS_AS((*invalid_sets)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 
   SECTION("mapping") {
-    strategies::Converter<std::set<T>> to_even_set(
+    cauldron::Converter<std::set<T>> to_even_set(
         [&](const std::set<T> &set) -> std::set<T> {
           std::vector<T> vector;
           vector.reserve(set.size());
@@ -123,7 +123,7 @@ static void check_integers_sets_strategy() {
           return std::set<T>(vector.begin(),
                              vector.end());
         });
-    strategies::Converter<std::set<T>> to_odd_set(
+    cauldron::Converter<std::set<T>> to_odd_set(
         [&](const std::set<T> &set) -> std::set<T> {
           std::vector<T> vector;
           vector.reserve(set.size());
@@ -141,10 +141,10 @@ static void check_integers_sets_strategy() {
      */
     static size_t min_size = constants::min_capacity;
     static size_t max_size = sufficient_capacity(1, 2, // odd or even
-                                                 strategies::MAX_CYCLES);
-    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
+                                                 cauldron::MAX_CYCLES);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                                 max_size);
-    strategies::Sets<T> sets(sizes,
+    cauldron::Sets<T> sets(sizes,
                              integers);
 
     SECTION("parity") {
@@ -169,9 +169,9 @@ static void check_integers_sets_strategy() {
       auto invalid_odd_sets = sets.map(to_even_set)->filter(is_odd_set);
 
       REQUIRE_THROWS_AS((*invalid_even_sets)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
       REQUIRE_THROWS_AS((*invalid_odd_sets)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 }

@@ -21,7 +21,7 @@ static void check_integers_builder_strategy() {
 
   T min_value = std::numeric_limits<T>::min();
   T max_value = std::numeric_limits<T>::max();
-  auto integers = std::make_shared<strategies::Integers<T>>(min_value,
+  auto integers = std::make_shared<cauldron::Integers<T>>(min_value,
                                                             max_value);
   auto integer_stays_in_range = in_range_checker<T>(min_value,
                                                     max_value);
@@ -33,11 +33,11 @@ static void check_integers_builder_strategy() {
     static const auto integers_range =
         factories::integers_range<int>(min_integer,
                                        max_integer);
-    auto ones = std::make_shared<strategies::Just<size_t>>(1);
+    auto ones = std::make_shared<cauldron::Just<size_t>>(1);
     for (T integer: integers_range) {
       auto single_integer_wrapper = IntegerWrapper(integer);
-      auto same_integer = std::make_shared<strategies::Just<T>>(integer);
-      strategies::Builder<IntegerWrapper, T> same_integer_wrappers(
+      auto same_integer = std::make_shared<cauldron::Just<T>>(integer);
+      cauldron::Builder<IntegerWrapper, T> same_integer_wrappers(
           same_integer);
 
       auto wrapper = same_integer_wrappers();
@@ -48,14 +48,14 @@ static void check_integers_builder_strategy() {
   }
 
   SECTION("multiple elements domain") {
-    strategies::Builder<IntegerWrapper, T> integers_wrappers(integers);
+    cauldron::Builder<IntegerWrapper, T> integers_wrappers(integers);
     auto wrapper = integers_wrappers();
 
     REQUIRE(integer_stays_in_range(wrapper.field()));
   }
 
   SECTION("filtration") {
-    strategies::Builder<IntegerWrapper, T> wrappers(integers);
+    cauldron::Builder<IntegerWrapper, T> wrappers(integers);
 
     SECTION("parity") {
       auto even_wrappers = wrappers.filter(is_even_wrapper);
@@ -75,21 +75,21 @@ static void check_integers_builder_strategy() {
           wrappers.filter(is_even_wrapper)->filter(is_odd_wrapper);
 
       REQUIRE_THROWS_AS((*invalid_wrappers)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 
   SECTION("mapping") {
-    strategies::Converter<IntegerWrapper> to_even_wrapper(
+    cauldron::Converter<IntegerWrapper> to_even_wrapper(
         [&](const IntegerWrapper &wrapper) -> IntegerWrapper {
           return IntegerWrapper(to_even<T>(wrapper.field()));
         });
-    strategies::Converter<IntegerWrapper> to_odd_wrapper(
+    cauldron::Converter<IntegerWrapper> to_odd_wrapper(
         [&](const IntegerWrapper &wrapper) -> IntegerWrapper {
           return IntegerWrapper(to_odd<T>(wrapper.field()));
         });
 
-    strategies::Builder<IntegerWrapper, T> wrappers(integers);
+    cauldron::Builder<IntegerWrapper, T> wrappers(integers);
 
     SECTION("parity") {
       auto even_wrappers = wrappers.map(to_even_wrapper);
@@ -111,9 +111,9 @@ static void check_integers_builder_strategy() {
           wrappers.map(to_even_wrapper)->filter(is_odd_wrapper);
 
       REQUIRE_THROWS_AS((*invalid_even_wrappers)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
       REQUIRE_THROWS_AS((*invalid_odd_wrappers)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 }
