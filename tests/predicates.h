@@ -15,7 +15,7 @@ template<typename T>
 std::function<bool(T)> in_range_checker(T min_value,
                                         T max_value) {
   return [=](T value) -> bool {
-    return (min_value <= value) and (value <= max_value);
+    return (min_value <= value) && (value <= max_value);
   };
 }
 
