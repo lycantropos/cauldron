@@ -27,7 +27,8 @@ static void check_strategy() {
       });
 
   // ``signed char`` is the smallest tested integer type
-  static signed char min_integer = std::numeric_limits<signed char>::min();
+  static signed char min_integer = std::is_unsigned<T>() ?
+                                   0 : std::numeric_limits<signed char>::min();
   static signed char max_integer = std::numeric_limits<signed char>::max();
   static auto numbers_range = factories::integers_range<int>(min_integer,
                                                              max_integer);
