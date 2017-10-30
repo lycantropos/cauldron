@@ -2,7 +2,7 @@
 #include "strings.h"
 
 
-namespace strategies {
+namespace cauldron {
 Strings::Strings(std::shared_ptr<Strategy<size_t>> lengths,
                  std::shared_ptr<Strategy<char>> alphabet) :
     lengths_(std::move(lengths)),

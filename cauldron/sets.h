@@ -4,7 +4,7 @@
 #include "bases.h"
 
 
-namespace strategies {
+namespace cauldron {
 /**
  * Strategy which generates ``std::set`` instances
  * with sizes and elements generated from corresponding strategies.

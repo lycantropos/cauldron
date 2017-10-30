@@ -8,7 +8,7 @@ bool identity(bool boolean) {
 
 
 bool negate(bool boolean) {
-  return not boolean;
+  return !boolean;
 }
 
 

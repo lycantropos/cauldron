@@ -4,11 +4,11 @@
 
 
 TEST_CASE("\"booleans\" strategy", "[booleans]") {
-  strategies::Booleans false_values(0.);
-  strategies::Booleans true_values(1.);
+  cauldron::Booleans false_values(0.);
+  cauldron::Booleans true_values(1.);
 
   SECTION("probability") {
-    REQUIRE(not false_values());
+    REQUIRE(!false_values());
     REQUIRE(true_values());
   }
 
@@ -26,9 +26,9 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
       auto invalid_true_values = true_values.filter(negate);
 
       REQUIRE_THROWS_AS((*invalid_false_values)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
       REQUIRE_THROWS_AS((*invalid_true_values)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 

@@ -1,5 +1,4 @@
 #include <catch.hpp>
-#include <iostream>
 #include "../cauldron/integers.h"
 #include "predicates.h"
 #include "operators.h"
@@ -12,17 +11,17 @@ static void check_strategy() {
   auto distribution = std::uniform_int_distribution<T>();
   std::vector<T> borders{distribution(random_device),
                          distribution(random_device)};
-  T min_value = *std::min_element(borders.begin(),
-                                  borders.end());
-  T max_value = *std::max_element(borders.begin(),
-                                  borders.end());
-  strategies::Integers<T> numbers(min_value,
-                                  max_value);
+  T min_number = *std::min_element(borders.begin(),
+                                   borders.end());
+  T max_number = *std::max_element(borders.begin(),
+                                   borders.end());
+  cauldron::Integers<T> numbers(min_number,
+                                max_number);
 
   SECTION("stays in range") {
     T number = numbers();
-    auto stays_in_range = in_range_checker<T>(min_value,
-                                              max_value);
+    auto stays_in_range = in_range_checker<T>(min_number,
+                                              max_number);
 
     REQUIRE(stays_in_range(number));
   }
@@ -43,7 +42,7 @@ static void check_strategy() {
       auto invalid_numbers = numbers.filter(even<T>)->filter(odd<T>);
 
       REQUIRE_THROWS_AS((*invalid_numbers)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 
@@ -64,9 +63,9 @@ static void check_strategy() {
       auto invalid_odd_numbers = numbers.map(to_even<T>)->filter(odd<T>);
 
       REQUIRE_THROWS_AS((*invalid_odd_numbers)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
       REQUIRE_THROWS_AS((*invalid_even_numbers)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 }

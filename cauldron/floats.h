@@ -8,7 +8,7 @@
 #include "bases.h"
 
 
-namespace strategies {
+namespace cauldron {
 template<typename Value>
 void validate_floats(Value min_value,
                      Value max_value) {

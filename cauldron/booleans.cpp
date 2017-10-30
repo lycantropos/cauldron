@@ -2,7 +2,7 @@
 #include "booleans.h"
 
 
-namespace strategies {
+namespace cauldron {
 Booleans::Booleans(double probability)
     : probability_(probability) {}
 

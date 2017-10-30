@@ -3,7 +3,7 @@
 #include "bases.h"
 
 
-namespace strategies {
+namespace cauldron {
 /**
  * Strategy which generates ``std::vector`` instances
  * with sizes and elements generated from corresponding strategies.

@@ -7,13 +7,13 @@
 
 
 TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
-  strategies::Requirement<std::set<bool>> is_false_set(
+  cauldron::Requirement<std::set<bool>> is_false_set(
       [&](std::set<bool> set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
                            negate);
       });
-  strategies::Requirement<std::set<bool>> is_true_set(
+  cauldron::Requirement<std::set<bool>> is_true_set(
       [&](std::set<bool> set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
@@ -23,14 +23,14 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
   SECTION("single element domain") {
     size_t min_size = 0;
     size_t max_size = 1;
-    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
-                                                                max_size);
-    auto true_values = std::make_shared<strategies::Booleans>(1.);
-    auto false_values = std::make_shared<strategies::Booleans>(0.);
-    strategies::Sets<bool> true_sets(sizes,
-                                     true_values);
-    strategies::Sets<bool> false_sets(sizes,
-                                      false_values);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                              max_size);
+    auto true_values = std::make_shared<cauldron::Booleans>(1.);
+    auto false_values = std::make_shared<cauldron::Booleans>(0.);
+    cauldron::Sets<bool> true_sets(sizes,
+                                   true_values);
+    cauldron::Sets<bool> false_sets(sizes,
+                                    false_values);
 
     auto true_set = true_sets();
     auto false_set = false_sets();
@@ -50,11 +50,11 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
      */
     size_t min_size = constants::min_capacity;
     size_t max_size = 2; // true or false;
-    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
-                                                                max_size);
-    auto booleans = std::make_shared<strategies::Booleans>();
-    strategies::Sets<bool> booleans_sets(sizes,
-                                         booleans);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                              max_size);
+    auto booleans = std::make_shared<cauldron::Booleans>();
+    cauldron::Sets<bool> booleans_sets(sizes,
+                                       booleans);
 
     SECTION("truthfulness") {
       auto true_sets = booleans_sets.filter(is_true_set);
@@ -75,12 +75,12 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
       auto invalid_sets =
           booleans_sets.filter(is_true_set)->filter(is_false_set);
       REQUIRE_THROWS_AS((*invalid_sets)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 
   SECTION("mapping") {
-    strategies::Converter<std::set<bool>> to_false_set(
+    cauldron::Converter<std::set<bool>> to_false_set(
         [&](const std::set<bool> &set) -> std::set<bool> {
           std::vector<bool> vector(set.size());
           std::fill(vector.begin(),
@@ -89,7 +89,7 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
           return std::set<bool>(vector.begin(),
                                 vector.end());
         });
-    strategies::Converter<std::set<bool>> to_true_set(
+    cauldron::Converter<std::set<bool>> to_true_set(
         [&](const std::set<bool> &set) -> std::set<bool> {
           std::vector<bool> vector(set.size());
           std::fill(vector.begin(),
@@ -105,11 +105,11 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
      */
     size_t min_size = constants::min_capacity;
     size_t max_size = 2; // true or false;
-    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
-                                                                max_size);
-    auto booleans = std::make_shared<strategies::Booleans>();
-    strategies::Sets<bool> booleans_sets(sizes,
-                                         booleans);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                              max_size);
+    auto booleans = std::make_shared<cauldron::Booleans>();
+    cauldron::Sets<bool> booleans_sets(sizes,
+                                       booleans);
 
     SECTION("truthfulness") {
       auto false_sets = booleans_sets.map(to_false_set);
@@ -132,9 +132,9 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
       auto invalid_true_sets =
           booleans_sets.map(to_false_set)->filter(is_true_set);
       REQUIRE_THROWS_AS((*invalid_false_sets)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
       REQUIRE_THROWS_AS((*invalid_true_sets)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 }

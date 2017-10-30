@@ -66,14 +66,17 @@ set(TESTS_SOURCE_FILES
         tests/test_strings.cpp
         tests/vectors_tests/fundamental/test_booleans.cpp
         tests/vectors_tests/fundamental/test_integers.cpp
+        tests/vectors_tests/fundamental/test_floats.cpp
         tests/vectors_tests/fundamental/test_characters.cpp
         tests/vectors_tests/compound/test_strings.cpp
         tests/sets_tests/fundamental/test_booleans.cpp
         tests/sets_tests/fundamental/test_integers.cpp
+        tests/sets_tests/fundamental/test_floats.cpp
         tests/sets_tests/fundamental/test_characters.cpp
         tests/sets_tests/compound/test_strings.cpp
         tests/builder_tests/fundamental/test_booleans.cpp
         tests/builder_tests/fundamental/test_integers.cpp
+        tests/builder_tests/fundamental/test_floats.cpp
         tests/builder_tests/fundamental/test_characters.cpp
         tests/builder_tests/compound/test_strings.cpp)
 add_executable(main

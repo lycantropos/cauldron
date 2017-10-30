@@ -3,7 +3,7 @@
 #include "characters.h"
 
 
-namespace strategies {
+namespace cauldron {
 void validate_characters(const std::string &characters) {
   if (characters.length() == 0) {
     throw std::invalid_argument("Characters container should not be empty.");
@@ -25,13 +25,10 @@ Characters::Characters(const char domain[]) {
 
 
 char Characters::operator()() const {
-  if (domain_.length() == 1) {
-    return domain_[0];
-  }
   static std::random_device random_device;
   size_t max_index = domain_.length() - 1;
-  auto distribution = std::uniform_int_distribution<size_t>(0, max_index);
-  auto index = distribution(random_device);
+  std::uniform_int_distribution<size_t> distribution(0, max_index);
+  size_t index = distribution(random_device);
   return domain_[index];
 }
 }

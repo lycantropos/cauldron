@@ -1,12 +1,11 @@
 #include <catch.hpp>
-#include <iostream>
 #include "../cauldron/just.h"
 
 
 template<typename T>
 static void check_strategy() {
   T value{};
-  strategies::Just<T> just_value(value);
+  cauldron::Just<T> just_value(value);
   bool values_are_equal = just_value() == value;
   REQUIRE(values_are_equal);
 }

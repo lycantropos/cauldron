@@ -7,54 +7,57 @@
 #include "../../../cauldron/vectors.h"
 #include "../../factories.h"
 #include "../../predicates.h"
-#include "../../utils.h"
 #include "../../operators.h"
+#include "../../utils.h"
 
 
 template<typename T>
-static void check_integers_vectors_strategy() {
-  auto is_even_vector = [&](std::vector<T> vector) -> bool {
-    return std::all_of(vector.begin(),
-                       vector.end(),
-                       even<T>);
-  };
-  auto is_odd_vector = [&](std::vector<T> vector) -> bool {
-    return std::all_of(vector.begin(),
-                       vector.end(),
-                       odd<T>);
-  };
+static void check_strategy() {
+  cauldron::Requirement<std::vector<T>> is_even_vector(
+      [&](std::vector<T> vector) -> bool {
+        return std::all_of(vector.begin(),
+                           vector.end(),
+                           even<T>);
+      });
+  cauldron::Requirement<std::vector<T>> is_odd_vector(
+      [&](std::vector<T> vector) -> bool {
+        return std::all_of(vector.begin(),
+                           vector.end(),
+                           odd<T>);
+      });
 
-  T min_value = std::numeric_limits<T>::min();
-  T max_value = std::numeric_limits<T>::max();
-  auto integers = std::make_shared<strategies::Integers<T>>(min_value,
-                                                            max_value);
-  auto integer_stays_in_range = in_range_checker<T>(min_value,
-                                                    max_value);
-  auto integers_stay_in_range =
-      [&](const std::vector<T> &integers_vector) -> bool {
-        return std::all_of(integers_vector.begin(),
-                           integers_vector.end(),
-                           integer_stays_in_range);
+  // ``signed char`` is the smallest tested integer type
+  static signed char min_integer = std::is_unsigned<T>() ?
+                                   0 : std::numeric_limits<signed char>::min();
+  static signed char max_integer = std::numeric_limits<signed char>::max();
+  static auto numbers_range = factories::integers_range<int>(min_integer,
+                                                             max_integer);
+
+  T min_number = std::numeric_limits<T>::min();
+  T max_number = std::numeric_limits<T>::max();
+  auto numbers = std::make_shared<cauldron::Integers<T>>(min_number,
+                                                         max_number);
+  auto number_stays_in_range = in_range_checker<T>(min_number,
+                                                   max_number);
+  auto numbers_stay_in_range =
+      [&](const std::vector<T> &numbers_vector) -> bool {
+        return std::all_of(numbers_vector.begin(),
+                           numbers_vector.end(),
+                           number_stays_in_range);
       };
 
   SECTION("single element domain") {
-    // ``signed char`` is the smallest tested integer type
-    static int min_integer = std::numeric_limits<signed char>::min();
-    static int max_integer = std::numeric_limits<signed char>::max();
-    static const auto integers_range = factories::integers_range<int>(
-        min_integer,
-        max_integer);
-    strategies::Just<size_t> ones(1);
-    for (T integer: integers_range) {
-      auto single_integer_vector = std::vector<T>{integer};
-      strategies::Just<T> same_integer(integer);
-      strategies::Vectors<T> same_integer_vectors(
-          std::make_shared<strategies::Just<size_t>>(ones),
-          std::make_shared<strategies::Just<T>>(same_integer));
+    cauldron::Just<size_t> ones(1);
+    for (T number: numbers_range) {
+      std::vector<T> single_number_vector{number};
+      cauldron::Just<T> same_number(number);
+      cauldron::Vectors<T> same_number_vectors(
+          std::make_shared<cauldron::Just<size_t>>(ones),
+          std::make_shared<cauldron::Just<T>>(same_number));
 
-      auto vector = same_integer_vectors();
+      auto vector = same_number_vectors();
 
-      bool vectors_are_equal = vector == single_integer_vector;
+      bool vectors_are_equal = vector == single_number_vector;
       REQUIRE(vectors_are_equal);
     }
   }
@@ -62,17 +65,17 @@ static void check_integers_vectors_strategy() {
   SECTION("multiple elements domain") {
     static size_t min_size = 0;
     static size_t max_size = constants::max_capacity;
-    static const std::shared_ptr<strategies::Integers<size_t>> &sizes =
-        std::make_shared<strategies::Integers<size_t>>(min_size,
-                                                       max_size);
-    strategies::Vectors<T> integers_vectors(sizes,
-                                            integers);
+    static const std::shared_ptr<cauldron::Integers<size_t>> &sizes =
+        std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                     max_size);
+    cauldron::Vectors<T> numbers_vectors(sizes,
+                                         numbers);
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
-    auto vector = integers_vectors();
+    auto vector = numbers_vectors();
 
     REQUIRE(size_stays_in_range(vector.size()));
-    REQUIRE(integers_stay_in_range(vector));
+    REQUIRE(numbers_stay_in_range(vector));
   }
 
   SECTION("filtration") {
@@ -82,11 +85,11 @@ static void check_integers_vectors_strategy() {
      */
     static size_t min_size = constants::min_capacity;
     static size_t max_size = sufficient_capacity(1, 2, // odd or even
-                                                 strategies::MAX_CYCLES);
-    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
-                                                                max_size);
-    strategies::Vectors<T> vectors(sizes,
-                                   integers);
+                                                 cauldron::MAX_CYCLES);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                              max_size);
+    cauldron::Vectors<T> vectors(sizes,
+                                 numbers);
 
     SECTION("parity") {
       auto even_vectors = vectors.filter(is_even_vector);
@@ -99,8 +102,8 @@ static void check_integers_vectors_strategy() {
 
       REQUIRE(size_stays_in_range(even_vector.size()));
       REQUIRE(size_stays_in_range(odd_vector.size()));
-      REQUIRE(integers_stay_in_range(even_vector));
-      REQUIRE(integers_stay_in_range(odd_vector));
+      REQUIRE(numbers_stay_in_range(even_vector));
+      REQUIRE(numbers_stay_in_range(odd_vector));
       REQUIRE(is_even_vector(even_vector));
       REQUIRE(is_odd_vector(odd_vector));
     }
@@ -110,12 +113,12 @@ static void check_integers_vectors_strategy() {
           vectors.filter(is_even_vector)->filter(is_odd_vector);
 
       REQUIRE_THROWS_AS((*invalid_vectors)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 
   SECTION("mapping") {
-    strategies::Converter<std::vector<T>> to_even_vector(
+    cauldron::Converter<std::vector<T>> to_even_vector(
         [&](const std::vector<T> &vector) -> std::vector<T> {
           auto result = std::vector<T>(vector.size());
           std::transform(vector.begin(),
@@ -124,7 +127,7 @@ static void check_integers_vectors_strategy() {
                          to_even<T>);
           return result;
         });
-    strategies::Converter<std::vector<T>> to_odd_vector(
+    cauldron::Converter<std::vector<T>> to_odd_vector(
         [&](const std::vector<T> &vector) -> std::vector<T> {
           auto result = std::vector<T>(vector.size());
           std::transform(vector.begin(),
@@ -140,11 +143,11 @@ static void check_integers_vectors_strategy() {
      */
     static size_t min_size = constants::min_capacity;
     static size_t max_size = sufficient_capacity(1, 2, // odd or even
-                                                 strategies::MAX_CYCLES);
-    auto sizes = std::make_shared<strategies::Integers<size_t>>(min_size,
-                                                                max_size);
-    strategies::Vectors<T> vectors(sizes,
-                                   integers);
+                                                 cauldron::MAX_CYCLES);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                              max_size);
+    cauldron::Vectors<T> vectors(sizes,
+                                 numbers);
 
     SECTION("parity") {
       auto even_vectors = vectors.map(to_even_vector);
@@ -157,8 +160,8 @@ static void check_integers_vectors_strategy() {
 
       REQUIRE(size_stays_in_range(even_vector.size()));
       REQUIRE(size_stays_in_range(odd_vector.size()));
-      REQUIRE(integers_stay_in_range(even_vector));
-      REQUIRE(integers_stay_in_range(odd_vector));
+      REQUIRE(numbers_stay_in_range(even_vector));
+      REQUIRE(numbers_stay_in_range(odd_vector));
       REQUIRE(is_even_vector(even_vector));
       REQUIRE(is_odd_vector(odd_vector));
     }
@@ -170,52 +173,52 @@ static void check_integers_vectors_strategy() {
           vectors.map(to_even_vector)->filter(is_odd_vector);
 
       REQUIRE_THROWS_AS((*invalid_even_vectors)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
       REQUIRE_THROWS_AS((*invalid_odd_vectors)(),
-                        strategies::OutOfCycles);
+                        cauldron::OutOfCycles);
     }
   }
 }
 
 
-TEST_CASE("\"vectors\" strategy", "[vectors]") {
+TEST_CASE("integers \"Vectors\" strategy", "[Vectors]") {
   SECTION("unsigned char") {
-    check_integers_vectors_strategy<unsigned char>();
+    check_strategy<unsigned char>();
   }
 
   SECTION("signed char") {
-    check_integers_vectors_strategy<signed char>();
+    check_strategy<signed char>();
   }
 
   SECTION("short int") {
-    check_integers_vectors_strategy<short>();
+    check_strategy<short>();
   }
 
   SECTION("unsigned short int") {
-    check_integers_vectors_strategy<unsigned short>();
+    check_strategy<unsigned short>();
   }
 
   SECTION("int") {
-    check_integers_vectors_strategy<int>();
+    check_strategy<int>();
   }
 
   SECTION("unsigned int") {
-    check_integers_vectors_strategy<unsigned>();
+    check_strategy<unsigned>();
   }
 
   SECTION("long int") {
-    check_integers_vectors_strategy<long>();
+    check_strategy<long>();
   }
 
   SECTION("unsigned long int") {
-    check_integers_vectors_strategy<unsigned long>();
+    check_strategy<unsigned long>();
   }
 
   SECTION("long long int") {
-    check_integers_vectors_strategy<long long>();
+    check_strategy<long long>();
   }
 
   SECTION("unsigned long long int") {
-    check_integers_vectors_strategy<unsigned long long>();
+    check_strategy<unsigned long long>();
   }
 }
