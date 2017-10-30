@@ -19,7 +19,7 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
       auto same_character = std::make_shared<cauldron::Characters>(
           single_character_string);
       cauldron::Strings same_character_strings(ones,
-                                                 same_character);
+                                               same_character);
 
       auto string = same_character_strings();
 
@@ -31,12 +31,12 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
     size_t min_length = 0;
 
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                  max_length);
+                                                                max_length);
     std::string alphabet_characters = factories::characters_string();
     auto alphabet = std::make_shared<cauldron::Characters>(
         alphabet_characters);
     cauldron::Strings strings(lengths,
-                                alphabet);
+                              alphabet);
 
     auto string = strings();
     auto stays_in_range = in_range_checker<size_t>(min_length,
@@ -54,11 +54,11 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
      */
     size_t min_length = constants::min_capacity;
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                  max_length);
+                                                                max_length);
     cauldron::Characters non_zero_characters(non_zero_characters_string);
     auto alphabetic_characters = non_zero_characters.filter(is_alphabetic);
     cauldron::Strings alphabetic(lengths,
-                                   std::move(alphabetic_characters));
+                                 std::move(alphabetic_characters));
 
     SECTION("case") {
       auto lower_strings = alphabetic.filter(is_lower_string);
@@ -91,11 +91,11 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
      */
     size_t min_length = constants::min_capacity;
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                  max_length);
+                                                                max_length);
     cauldron::Characters non_zero_characters(non_zero_characters_string);
     auto alphabetic_characters = non_zero_characters.filter(is_alphabetic);
     cauldron::Strings alphabetic(lengths,
-                                   std::move(alphabetic_characters));
+                                 std::move(alphabetic_characters));
 
     SECTION("case") {
       auto lower_strings = alphabetic.map(to_lower_string);

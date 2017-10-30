@@ -24,13 +24,13 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
     size_t min_size = 0;
     size_t max_size = 1;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto true_values = std::make_shared<cauldron::Booleans>(1.);
     auto false_values = std::make_shared<cauldron::Booleans>(0.);
     cauldron::Sets<bool> true_sets(sizes,
-                                     true_values);
+                                   true_values);
     cauldron::Sets<bool> false_sets(sizes,
-                                      false_values);
+                                    false_values);
 
     auto true_set = true_sets();
     auto false_set = false_sets();
@@ -51,10 +51,10 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
     size_t min_size = constants::min_capacity;
     size_t max_size = 2; // true or false;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto booleans = std::make_shared<cauldron::Booleans>();
     cauldron::Sets<bool> booleans_sets(sizes,
-                                         booleans);
+                                       booleans);
 
     SECTION("truthfulness") {
       auto true_sets = booleans_sets.filter(is_true_set);
@@ -106,10 +106,10 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
     size_t min_size = constants::min_capacity;
     size_t max_size = 2; // true or false;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto booleans = std::make_shared<cauldron::Booleans>();
     cauldron::Sets<bool> booleans_sets(sizes,
-                                         booleans);
+                                       booleans);
 
     SECTION("truthfulness") {
       auto false_sets = booleans_sets.map(to_false_set);

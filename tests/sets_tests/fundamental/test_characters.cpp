@@ -33,7 +33,7 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
       auto same_character = std::make_shared<cauldron::Characters>(
           single_character_string);
       cauldron::Sets<char> same_character_sets(ones,
-                                                 same_character);
+                                               same_character);
 
       auto same_character_set = same_character_sets();
 
@@ -51,11 +51,11 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
     size_t max_size = sufficient_set_size(characters_string.length(),
                                           cauldron::MAX_CYCLES);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto characters = std::make_shared<cauldron::Characters>(
         characters_string);
     cauldron::Sets<char> characters_sets(sizes,
-                                           characters);
+                                         characters);
     std::set<char> characters_domain(characters_string.begin(),
                                      characters_string.end());
 
@@ -86,11 +86,11 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
         constants::alphabetic_characters_count,
         cauldron::MAX_CYCLES);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Sets<char> alphabetic(sizes,
-                                      std::move(alphabetic_characters));
+                                    std::move(alphabetic_characters));
 
     SECTION("case") {
       auto lower_sets = alphabetic.filter(is_lower_set);
@@ -149,11 +149,11 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
         constants::alphabetic_characters_count,
         cauldron::MAX_CYCLES);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Sets<char> alphabetic(sizes,
-                                      std::move(alphabetic_characters));
+                                    std::move(alphabetic_characters));
 
     SECTION("case") {
       auto lower_sets = alphabetic.map(to_lower_set);

@@ -53,10 +53,10 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
     size_t max_size = constants::max_capacity;
     size_t min_length = 0;
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                  max_length);
+                                                                max_length);
 
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
 
     std::string alphabet_characters = factories::characters_string(
         constants::min_capacity,
@@ -64,9 +64,9 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
     auto alphabet = std::make_shared<cauldron::Characters>(
         alphabet_characters);
     auto strings = std::make_shared<cauldron::Strings>(lengths,
-                                                         alphabet);
+                                                       alphabet);
     cauldron::Sets<std::string> strings_sets(sizes,
-                                               strings);
+                                             strings);
 
     auto strings_set = strings_sets();
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
@@ -101,9 +101,9 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
     size_t max_size = min_size + 1;
     size_t min_length = constants::min_capacity;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                  max_length);
+                                                                max_length);
 
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
@@ -111,7 +111,7 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
         lengths,
         std::move(alphabetic_characters));
     cauldron::Sets<std::string> alphabetic(sizes,
-                                             alphabetic_strings);
+                                           alphabetic_strings);
 
     SECTION("case") {
       auto lower_sets = alphabetic.filter(is_lower_set);
@@ -181,9 +181,9 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
     size_t max_size = min_size + 1;
     size_t min_length = constants::min_capacity;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                  max_length);
+                                                                max_length);
 
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
@@ -191,7 +191,7 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
         lengths,
         std::move(alphabetic_characters));
     cauldron::Sets<std::string> alphabetic(sizes,
-                                             alphabetic_strings);
+                                           alphabetic_strings);
 
     SECTION("case") {
       auto lower_sets = alphabetic.map(to_lower_set);
