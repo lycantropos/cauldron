@@ -9,7 +9,7 @@
 
 
 template<typename T>
-static void check_integers_sets_strategy() {
+static void check_strategy() {
   cauldron::Requirement<std::set<T>> is_even_set(
       [&](std::set<T> set) -> bool {
         return std::all_of(set.begin(),
@@ -23,37 +23,36 @@ static void check_integers_sets_strategy() {
                            odd<T>);
       });
 
-  T min_value = std::numeric_limits<T>::min();
-  T max_value = std::numeric_limits<T>::max();
-  auto integers = std::make_shared<cauldron::Integers<T>>(min_value,
-                                                            max_value);
-  auto integer_stays_in_range = in_range_checker<T>(min_value,
-                                                    max_value);
-  auto integers_stay_in_range =
-      [&](const std::set<T> &integers_set) -> bool {
-        return std::all_of(integers_set.begin(),
-                           integers_set.end(),
-                           integer_stays_in_range);
-      };
+  // ``signed char`` is the smallest tested integer type
+  static signed char min_integer = std::is_unsigned<T>() ?
+                                   0 : std::numeric_limits<signed char>::min();
+  static signed char max_integer = std::numeric_limits<signed char>::max();
+  static auto numbers_range = factories::integers_range<int>(min_integer,
+                                                             max_integer);
+
+  T min_number = std::numeric_limits<T>::min();
+  T max_number = std::numeric_limits<T>::max();
+  auto numbers = std::make_shared<cauldron::Integers<T>>(min_number,
+                                                         max_number);
+  auto number_stays_in_range = in_range_checker<T>(min_number,
+                                                   max_number);
+  auto numbers_stay_in_range = [&](const std::set<T> &set) -> bool {
+    return std::all_of(set.begin(),
+                       set.end(),
+                       number_stays_in_range);
+  };
 
   SECTION("single element domain") {
-    // ``signed char`` is the smallest tested integer type
-    static int min_integer = std::numeric_limits<signed char>::min();
-    static int max_integer = std::numeric_limits<signed char>::max();
-    static const auto integers_range =
-        factories::integers_range<int>(min_integer,
-                                       max_integer);
     auto ones = std::make_shared<cauldron::Just<size_t>>(1);
-    for (T integer: integers_range) {
-      auto single_integer_set = std::set<T>{integer};
-      auto same_integer = std::make_shared<cauldron::Just<T>>(integer);
-      cauldron::Sets<T> same_integer_sets(ones,
-                                            same_integer);
+    for (const T number: numbers_range) {
+      auto single_number_set = std::set<T>{number};
+      auto same_number = std::make_shared<cauldron::Just<T>>(number);
+      cauldron::Sets<T> same_number_sets(ones,
+                                         same_number);
 
-      auto set = same_integer_sets();
+      auto numbers_set = same_number_sets();
 
-      bool sets_are_equal = set == single_integer_set;
-      REQUIRE(sets_are_equal);
+      REQUIRE(numbers_set == single_number_set);
     }
   }
 
@@ -62,15 +61,15 @@ static void check_integers_sets_strategy() {
     static size_t max_size = constants::max_capacity;
     static const auto sizes =
         std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                       max_size);
-    cauldron::Sets<T> integers_sets(sizes,
-                                      integers);
+                                                     max_size);
+    cauldron::Sets<T> numbers_sets(sizes,
+                                   numbers);
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
-    auto set = integers_sets();
+    auto set = numbers_sets();
 
     REQUIRE(size_stays_in_range(set.size()));
-    REQUIRE(integers_stay_in_range(set));
+    REQUIRE(numbers_stay_in_range(set));
   }
 
   SECTION("filtration") {
@@ -82,9 +81,9 @@ static void check_integers_sets_strategy() {
     static size_t max_size = sufficient_capacity(1, 2, // odd or even
                                                  cauldron::MAX_CYCLES);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     cauldron::Sets<T> sets(sizes,
-                             integers);
+                           numbers);
 
     SECTION("parity") {
       auto even_sets = sets.filter(is_even_set);
@@ -97,8 +96,8 @@ static void check_integers_sets_strategy() {
 
       REQUIRE(size_stays_in_range(even_set.size()));
       REQUIRE(size_stays_in_range(odd_set.size()));
-      REQUIRE(integers_stay_in_range(even_set));
-      REQUIRE(integers_stay_in_range(odd_set));
+      REQUIRE(numbers_stay_in_range(even_set));
+      REQUIRE(numbers_stay_in_range(odd_set));
       REQUIRE(is_even_set(even_set));
       REQUIRE(is_odd_set(odd_set));
     }
@@ -143,9 +142,9 @@ static void check_integers_sets_strategy() {
     static size_t max_size = sufficient_capacity(1, 2, // odd or even
                                                  cauldron::MAX_CYCLES);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     cauldron::Sets<T> sets(sizes,
-                             integers);
+                           numbers);
 
     SECTION("parity") {
       auto even_sets = sets.map(to_even_set);
@@ -158,8 +157,8 @@ static void check_integers_sets_strategy() {
 
       REQUIRE(size_stays_in_range(even_set.size()));
       REQUIRE(size_stays_in_range(odd_set.size()));
-      REQUIRE(integers_stay_in_range(even_set));
-      REQUIRE(integers_stay_in_range(odd_set));
+      REQUIRE(numbers_stay_in_range(even_set));
+      REQUIRE(numbers_stay_in_range(odd_set));
       REQUIRE(is_even_set(even_set));
       REQUIRE(is_odd_set(odd_set));
     }
@@ -179,42 +178,42 @@ static void check_integers_sets_strategy() {
 
 TEST_CASE("integers \"Sets\" strategy", "[Sets]") {
   SECTION("unsigned char") {
-    check_integers_sets_strategy<unsigned char>();
+    check_strategy<unsigned char>();
   }
 
   SECTION("signed char") {
-    check_integers_sets_strategy<signed char>();
+    check_strategy<signed char>();
   }
 
   SECTION("short int") {
-    check_integers_sets_strategy<short>();
+    check_strategy<short>();
   }
 
   SECTION("unsigned short int") {
-    check_integers_sets_strategy<unsigned short>();
+    check_strategy<unsigned short>();
   }
 
   SECTION("int") {
-    check_integers_sets_strategy<int>();
+    check_strategy<int>();
   }
 
   SECTION("unsigned int") {
-    check_integers_sets_strategy<unsigned>();
+    check_strategy<unsigned>();
   }
 
   SECTION("long int") {
-    check_integers_sets_strategy<long>();
+    check_strategy<long>();
   }
 
   SECTION("unsigned long int") {
-    check_integers_sets_strategy<unsigned long>();
+    check_strategy<unsigned long>();
   }
 
   SECTION("long long int") {
-    check_integers_sets_strategy<long long>();
+    check_strategy<long long>();
   }
 
   SECTION("unsigned long long int") {
-    check_integers_sets_strategy<unsigned long long>();
+    check_strategy<unsigned long long>();
   }
 }
