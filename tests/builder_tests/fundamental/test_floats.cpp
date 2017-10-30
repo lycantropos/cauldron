@@ -4,8 +4,8 @@
 #include "../../../cauldron/floats.h"
 #include "../../../cauldron/builder.h"
 #include "../../predicates.h"
-#include "../wrapper.h"
 #include "../../operators.h"
+#include "../wrapper.h"
 
 
 template<typename T>

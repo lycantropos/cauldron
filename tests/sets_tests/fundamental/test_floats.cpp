@@ -5,8 +5,8 @@
 #include "../../../cauldron/sets.h"
 #include "../../factories.h"
 #include "../../predicates.h"
-#include "../../utils.h"
 #include "../../operators.h"
+#include "../../utils.h"
 
 
 template<typename T>
