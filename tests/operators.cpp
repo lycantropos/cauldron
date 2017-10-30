@@ -1,5 +1,5 @@
-#include <string>
 #include <algorithm>
+#include <string>
 #include "operators.h"
 
 
