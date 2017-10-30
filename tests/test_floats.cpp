@@ -7,31 +7,31 @@
 
 template<typename T>
 static void check_strategy() {
-  T min_possible_value = std::numeric_limits<T>::lowest();
-  T min_possible_positive_value = std::numeric_limits<T>::min();
-  T max_possible_value = std::numeric_limits<T>::max();
+  T min_possible_number = std::numeric_limits<T>::lowest();
+  T min_possible_positive_number = std::numeric_limits<T>::min();
+  T max_possible_number = std::numeric_limits<T>::max();
 
   static std::random_device random_device;
 
   auto distribution = std::uniform_real_distribution<T>(
-      min_possible_value,
-      -min_possible_positive_value);
-  T min_value = distribution(random_device);
-  T max_value = max_possible_value + min_value;
-  cauldron::Floats<T> numbers(min_value,
-                                max_value);
+      min_possible_number,
+      -min_possible_positive_number);
+  T min_number = distribution(random_device);
+  T max_number = max_possible_number + min_number;
+  cauldron::Floats<T> numbers(min_number,
+                              max_number);
 
   SECTION("stays in range") {
     T number = numbers();
-    auto stays_in_range = in_range_checker<T>(min_value,
-                                              max_value);
+    auto stays_in_range = in_range_checker<T>(min_number,
+                                              max_number);
 
     REQUIRE(stays_in_range(number));
   }
 
   SECTION("invalid min/max values") {
-    REQUIRE_THROWS_AS(cauldron::Floats<T>(min_value,
-                                            max_possible_value),
+    REQUIRE_THROWS_AS(cauldron::Floats<T>(min_number,
+                                          max_possible_number),
                       std::invalid_argument);
   }
 
