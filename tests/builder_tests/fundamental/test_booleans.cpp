@@ -29,6 +29,21 @@ TEST_CASE("booleans \"Builder\" strategy", "[Builder]") {
     REQUIRE(is_true_wrapper(true_wrapper));
   }
 
+  SECTION("union") {
+    auto false_values = std::make_shared<cauldron::Booleans>(0.);
+    auto true_values = std::make_shared<cauldron::Booleans>(1.);
+    cauldron::Builder<BooleanWrapper, bool> false_wrappers(false_values);
+    cauldron::Builder<BooleanWrapper, bool> true_wrappers(true_values);
+    auto still_false_wrappers = false_wrappers || false_wrappers;
+    auto still_true_wrappers = true_wrappers || true_wrappers;
+
+    auto false_wrapper = still_false_wrappers();
+    auto true_wrapper = still_true_wrappers();
+
+    REQUIRE(is_false_wrapper(false_wrapper));
+    REQUIRE(is_true_wrapper(true_wrapper));
+  }
+
   SECTION("filtration") {
     auto booleans = std::make_shared<cauldron::Booleans>();
     cauldron::Builder<BooleanWrapper, bool> booleans_wrappers(booleans);

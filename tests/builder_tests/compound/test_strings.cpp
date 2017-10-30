@@ -66,6 +66,51 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
                                     alphabet_characters));
   }
 
+  SECTION("union") {
+    SECTION("single character alphabet") {
+      auto ones = std::make_shared<cauldron::Just<size_t>>(1);
+      for (char single_character: non_zero_characters) {
+        std::string single_character_string{single_character};
+        auto same_character = std::make_shared<cauldron::Characters>(
+            single_character_string);
+        auto same_character_strings = std::make_shared<cauldron::Strings>(
+            ones,
+            same_character);
+        cauldron::Builder<StringWrapper, std::string>
+            same_character_strings_wrappers(same_character_strings);
+        auto still_same_character_strings_wrappers =
+            same_character_strings_wrappers || same_character_strings_wrappers;
+
+        auto wrapper = still_same_character_strings_wrappers();
+
+        REQUIRE(wrapper == StringWrapper(single_character_string));
+      }
+    }
+
+    SECTION("multiple characters alphabet") {
+      size_t min_length = 0;
+      auto length_stays_in_range = in_range_checker<size_t>(min_length,
+                                                            max_length);
+      auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
+                                                                  max_length);
+      std::string alphabet_characters = factories::characters_string(
+          constants::min_capacity,
+          constants::max_capacity);
+      auto alphabet = std::make_shared<cauldron::Characters>(
+          alphabet_characters);
+      auto strings = std::make_shared<cauldron::Strings>(lengths,
+                                                         alphabet);
+      cauldron::Builder<StringWrapper, std::string> strings_wrappers(strings);
+      auto still_strings_wrappers = strings_wrappers || strings_wrappers;
+
+      auto wrapper = still_strings_wrappers();
+
+      REQUIRE(length_stays_in_range(wrapper.field().length()));
+      REQUIRE(is_string_from_alphabet(wrapper.field(),
+                                      alphabet_characters));
+    }
+  }
+
   SECTION("filtration") {
     /* if ``min_length``/``min_size`` equals to zero
      * than "impossible" section would not raise exception

@@ -71,6 +71,56 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
     REQUIRE(is_vector_from_characters_domain(vector));
   }
 
+  SECTION("union") {
+    SECTION("single character") {
+      auto ones = std::make_shared<cauldron::Just<size_t>>(1);
+      for (char single_character: non_zero_characters) {
+        std::string single_character_string{single_character};
+        auto same_character = std::make_shared<cauldron::Characters>(
+            single_character_string);
+        cauldron::Vectors<char> same_character_vectors(ones,
+                                                       same_character);
+        auto still_same_character_vectors =
+            same_character_vectors || same_character_vectors;
+
+        auto vector = same_character_vectors();
+
+        REQUIRE(vector == std::vector<char>(vector.size(), single_character));
+      }
+    }
+
+    SECTION("multiple characters") {
+      size_t min_size = 0;
+      size_t max_size = constants::max_capacity;
+      auto stays_in_range = in_range_checker<size_t>(min_size,
+                                                     max_size);
+      std::string characters_string = factories::characters_string();
+      std::vector<char> characters_domain(characters_string.begin(),
+                                          characters_string.end());
+      auto is_character_from_domain = [=](char character) -> bool {
+        return is_object_in_vector<char>(character, characters_domain);
+      };
+      auto is_vector_from_characters_domain =
+          [&](const std::vector<char> &vector) -> bool {
+            return std::all_of(vector.begin(),
+                               vector.end(),
+                               is_character_from_domain);
+          };
+      auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                                max_size);
+      auto characters = std::make_shared<cauldron::Characters>(
+          characters_string);
+      cauldron::Vectors<char> characters_vectors(sizes,
+                                                 characters);
+      auto still_characters_vectors = characters_vectors || characters_vectors;
+
+      auto vector = still_characters_vectors();
+
+      REQUIRE(stays_in_range(vector.size()));
+      REQUIRE(is_vector_from_characters_domain(vector));
+    }
+  }
+
   SECTION("filtration") {
     /* if `min_size`` equals to zero
      * than "impossible" section would not raise exception

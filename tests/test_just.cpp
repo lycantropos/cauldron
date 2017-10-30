@@ -4,6 +4,9 @@
 
 template<typename T>
 static void check_strategy() {
+  static_assert(std::is_default_constructible<T>(),
+                "Expected type with default constructor.");
+
   T value{};
   cauldron::Just<T> same_value(value);
 
@@ -11,6 +14,14 @@ static void check_strategy() {
     bool value_is_the_same = same_value() == value;
 
     REQUIRE(value_is_the_same);
+  }
+
+  SECTION("union") {
+    auto still_same_value = same_value || same_value;
+
+    bool value_is_still_the_same = still_same_value() == value;
+
+    REQUIRE(value_is_still_the_same);
   }
 }
 

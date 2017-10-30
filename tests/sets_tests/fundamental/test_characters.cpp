@@ -73,6 +73,58 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
     REQUIRE(is_set_from_characters_domain(set));
   }
 
+  SECTION("union") {
+    SECTION("single character") {
+      auto ones = std::make_shared<cauldron::Just<size_t>>(1);
+      for (char single_character: non_zero_characters) {
+        std::string single_character_string{single_character};
+        auto same_character = std::make_shared<cauldron::Characters>(
+            single_character_string);
+        cauldron::Sets<char> same_character_sets(ones,
+                                                 same_character);
+        auto still_same_character_sets =
+            same_character_sets || same_character_sets;
+
+        auto same_character_set = still_same_character_sets();
+
+        REQUIRE(same_character_set.size() == 1);
+        REQUIRE(same_character_set == std::set<char>{single_character});
+      }
+    }
+
+    SECTION("multiple characters") {
+      std::string characters_string = factories::characters_string();
+      std::set<char> characters_domain(characters_string.begin(),
+                                       characters_string.end());
+      auto is_character_from_domain = [=](char character) -> bool {
+        return is_object_in_set<char>(character, characters_domain);
+      };
+      auto is_set_from_characters_domain =
+          [&](const std::set<char> &set) -> bool {
+            return std::all_of(set.begin(),
+                               set.end(),
+                               is_character_from_domain);
+          };
+      size_t min_size = 0;
+      size_t max_size = sufficient_set_size(characters_string.length(),
+                                            cauldron::MAX_CYCLES);
+      auto stays_in_range = in_range_checker<size_t>(min_size,
+                                                     max_size);
+      auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                                max_size);
+      auto characters = std::make_shared<cauldron::Characters>(
+          characters_string);
+      cauldron::Sets<char> characters_sets(sizes,
+                                           characters);
+      auto still_characters_sets = characters_sets || characters_sets;
+
+      auto set = still_characters_sets();
+
+      REQUIRE(stays_in_range(set.size()));
+      REQUIRE(is_set_from_characters_domain(set));
+    }
+  }
+
   SECTION("filtration") {
     /* if `min_size`` equals to zero
      * than "impossible" section would not raise exception

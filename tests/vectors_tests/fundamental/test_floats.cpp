@@ -66,6 +66,24 @@ static void check_strategy() {
     REQUIRE(numbers_stay_in_range(vector));
   }
 
+  SECTION("union") {
+    static size_t min_size = 0;
+    static size_t max_size = constants::max_capacity;
+    auto size_stays_in_range = in_range_checker<size_t>(min_size,
+                                                        max_size);
+    static const auto sizes =
+        std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                     max_size);
+    cauldron::Vectors<T> numbers_vectors(sizes,
+                                         numbers);
+    auto still_numbers_vectors = numbers_vectors || numbers_vectors;
+
+    auto vector = still_numbers_vectors();
+
+    REQUIRE(size_stays_in_range(vector.size()));
+    REQUIRE(numbers_stay_in_range(vector));
+  }
+
   SECTION("filtration") {
     /* if `min_size`` equals to zero
      * than "impossible" section would not raise exception

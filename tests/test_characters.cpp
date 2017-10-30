@@ -38,6 +38,19 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
                       std::invalid_argument);
   }
 
+  SECTION("union") {
+    for (char single_character: non_zero_characters) {
+      std::string single_character_string{single_character};
+      cauldron::Characters same_character(single_character_string);
+      auto still_same_character = same_character || same_character;
+
+      auto character = still_same_character();
+
+      REQUIRE(character == single_character);
+    }
+
+  }
+
   SECTION("filtration") {
     cauldron::Characters non_zero(non_zero_characters);
 

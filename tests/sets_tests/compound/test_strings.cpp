@@ -90,6 +90,72 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
                         }));
   }
 
+  SECTION("union") {
+    SECTION("single character alphabet") {
+      auto ones = std::make_shared<cauldron::Just<size_t>>(1);
+      for (char single_character: non_zero_characters) {
+        std::string single_character_string{single_character};
+        auto same_character = std::make_shared<cauldron::Characters>(
+            single_character_string);
+        auto same_character_strings = std::make_shared<cauldron::Strings>(
+            ones,
+            same_character);
+        cauldron::Sets<std::string> same_character_strings_sets(
+            ones,
+            same_character_strings);
+        auto still_same_character_strings_sets =
+            same_character_strings_sets || same_character_strings_sets;
+
+        auto set = still_same_character_strings_sets();
+
+        REQUIRE(set == std::set<std::string>{single_character_string});
+      }
+    }
+
+    SECTION("multiple characters alphabet") {
+      size_t min_size = 0;
+      size_t max_size = constants::max_capacity;
+      auto size_stays_in_range = in_range_checker<size_t>(min_size,
+                                                          max_size);
+      size_t min_length = 0;
+      auto length_stays_in_range = in_range_checker<size_t>(min_length,
+                                                            max_length);
+      auto lengths_stay_in_range =
+          [&](const std::set<std::string> &set) -> bool {
+            return std::all_of(set.begin(),
+                               set.end(),
+                               [&](const std::string &string) -> bool {
+                                 return length_stays_in_range(string.length());
+                               });
+          };
+      auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
+                                                                  max_length);
+      auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                                max_size);
+      std::string alphabet_characters = factories::characters_string(
+          constants::min_capacity,
+          constants::max_capacity);
+      auto alphabet = std::make_shared<cauldron::Characters>(
+          alphabet_characters);
+      auto strings = std::make_shared<cauldron::Strings>(lengths,
+                                                         alphabet);
+      cauldron::Sets<std::string> strings_sets(sizes,
+                                               strings);
+      auto still_strings_sets = strings_sets || strings_sets;
+
+      auto set = still_strings_sets();
+
+      REQUIRE(size_stays_in_range(set.size()));
+      REQUIRE(lengths_stay_in_range(set));
+      REQUIRE(std::all_of(set.begin(),
+                          set.end(),
+                          [&](const std::string &string) -> bool {
+                            return is_string_from_alphabet(string,
+                                                           alphabet_characters);
+                          }));
+    }
+  }
+
   SECTION("filtration") {
     /* if ``min_length``/``min_size`` equals to zero
      * than "impossible" section would not raise exception
