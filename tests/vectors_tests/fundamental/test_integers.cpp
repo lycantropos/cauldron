@@ -48,15 +48,15 @@ static void check_strategy() {
   SECTION("single element domain") {
     cauldron::Just<size_t> ones(1);
     for (T number: numbers_range) {
-      auto single_number_vector = std::vector<T>{number};
+      std::vector<T> single_number_vector{number};
       cauldron::Just<T> same_number(number);
       cauldron::Vectors<T> same_number_vectors(
           std::make_shared<cauldron::Just<size_t>>(ones),
           std::make_shared<cauldron::Just<T>>(same_number));
 
-      auto same_number_vector = same_number_vectors();
+      auto vector = same_number_vectors();
 
-      bool vectors_are_equal = same_number_vector == single_number_vector;
+      bool vectors_are_equal = vector == single_number_vector;
       REQUIRE(vectors_are_equal);
     }
   }

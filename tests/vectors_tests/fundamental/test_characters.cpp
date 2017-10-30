@@ -35,10 +35,10 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
       cauldron::Vectors<char> same_character_vectors(ones,
                                                      same_character);
 
-      auto same_character_vector = same_character_vectors();
+      auto vector = same_character_vectors();
 
-      REQUIRE(std::all_of(same_character_vector.begin(),
-                          same_character_vector.end(),
+      REQUIRE(std::all_of(vector.begin(),
+                          vector.end(),
                           [=](char character) -> bool {
                             return character == single_character;
                           }));
@@ -58,7 +58,7 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
     std::vector<char> characters_domain(characters_string.begin(),
                                         characters_string.end());
 
-    auto characters_vector = characters_vectors();
+    auto vector = characters_vectors();
     auto stays_in_range = in_range_checker<size_t>(min_size,
                                                    max_size);
     auto is_character_from_domain = [=](char character) -> bool {
@@ -71,8 +71,8 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
                              is_character_from_domain);
         };
 
-    REQUIRE(stays_in_range(characters_vector.size()));
-    REQUIRE(is_vector_from_characters_domain(characters_vector));
+    REQUIRE(stays_in_range(vector.size()));
+    REQUIRE(is_vector_from_characters_domain(vector));
   }
 
   SECTION("filtration") {

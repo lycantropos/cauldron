@@ -69,7 +69,7 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
     cauldron::Vectors<std::string> strings_vectors(sizes,
                                                    strings);
 
-    auto strings_vector = strings_vectors();
+    auto vector = strings_vectors();
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
     auto length_stays_in_range = in_range_checker<size_t>(min_length,
@@ -83,10 +83,10 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
                              });
         };
 
-    REQUIRE(size_stays_in_range(strings_vector.size()));
-    REQUIRE(lengths_stay_in_range(strings_vector));
-    REQUIRE(std::all_of(strings_vector.begin(),
-                        strings_vector.end(),
+    REQUIRE(size_stays_in_range(vector.size()));
+    REQUIRE(lengths_stay_in_range(vector));
+    REQUIRE(std::all_of(vector.begin(),
+                        vector.end(),
                         [&](const std::string &string) -> bool {
                           return is_string_from_alphabet(string,
                                                          alphabet_characters);
