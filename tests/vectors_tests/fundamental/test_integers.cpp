@@ -180,7 +180,7 @@ static void check_strategy() {
 }
 
 
-TEST_CASE("\"vectors\" strategy", "[vectors]") {
+TEST_CASE("integers \"Vectors\" strategy", "[Vectors]") {
   SECTION("unsigned char") {
     check_strategy<unsigned char>();
   }
