@@ -16,8 +16,8 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
     auto still_false_values = false_values || false_values;
     auto still_true_values = true_values || true_values;
 
-    REQUIRE((still_false_values)() == false_values());
-    REQUIRE((still_true_values)() == true_values());
+    REQUIRE(!(still_false_values)());
+    REQUIRE(still_true_values());
   }
 
   SECTION("filtration") {
@@ -25,8 +25,8 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
       auto still_false_values = false_values.filter(negate);
       auto still_true_values = true_values.filter(identity);
 
-      REQUIRE((*still_false_values)() == false_values());
-      REQUIRE((*still_true_values)() == true_values());
+      REQUIRE(!(*still_false_values)());
+      REQUIRE((*still_true_values)());
     }
 
     SECTION("impossible") {
@@ -46,9 +46,9 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
     auto now_true_values = still_false_values->map(negate);
     auto now_false_values = still_true_values->map(negate);
 
-    REQUIRE((*still_false_values)() == false_values());
-    REQUIRE((*still_true_values)() == true_values());
-    REQUIRE((*now_true_values)() != false_values());
-    REQUIRE((*now_false_values)() != true_values());
+    REQUIRE(!(*still_false_values)());
+    REQUIRE((*still_true_values)());
+    REQUIRE((*now_true_values)());
+    REQUIRE(!(*now_false_values)());
   }
 }
