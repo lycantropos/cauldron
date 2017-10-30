@@ -13,14 +13,14 @@
 TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
   using StringWrapper = Wrapper<std::string>;
 
-  auto is_lower_wrapper =
+  cauldron::Requirement<StringWrapper> is_lower_wrapper(
       [&](const StringWrapper &wrapper) -> bool {
         return is_lower_string(wrapper.field());
-      };
-  auto is_upper_wrapper =
+      });
+  cauldron::Requirement<StringWrapper> is_upper_wrapper(
       [&](const StringWrapper &wrapper) -> bool {
         return is_upper_string(wrapper.field());
-      };
+      });
 
   size_t max_length = constants::max_capacity;
 
@@ -48,14 +48,14 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
   SECTION("multiple characters alphabet") {
     size_t min_length = 0;
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                  max_length);
+                                                                max_length);
     std::string alphabet_characters = factories::characters_string(
         constants::min_capacity,
         constants::max_capacity);
     auto alphabet = std::make_shared<cauldron::Characters>(
         alphabet_characters);
     auto strings = std::make_shared<cauldron::Strings>(lengths,
-                                                         alphabet);
+                                                       alphabet);
     cauldron::Builder<StringWrapper, std::string> strings_wrappers(strings);
 
     auto string_wrapper = strings_wrappers();
@@ -76,9 +76,9 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
     size_t max_size = min_size + 1;
     size_t min_length = constants::min_capacity;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                  max_length);
+                                                                max_length);
 
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
@@ -132,9 +132,9 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
     size_t max_size = min_size + 1;
     size_t min_length = constants::min_capacity;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                  max_length);
+                                                                max_length);
 
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);

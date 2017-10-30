@@ -12,12 +12,14 @@ template<typename T>
 static void check_strategy() {
   using IntegerWrapper = Wrapper<T>;
 
-  auto is_even_wrapper = [&](IntegerWrapper wrapper) -> bool {
-    return even<T>(wrapper.field());
-  };
-  auto is_odd_wrapper = [&](IntegerWrapper wrapper) -> bool {
-    return odd<T>(wrapper.field());
-  };
+  cauldron::Requirement<IntegerWrapper> is_even_wrapper(
+      [&](IntegerWrapper wrapper) -> bool {
+        return even<T>(wrapper.field());
+      });
+  cauldron::Requirement<IntegerWrapper> is_odd_wrapper(
+      [&](IntegerWrapper wrapper) -> bool {
+        return odd<T>(wrapper.field());
+      });
 
   // ``signed char`` is the smallest tested integer type
   static signed char min_integer = std::numeric_limits<signed char>::min();

@@ -13,16 +13,18 @@
 
 template<typename T>
 static void check_strategy() {
-  auto is_even_vector = [&](std::vector<T> vector) -> bool {
-    return std::all_of(vector.begin(),
-                       vector.end(),
-                       even<T>);
-  };
-  auto is_odd_vector = [&](std::vector<T> vector) -> bool {
-    return std::all_of(vector.begin(),
-                       vector.end(),
-                       odd<T>);
-  };
+  cauldron::Requirement<std::vector<T>> is_even_vector(
+      [&](std::vector<T> vector) -> bool {
+        return std::all_of(vector.begin(),
+                           vector.end(),
+                           even<T>);
+      });
+  cauldron::Requirement<std::vector<T>> is_odd_vector(
+      [&](std::vector<T> vector) -> bool {
+        return std::all_of(vector.begin(),
+                           vector.end(),
+                           odd<T>);
+      });
 
   // ``signed char`` is the smallest tested integer type
   static signed char min_integer = std::numeric_limits<signed char>::min();

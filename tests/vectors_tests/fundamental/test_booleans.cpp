@@ -11,28 +11,30 @@
 
 
 TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
-  auto is_false_vector = [&](std::vector<bool> vector) -> bool {
-    return std::all_of(vector.begin(),
-                       vector.end(),
-                       negate);
-  };
-  auto is_true_vector = [&](std::vector<bool> vector) -> bool {
-    return std::all_of(vector.begin(),
-                       vector.end(),
-                       identity);
-  };
+  cauldron::Requirement<std::vector<bool>> is_false_vector(
+      [&](std::vector<bool> vector) -> bool {
+        return std::all_of(vector.begin(),
+                           vector.end(),
+                           negate);
+      });
+  cauldron::Requirement<std::vector<bool>> is_true_vector(
+      [&](std::vector<bool> vector) -> bool {
+        return std::all_of(vector.begin(),
+                           vector.end(),
+                           identity);
+      });
 
   SECTION("single element domain") {
     size_t min_size = 0;
     size_t max_size = constants::max_capacity;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto true_values = std::make_shared<cauldron::Booleans>(1.);
     auto false_values = std::make_shared<cauldron::Booleans>(0.);
     cauldron::Vectors<bool> true_vectors(sizes,
-                                           true_values);
+                                         true_values);
     cauldron::Vectors<bool> false_vectors(sizes,
-                                            false_values);
+                                          false_values);
 
     auto true_vector = true_vectors();
     auto false_vector = false_vectors();
@@ -54,10 +56,10 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
     size_t max_size = sufficient_capacity(1, 2, // true or false
                                           cauldron::MAX_CYCLES);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto booleans = std::make_shared<cauldron::Booleans>();
     cauldron::Vectors<bool> booleans_vectors(sizes,
-                                               booleans);
+                                             booleans);
 
     SECTION("truthfulness") {
       auto true_vectors = booleans_vectors.filter(is_true_vector);
@@ -107,10 +109,10 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
     size_t min_size = constants::min_capacity;
     size_t max_size = constants::max_capacity;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto booleans = std::make_shared<cauldron::Booleans>();
     cauldron::Vectors<bool> booleans_vectors(sizes,
-                                               booleans);
+                                             booleans);
 
     SECTION("truthfulness") {
       auto false_vectors = booleans_vectors.map(to_false_vector);

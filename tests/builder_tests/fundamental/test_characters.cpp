@@ -11,12 +11,14 @@
 TEST_CASE("characters \"Builder\" strategy", "[Builder]") {
   using CharacterWrapper = Wrapper<char>;
 
-  auto is_lower_wrapper = [&](const CharacterWrapper &wrapper) -> bool {
-    return is_lower(wrapper.field());
-  };
-  auto is_upper_wrapper = [&](const CharacterWrapper &wrapper) -> bool {
-    return is_upper(wrapper.field());
-  };
+  cauldron::Requirement<CharacterWrapper> is_lower_wrapper(
+      [&](const CharacterWrapper &wrapper) -> bool {
+        return is_lower(wrapper.field());
+      });
+  cauldron::Requirement<CharacterWrapper> is_upper_wrapper(
+      [&](const CharacterWrapper &wrapper) -> bool {
+        return is_upper(wrapper.field());
+      });
 
   std::string non_zero_characters = factories::non_zero_characters();
 
@@ -41,8 +43,7 @@ TEST_CASE("characters \"Builder\" strategy", "[Builder]") {
     std::string characters_string = factories::characters_string();
     auto characters = std::make_shared<cauldron::Characters>(
         characters_string);
-    cauldron::Builder<CharacterWrapper, char>
-        characters_wrappers(characters);
+    cauldron::Builder<CharacterWrapper, char> characters_wrappers(characters);
     std::set<char> characters_domain(characters_string.begin(),
                                      characters_string.end());
 

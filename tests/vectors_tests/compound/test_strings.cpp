@@ -9,19 +9,20 @@
 #include "../../predicates.h"
 #include "../../operators.h"
 
+
 TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
-  auto is_lower_vector =
+  cauldron::Requirement<std::vector<std::string>> is_lower_vector(
       [&](const std::vector<std::string> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
                            is_lower_string);
-      };
-  auto is_upper_vector =
+      });
+  cauldron::Requirement<std::vector<std::string>> is_upper_vector(
       [&](const std::vector<std::string> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
                            is_upper_string);
-      };
+      });
 
   size_t max_length = constants::max_capacity;
 
@@ -53,10 +54,10 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
     size_t max_size = constants::max_capacity;
     size_t min_length = 0;
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                  max_length);
+                                                                max_length);
 
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
 
     std::string alphabet_characters = factories::characters_string(
         constants::min_capacity,
@@ -64,9 +65,9 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
     auto alphabet = std::make_shared<cauldron::Characters>(
         alphabet_characters);
     auto strings = std::make_shared<cauldron::Strings>(lengths,
-                                                         alphabet);
+                                                       alphabet);
     cauldron::Vectors<std::string> strings_vectors(sizes,
-                                                     strings);
+                                                   strings);
 
     auto strings_vector = strings_vectors();
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
@@ -101,9 +102,9 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
     size_t max_size = min_size + 1;
     size_t min_length = constants::min_capacity;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                  max_length);
+                                                                max_length);
 
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters_string)
@@ -112,7 +113,7 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
         lengths,
         std::move(alphabetic_characters));
     cauldron::Vectors<std::string> alphabetic(sizes,
-                                                alphabetic_strings);
+                                              alphabetic_strings);
 
     SECTION("case") {
       auto lower_vectors = alphabetic.filter(is_lower_vector);
@@ -178,9 +179,9 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
     size_t max_size = min_size + 1;
     size_t min_length = constants::min_capacity;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                  max_length);
+                                                                max_length);
 
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters_string)
@@ -189,7 +190,7 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
         lengths,
         std::move(alphabetic_characters));
     cauldron::Vectors<std::string> alphabetic(sizes,
-                                                alphabetic_strings);
+                                              alphabetic_strings);
 
     SECTION("case") {
       auto lower_vectors = alphabetic.map(to_lower_vector);

@@ -11,16 +11,18 @@
 
 
 TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
-  auto is_lower_vector = [&](const std::vector<char> vector) -> bool {
-    return std::all_of(vector.begin(),
-                       vector.end(),
-                       is_lower);
-  };
-  auto is_upper_vector = [&](const std::vector<char> vector) -> bool {
-    return std::all_of(vector.begin(),
-                       vector.end(),
-                       is_upper);
-  };
+  cauldron::Requirement<std::vector<char>> is_lower_vector(
+      [&](const std::vector<char> vector) -> bool {
+        return std::all_of(vector.begin(),
+                           vector.end(),
+                           is_lower);
+      });
+  cauldron::Requirement<std::vector<char>> is_upper_vector(
+      [&](const std::vector<char> vector) -> bool {
+        return std::all_of(vector.begin(),
+                           vector.end(),
+                           is_upper);
+      });
 
   std::string non_zero_characters = factories::non_zero_characters();
 
@@ -31,7 +33,7 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
       auto same_character = std::make_shared<cauldron::Characters>(
           single_character_string);
       cauldron::Vectors<char> same_character_vectors(ones,
-                                                       same_character);
+                                                     same_character);
 
       auto same_character_vector = same_character_vectors();
 
@@ -47,12 +49,12 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
     size_t min_size = 0;
     size_t max_size = constants::max_capacity;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     std::string characters_string = factories::characters_string();
     auto characters = std::make_shared<cauldron::Characters>(
         characters_string);
     cauldron::Vectors<char> characters_vectors(sizes,
-                                                 characters);
+                                               characters);
     std::vector<char> characters_domain(characters_string.begin(),
                                         characters_string.end());
 
@@ -81,11 +83,11 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
     size_t min_size = constants::min_capacity;
     size_t max_size = constants::max_capacity;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Vectors<char> alphabetic(sizes,
-                                         std::move(alphabetic_characters));
+                                       std::move(alphabetic_characters));
 
     SECTION("case") {
       auto lower_vectors = alphabetic.filter(is_lower_vector);
@@ -138,11 +140,11 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
     size_t min_size = constants::min_capacity;
     size_t max_size = constants::max_capacity;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                                max_size);
+                                                              max_size);
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Vectors<char> alphabetic(sizes,
-                                         std::move(alphabetic_characters));
+                                       std::move(alphabetic_characters));
 
     SECTION("case") {
       auto lower_vectors = alphabetic.map(to_lower_vector);
