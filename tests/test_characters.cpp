@@ -48,7 +48,6 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
 
       REQUIRE(character == single_character);
     }
-
   }
 
   SECTION("filtration") {
