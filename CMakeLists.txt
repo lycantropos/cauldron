@@ -76,6 +76,7 @@ set(TESTS_SOURCE_FILES
         tests/sets_tests/compound/test_strings.cpp
         tests/builder_tests/fundamental/test_booleans.cpp
         tests/builder_tests/fundamental/test_integers.cpp
+        tests/builder_tests/fundamental/test_floats.cpp
         tests/builder_tests/fundamental/test_characters.cpp
         tests/builder_tests/compound/test_strings.cpp)
 add_executable(main
