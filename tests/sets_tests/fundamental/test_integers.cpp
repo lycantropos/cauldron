@@ -45,27 +45,27 @@ static void check_strategy() {
   SECTION("single element domain") {
     auto ones = std::make_shared<cauldron::Just<size_t>>(1);
     for (const T number: numbers_range) {
-      auto single_number_set = std::set<T>{number};
       auto same_number = std::make_shared<cauldron::Just<T>>(number);
       cauldron::Sets<T> same_number_sets(ones,
                                          same_number);
 
-      auto numbers_set = same_number_sets();
+      auto set = same_number_sets();
 
-      REQUIRE(numbers_set == single_number_set);
+      REQUIRE(set == std::set<T>{number});
     }
   }
 
   SECTION("multiple elements domain") {
     static size_t min_size = 0;
     static size_t max_size = constants::max_capacity;
+    auto size_stays_in_range = in_range_checker<size_t>(min_size,
+                                                        max_size);
     static const auto sizes =
         std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                      max_size);
     cauldron::Sets<T> numbers_sets(sizes,
                                    numbers);
-    auto size_stays_in_range = in_range_checker<size_t>(min_size,
-                                                        max_size);
+
     auto set = numbers_sets();
 
     REQUIRE(size_stays_in_range(set.size()));

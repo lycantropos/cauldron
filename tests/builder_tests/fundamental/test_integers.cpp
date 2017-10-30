@@ -40,14 +40,12 @@ static void check_strategy() {
   SECTION("single element domain") {
     auto ones = std::make_shared<cauldron::Just<size_t>>(1);
     for (T number: numbers_range) {
-      auto single_number_wrapper = IntegerWrapper(number);
       auto same_number = std::make_shared<cauldron::Just<T>>(number);
       cauldron::Builder<IntegerWrapper, T> same_number_wrappers(same_number);
 
       auto same_number_wrapper = same_number_wrappers();
 
-      bool wrappers_are_equal = same_number_wrapper == single_number_wrapper;
-      REQUIRE(wrappers_are_equal);
+      REQUIRE(same_number_wrapper == IntegerWrapper(number));
     }
   }
 

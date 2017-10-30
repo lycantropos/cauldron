@@ -42,17 +42,27 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
           same_character_strings);
 
       auto vector = same_character_strings_vectors();
-      std::vector<std::string>
-          single_character_string_vector{single_character_string};
 
-      REQUIRE(vector == single_character_string_vector);
+      REQUIRE(vector == std::vector<std::string>{single_character_string});
     }
   }
 
   SECTION("multiple characters alphabet") {
     size_t min_size = 0;
     size_t max_size = constants::max_capacity;
+    auto size_stays_in_range = in_range_checker<size_t>(min_size,
+                                                        max_size);
     size_t min_length = 0;
+    auto length_stays_in_range = in_range_checker<size_t>(min_length,
+                                                          max_length);
+    auto lengths_stay_in_range =
+        [&](const std::vector<std::string> &vector) -> bool {
+          return std::all_of(vector.begin(),
+                             vector.end(),
+                             [&](const std::string &string) -> bool {
+                               return length_stays_in_range(string.length());
+                             });
+        };
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
                                                                 max_length);
 
@@ -70,18 +80,6 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
                                                    strings);
 
     auto vector = strings_vectors();
-    auto size_stays_in_range = in_range_checker<size_t>(min_size,
-                                                        max_size);
-    auto length_stays_in_range = in_range_checker<size_t>(min_length,
-                                                          max_length);
-    auto lengths_stay_in_range =
-        [&](const std::vector<std::string> &vector) -> bool {
-          return std::all_of(vector.begin(),
-                             vector.end(),
-                             [&](const std::string &string) -> bool {
-                               return length_stays_in_range(string.length());
-                             });
-        };
 
     REQUIRE(size_stays_in_range(vector.size()));
     REQUIRE(lengths_stay_in_range(vector));

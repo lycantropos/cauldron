@@ -48,13 +48,14 @@ static void check_strategy() {
   SECTION("stays in range") {
     static size_t min_size = 0;
     static size_t max_size = constants::max_capacity;
+    auto size_stays_in_range = in_range_checker<size_t>(min_size,
+                                                        max_size);
     static const auto sizes =
         std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                      max_size);
     cauldron::Sets<T> numbers_sets(sizes,
                                    numbers);
-    auto size_stays_in_range = in_range_checker<size_t>(min_size,
-                                                        max_size);
+
     auto set = numbers_sets();
 
     REQUIRE(size_stays_in_range(set.size()));
@@ -74,7 +75,7 @@ static void check_strategy() {
     cauldron::Sets<T> sets(sizes,
                            numbers);
 
-    SECTION("parity") {
+    SECTION("sign") {
       auto positive_sets = sets.filter(is_positive_set);
       auto non_positive_sets = sets.filter(is_non_positive_set);
 
@@ -138,7 +139,7 @@ static void check_strategy() {
     cauldron::Sets<T> sets(sizes,
                            numbers);
 
-    SECTION("parity") {
+    SECTION("sign") {
       auto positive_sets = sets.map(to_positive_set);
       auto non_positive_sets = sets.map(to_non_positive_set);
 
@@ -171,15 +172,15 @@ static void check_strategy() {
 
 
 TEST_CASE("floats \"Sets\" strategy", "[Sets]") {
-  SECTION("unsigned char") {
+  SECTION("float") {
     check_strategy<float>();
   }
 
-  SECTION("unsigned char") {
+  SECTION("double") {
     check_strategy<double>();
   }
 
-  SECTION("unsigned char") {
+  SECTION("long double") {
     check_strategy<long double>();
   }
 }

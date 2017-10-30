@@ -15,13 +15,13 @@ static void check_strategy() {
                                    borders.end());
   T max_number = *std::max_element(borders.begin(),
                                    borders.end());
+  auto stays_in_range = in_range_checker<T>(min_number,
+                                            max_number);
   cauldron::Integers<T> numbers(min_number,
                                 max_number);
 
   SECTION("stays in range") {
     T number = numbers();
-    auto stays_in_range = in_range_checker<T>(min_number,
-                                              max_number);
 
     REQUIRE(stays_in_range(number));
   }

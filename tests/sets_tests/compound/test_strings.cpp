@@ -41,10 +41,8 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
           same_character_strings);
 
       auto set = same_character_strings_sets();
-      std::set<std::string>
-          single_character_string_set{single_character_string};
 
-      REQUIRE(set == single_character_string_set);
+      REQUIRE(set == std::set<std::string>{single_character_string});
     }
   }
 
@@ -99,7 +97,19 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
      */
     size_t min_size = constants::min_capacity;
     size_t max_size = min_size + 1;
+    auto sizes_stays_in_range = in_range_checker<size_t>(min_size,
+                                                         max_size);
     size_t min_length = constants::min_capacity;
+    auto length_stays_in_range = in_range_checker<size_t>(min_length,
+                                                          max_length);
+    auto lengths_stay_in_range =
+        [&](const std::set<std::string> &set) -> bool {
+          return std::all_of(set.begin(),
+                             set.end(),
+                             [&](const std::string &string) -> bool {
+                               return length_stays_in_range(string.length());
+                             });
+        };
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
@@ -119,18 +129,6 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
 
       auto lower_set = (*lower_sets)();
       auto upper_set = (*upper_sets)();
-      auto sizes_stays_in_range = in_range_checker<size_t>(min_size,
-                                                           max_size);
-      auto length_stays_in_range = in_range_checker<size_t>(min_length,
-                                                            max_length);
-      auto lengths_stay_in_range =
-          [&](const std::set<std::string> &set) -> bool {
-            return std::all_of(set.begin(),
-                               set.end(),
-                               [&](const std::string &string) -> bool {
-                                 return length_stays_in_range(string.length());
-                               });
-          };
 
       REQUIRE(sizes_stays_in_range(lower_set.size()));
       REQUIRE(sizes_stays_in_range(upper_set.size()));
@@ -179,7 +177,19 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
      */
     size_t min_size = constants::min_capacity;
     size_t max_size = min_size + 1;
+    auto sizes_stays_in_range = in_range_checker<size_t>(min_size,
+                                                         max_size);
     size_t min_length = constants::min_capacity;
+    auto length_stays_in_range = in_range_checker<size_t>(min_length,
+                                                          max_length);
+    auto lengths_stay_in_range =
+        [&](const std::set<std::string> &set) -> bool {
+          return std::all_of(set.begin(),
+                             set.end(),
+                             [&](const std::string &string) -> bool {
+                               return length_stays_in_range(string.length());
+                             });
+        };
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
@@ -199,18 +209,6 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
 
       auto lower_set = (*lower_sets)();
       auto upper_set = (*upper_sets)();
-      auto sizes_stays_in_range = in_range_checker<size_t>(min_size,
-                                                           max_size);
-      auto length_stays_in_range = in_range_checker<size_t>(min_length,
-                                                            max_length);
-      auto lengths_stay_in_range =
-          [&](const std::set<std::string> &set) -> bool {
-            return std::all_of(set.begin(),
-                               set.end(),
-                               [&](const std::string &string) -> bool {
-                                 return length_stays_in_range(string.length());
-                               });
-          };
 
       REQUIRE(sizes_stays_in_range(lower_set.size()));
       REQUIRE(sizes_stays_in_range(upper_set.size()));

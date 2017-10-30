@@ -29,18 +29,17 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
 
   SECTION("multiple characters alphabet") {
     size_t min_length = 0;
-
+    auto stays_in_range = in_range_checker<size_t>(min_length,
+                                                   max_length);
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
                                                                 max_length);
     std::string alphabet_characters = factories::characters_string();
     auto alphabet = std::make_shared<cauldron::Characters>(
         alphabet_characters);
-    cauldron::Strings strings(lengths,
-                              alphabet);
+    cauldron::Strings alphabet_strings(lengths,
+                                       alphabet);
 
-    auto string = strings();
-    auto stays_in_range = in_range_checker<size_t>(min_length,
-                                                   max_length);
+    auto string = alphabet_strings();
 
     REQUIRE(stays_in_range(string.length()));
     REQUIRE(is_string_from_alphabet(string,

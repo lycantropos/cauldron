@@ -14,13 +14,13 @@
 template<typename T>
 static void check_strategy() {
   cauldron::Requirement<std::vector<T>> is_even_vector(
-      [&](std::vector<T> vector) -> bool {
+      [&](const std::vector<T> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
                            even<T>);
       });
   cauldron::Requirement<std::vector<T>> is_odd_vector(
-      [&](std::vector<T> vector) -> bool {
+      [&](const std::vector<T> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
                            odd<T>);
@@ -49,7 +49,6 @@ static void check_strategy() {
   SECTION("single element domain") {
     cauldron::Just<size_t> ones(1);
     for (T number: numbers_range) {
-      std::vector<T> single_number_vector{number};
       cauldron::Just<T> same_number(number);
       cauldron::Vectors<T> same_number_vectors(
           std::make_shared<cauldron::Just<size_t>>(ones),
@@ -57,21 +56,21 @@ static void check_strategy() {
 
       auto vector = same_number_vectors();
 
-      bool vectors_are_equal = vector == single_number_vector;
-      REQUIRE(vectors_are_equal);
+      REQUIRE(vector == std::vector<T>{number});
     }
   }
 
   SECTION("multiple elements domain") {
     static size_t min_size = 0;
     static size_t max_size = constants::max_capacity;
-    static const std::shared_ptr<cauldron::Integers<size_t>> &sizes =
+    auto size_stays_in_range = in_range_checker<size_t>(min_size,
+                                                        max_size);
+    static const auto sizes =
         std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                      max_size);
     cauldron::Vectors<T> numbers_vectors(sizes,
                                          numbers);
-    auto size_stays_in_range = in_range_checker<size_t>(min_size,
-                                                        max_size);
+
     auto vector = numbers_vectors();
 
     REQUIRE(size_stays_in_range(vector.size()));

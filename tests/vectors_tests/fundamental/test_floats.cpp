@@ -15,13 +15,13 @@
 template<typename T>
 static void check_strategy() {
   cauldron::Requirement<std::vector<T>> is_positive_vector(
-      [&](std::vector<T> vector) -> bool {
+      [&](const std::vector<T> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
                            positive<T>);
       });
   cauldron::Requirement<std::vector<T>> is_non_positive_vector(
-      [&](std::vector<T> vector) -> bool {
+      [&](const std::vector<T> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
                            non_positive<T>);
@@ -52,13 +52,14 @@ static void check_strategy() {
   SECTION("stays in range") {
     static size_t min_size = 0;
     static size_t max_size = constants::max_capacity;
-    static const std::shared_ptr<cauldron::Integers<size_t>> &sizes =
+    auto size_stays_in_range = in_range_checker<size_t>(min_size,
+                                                        max_size);
+    static const auto sizes =
         std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                      max_size);
     cauldron::Vectors<T> numbers_vectors(sizes,
                                          numbers);
-    auto size_stays_in_range = in_range_checker<size_t>(min_size,
-                                                        max_size);
+
     auto vector = numbers_vectors();
 
     REQUIRE(size_stays_in_range(vector.size()));
@@ -73,7 +74,7 @@ static void check_strategy() {
     static size_t min_size = constants::min_capacity;
     static size_t max_size = sufficient_capacity(1, 2, // non- or positive
                                                  cauldron::MAX_CYCLES);
-    static const std::shared_ptr<cauldron::Integers<size_t>> &sizes =
+    static const auto sizes =
         std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                      max_size);
     cauldron::Vectors<T> vectors(sizes,
@@ -140,7 +141,7 @@ static void check_strategy() {
     cauldron::Vectors<T> vectors(sizes,
                                  numbers);
 
-    SECTION("parity") {
+    SECTION("sign") {
       auto positive_vectors = vectors.map(to_positive_vector);
       auto non_positive_vectors = vectors.map(to_non_positive_vector);
 

@@ -46,7 +46,7 @@ static void check_strategy() {
   }
 
   SECTION("filtration") {
-    SECTION("parity") {
+    SECTION("sign") {
       auto positive_wrappers = numbers_wrappers.filter(is_positive_wrapper);
       auto non_positive_wrappers =
           numbers_wrappers.filter(is_non_positive_wrapper);
@@ -82,7 +82,7 @@ static void check_strategy() {
           return FloatWrapper(to_non_positive(wrapper.field()));
         });
 
-    SECTION("parity") {
+    SECTION("sign") {
       auto positive_wrappers = numbers_wrappers.map(to_positive_wrapper);
       auto non_positive_wrappers =
           numbers_wrappers.map(to_non_positive_wrapper);
@@ -114,15 +114,15 @@ static void check_strategy() {
 
 
 TEST_CASE("floats \"Builder\" strategy", "[Builder]") {
-  SECTION("unsigned char") {
+  SECTION("float") {
     check_strategy<float>();
   }
 
-  SECTION("unsigned char") {
+  SECTION("double") {
     check_strategy<double>();
   }
 
-  SECTION("unsigned char") {
+  SECTION("long double") {
     check_strategy<long double>();
   }
 }

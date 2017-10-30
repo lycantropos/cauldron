@@ -31,11 +31,9 @@ TEST_CASE("characters \"Builder\" strategy", "[Builder]") {
       cauldron::Builder<CharacterWrapper, char> same_character_wrappers(
           same_character);
 
-      auto same_character_wrapper = same_character_wrappers();
+      auto wrapper = same_character_wrappers();
 
-      bool character_is_the_same =
-          same_character_wrapper.field() == single_character;
-      REQUIRE(character_is_the_same);
+      REQUIRE(wrapper == CharacterWrapper(single_character));
     }
   }
 
@@ -47,9 +45,9 @@ TEST_CASE("characters \"Builder\" strategy", "[Builder]") {
     std::set<char> characters_domain(characters_string.begin(),
                                      characters_string.end());
 
-    auto characters_wrapper = characters_wrappers();
+    auto wrapper = characters_wrappers();
 
-    REQUIRE(is_object_in_set<char>(characters_wrapper.field(),
+    REQUIRE(is_object_in_set<char>(wrapper.field(),
                                    characters_domain));
   }
 

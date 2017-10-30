@@ -5,14 +5,18 @@
 template<typename T>
 static void check_strategy() {
   T value{};
-  cauldron::Just<T> just_value(value);
-  bool values_are_equal = just_value() == value;
-  REQUIRE(values_are_equal);
+  cauldron::Just<T> same_value(value);
+
+  SECTION("generation") {
+    bool value_is_the_same = same_value() == value;
+
+    REQUIRE(value_is_the_same);
+  }
 }
 
 
 TEST_CASE("\"just\" strategy", "[just]") {
-  SECTION("primitives") {
+  SECTION("fundamental") {
     SECTION("unsigned char") {
       check_strategy<bool>();
     }
@@ -58,13 +62,17 @@ TEST_CASE("\"just\" strategy", "[just]") {
     }
   }
 
-  SECTION("objects") {
+  SECTION("compound") {
     SECTION("string") {
       check_strategy<std::string>();
     }
 
     SECTION("vector") {
       check_strategy<std::vector<std::string>>();
+    }
+
+    SECTION("set") {
+      check_strategy<std::set<std::string>>();
     }
   }
 }
