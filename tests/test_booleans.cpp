@@ -8,7 +8,7 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
   cauldron::Booleans true_values(1.);
 
   SECTION("probability") {
-    REQUIRE(not false_values());
+    REQUIRE(!false_values());
     REQUIRE(true_values());
   }
 

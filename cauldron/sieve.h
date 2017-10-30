@@ -47,7 +47,7 @@ class Sieve {
   bool satisfactory(Product product) const {
     for (const auto &requirement: requirements_) {
       bool satisfies_requirement = requirement(product);
-      if (not satisfies_requirement) {
+      if (!satisfies_requirement) {
         return false;
       }
     }
@@ -64,7 +64,7 @@ class Sieve {
   Product sift(std::function<Product()> producer) const {
     for (unsigned _ = 0; _ < max_cycles_; ++_) {
       Product product = producer();
-      if (not satisfactory(product)) {
+      if (!satisfactory(product)) {
         continue;
       }
       return product;

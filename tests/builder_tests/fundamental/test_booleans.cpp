@@ -9,7 +9,7 @@ TEST_CASE("booleans \"Builder\" strategy", "[Builder]") {
 
   cauldron::Requirement<BooleanWrapper> is_false_wrapper(
       [&](BooleanWrapper wrapper) -> bool {
-        return not wrapper.field();
+        return !wrapper.field();
       });
   cauldron::Requirement<BooleanWrapper> is_true_wrapper(
       [&](BooleanWrapper wrapper) -> bool {

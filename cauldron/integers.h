@@ -14,7 +14,7 @@ template<typename Value>
 class Integers : public CloneHelper<Value, Integers<Value>> {
   static_assert(std::is_integral<Value>(),
                 "``Value`` should be integral type.");
-  static_assert(not std::is_same<Value, bool>(),
+  static_assert(!std::is_same<Value, bool>(),
                 "``Value`` should not be ``bool`` type, "
                     "use ``strategies::Booleans`` instead.");
  public:
