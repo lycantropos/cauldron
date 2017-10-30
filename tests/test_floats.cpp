@@ -19,11 +19,14 @@ static void check_strategy() {
   T max_number = max_possible_number + min_number;
   cauldron::Floats<T> numbers(min_number,
                               max_number);
+  auto stays_in_range = in_range_checker<T>(min_number,
+                                            max_number);
+
+  cauldron::Converter<T> to_positive(to_positive_operator(max_number));
+  cauldron::Converter<T> to_non_positive(to_non_positive_operator(min_number));
 
   SECTION("stays in range") {
     T number = numbers();
-    auto stays_in_range = in_range_checker<T>(min_number,
-                                              max_number);
 
     REQUIRE(stays_in_range(number));
   }
@@ -42,6 +45,8 @@ static void check_strategy() {
       auto positive_number = (*positive_numbers)();
       auto non_positive_number = (*non_positive_numbers)();
 
+      REQUIRE(stays_in_range(positive_number));
+      REQUIRE(stays_in_range(non_positive_number));
       REQUIRE(positive(positive_number));
       REQUIRE(non_positive(non_positive_number));
     }
@@ -57,21 +62,23 @@ static void check_strategy() {
 
   SECTION("mapping") {
     SECTION("sign") {
-      auto positive_numbers = numbers.map(to_positive<T>);
-      auto non_positive_numbers = numbers.map(to_non_positive<T>);
+      auto positive_numbers = numbers.map(to_positive);
+      auto non_positive_numbers = numbers.map(to_non_positive);
 
       auto positive_number = (*positive_numbers)();
       auto non_positive_number = (*non_positive_numbers)();
 
+      REQUIRE(stays_in_range(positive_number));
+      REQUIRE(stays_in_range(non_positive_number));
       REQUIRE(positive(positive_number));
       REQUIRE(non_positive(non_positive_number));
     }
 
     SECTION("impossible") {
       auto invalid_positive_numbers =
-          numbers.map(to_non_positive<T>)->filter(positive<T>);
+          numbers.map(to_non_positive)->filter(positive<T>);
       auto invalid_non_positive_numbers =
-          numbers.map(to_positive<T>)->filter(non_positive<T>);
+          numbers.map(to_positive)->filter(non_positive<T>);
 
       REQUIRE_THROWS_AS((*invalid_non_positive_numbers)(),
                         cauldron::OutOfCycles);

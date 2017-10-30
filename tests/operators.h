@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 
 template<typename Number>
 Number to_even(Number number) {
@@ -19,21 +21,39 @@ Number to_odd(Number number) {
 
 
 template<typename Number>
-Number to_positive(Number number) {
+std::function<Number(Number)> to_positive_operator(Number max_number) {
   static_assert(std::is_signed<Number>(),
                 "``Number`` should be signed arithmetic type.");
-  if (number == 0) {
-    return 1;
+
+  if (max_number <= 0) {
+    throw std::invalid_argument(
+        "``max_number`` should be positive number."
+    );
   }
-  return std::abs(number);
+
+  return [=](Number number) -> Number {
+    if (number == 0) {
+      return max_number;
+    }
+    return std::min(std::abs(number), max_number);
+  };
 }
 
 
 template<typename Number>
-Number to_non_positive(Number number) {
+std::function<Number(Number)> to_non_positive_operator(Number min_number) {
   static_assert(std::is_signed<Number>(),
                 "``Number`` should be signed arithmetic type.");
-  return -std::abs(number);
+
+  if (min_number > 0) {
+    throw std::invalid_argument(
+        "``min_number`` should be non-positive number."
+    );
+  }
+
+  return [=](Number number) -> Number {
+    return std::max(-std::abs(number), min_number);
+  };
 }
 
 
