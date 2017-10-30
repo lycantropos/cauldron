@@ -23,24 +23,24 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
   SECTION("single element domain") {
     size_t min_size = 0;
     size_t max_size = 1;
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
-    auto true_values = std::make_shared<cauldron::Booleans>(1.);
-    auto false_values = std::make_shared<cauldron::Booleans>(0.);
-    cauldron::Sets<bool> true_sets(sizes,
-                                   true_values);
-    cauldron::Sets<bool> false_sets(sizes,
-                                    false_values);
-
-    auto true_set = true_sets();
-    auto false_set = false_sets();
     auto stays_in_range = in_range_checker<size_t>(min_size,
                                                    max_size);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                              max_size);
+    auto false_values = std::make_shared<cauldron::Booleans>(0.);
+    auto true_values = std::make_shared<cauldron::Booleans>(1.);
+    cauldron::Sets<bool> false_sets(sizes,
+                                    false_values);
+    cauldron::Sets<bool> true_sets(sizes,
+                                   true_values);
 
-    REQUIRE(stays_in_range(true_set.size()));
+    auto false_set = false_sets();
+    auto true_set = true_sets();
+
     REQUIRE(stays_in_range(false_set.size()));
-    REQUIRE(is_true_set(true_set));
+    REQUIRE(stays_in_range(true_set.size()));
     REQUIRE(is_false_set(false_set));
+    REQUIRE(is_true_set(true_set));
   }
 
   SECTION("filtration") {
@@ -57,23 +57,24 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
                                        booleans);
 
     SECTION("truthfulness") {
-      auto true_sets = booleans_sets.filter(is_true_set);
       auto false_sets = booleans_sets.filter(is_false_set);
+      auto true_sets = booleans_sets.filter(is_true_set);
 
-      auto true_set = (*true_sets)();
       auto false_set = (*false_sets)();
+      auto true_set = (*true_sets)();
       auto stays_in_range = in_range_checker(min_size,
                                              max_size);
 
-      REQUIRE(stays_in_range(true_set.size()));
       REQUIRE(stays_in_range(false_set.size()));
-      REQUIRE(is_true_set(true_set));
+      REQUIRE(stays_in_range(true_set.size()));
       REQUIRE(is_false_set(false_set));
+      REQUIRE(is_true_set(true_set));
     }
 
     SECTION("impossible") {
       auto invalid_sets =
-          booleans_sets.filter(is_true_set)->filter(is_false_set);
+          booleans_sets.filter(is_false_set)->filter(is_true_set);
+
       REQUIRE_THROWS_AS((*invalid_sets)(),
                         cauldron::OutOfCycles);
     }
@@ -128,9 +129,10 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
 
     SECTION("impossible") {
       auto invalid_false_sets =
-          booleans_sets.map(to_false_set)->filter(is_true_set);
+          booleans_sets.map(to_true_set)->filter(is_false_set);
       auto invalid_true_sets =
           booleans_sets.map(to_false_set)->filter(is_true_set);
+
       REQUIRE_THROWS_AS((*invalid_false_sets)(),
                         cauldron::OutOfCycles);
       REQUIRE_THROWS_AS((*invalid_true_sets)(),

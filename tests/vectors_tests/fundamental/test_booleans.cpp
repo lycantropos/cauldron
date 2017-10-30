@@ -12,13 +12,13 @@
 
 TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
   cauldron::Requirement<std::vector<bool>> is_false_vector(
-      [&](std::vector<bool> vector) -> bool {
+      [&](const std::vector<bool> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
                            negate);
       });
   cauldron::Requirement<std::vector<bool>> is_true_vector(
-      [&](std::vector<bool> vector) -> bool {
+      [&](const std::vector<bool> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
                            identity);
@@ -27,24 +27,24 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
   SECTION("single element domain") {
     size_t min_size = 0;
     size_t max_size = constants::max_capacity;
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
-    auto true_values = std::make_shared<cauldron::Booleans>(1.);
-    auto false_values = std::make_shared<cauldron::Booleans>(0.);
-    cauldron::Vectors<bool> true_vectors(sizes,
-                                         true_values);
-    cauldron::Vectors<bool> false_vectors(sizes,
-                                          false_values);
-
-    auto true_vector = true_vectors();
-    auto false_vector = false_vectors();
     auto stays_in_range = in_range_checker<size_t>(min_size,
                                                    max_size);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                              max_size);
+    auto false_values = std::make_shared<cauldron::Booleans>(0.);
+    auto true_values = std::make_shared<cauldron::Booleans>(1.);
+    cauldron::Vectors<bool> false_vectors(sizes,
+                                          false_values);
+    cauldron::Vectors<bool> true_vectors(sizes,
+                                         true_values);
 
-    REQUIRE(stays_in_range(true_vector.size()));
+    auto false_vector = false_vectors();
+    auto true_vector = true_vectors();
+
     REQUIRE(stays_in_range(false_vector.size()));
-    REQUIRE(is_true_vector(true_vector));
+    REQUIRE(stays_in_range(true_vector.size()));
     REQUIRE(is_false_vector(false_vector));
+    REQUIRE(is_true_vector(true_vector));
   }
 
   SECTION("filtration") {
@@ -62,23 +62,23 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
                                              booleans);
 
     SECTION("truthfulness") {
-      auto true_vectors = booleans_vectors.filter(is_true_vector);
       auto false_vectors = booleans_vectors.filter(is_false_vector);
+      auto true_vectors = booleans_vectors.filter(is_true_vector);
 
-      auto true_vector = (*true_vectors)();
       auto false_vector = (*false_vectors)();
+      auto true_vector = (*true_vectors)();
       auto stays_in_range = in_range_checker(min_size,
                                              max_size);
 
-      REQUIRE(stays_in_range(true_vector.size()));
       REQUIRE(stays_in_range(false_vector.size()));
-      REQUIRE(is_true_vector(true_vector));
+      REQUIRE(stays_in_range(true_vector.size()));
       REQUIRE(is_false_vector(false_vector));
+      REQUIRE(is_true_vector(true_vector));
     }
 
     SECTION("impossible") {
       auto invalid_vectors =
-          booleans_vectors.filter(is_true_vector)->filter(is_false_vector);
+          booleans_vectors.filter(is_false_vector)->filter(is_true_vector);
       REQUIRE_THROWS_AS((*invalid_vectors)(),
                         cauldron::OutOfCycles);
     }
@@ -131,9 +131,10 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
 
     SECTION("impossible") {
       auto invalid_false_vectors =
-          booleans_vectors.map(to_false_vector)->filter(is_true_vector);
+          booleans_vectors.map(to_true_vector)->filter(is_false_vector);
       auto invalid_true_vectors =
           booleans_vectors.map(to_false_vector)->filter(is_true_vector);
+
       REQUIRE_THROWS_AS((*invalid_false_vectors)(),
                         cauldron::OutOfCycles);
       REQUIRE_THROWS_AS((*invalid_true_vectors)(),
