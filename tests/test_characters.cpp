@@ -1,5 +1,4 @@
 #include <catch.hpp>
-#include <iostream>
 #include "../cauldron/characters.h"
 #include "operators.h"
 #include "predicates.h"

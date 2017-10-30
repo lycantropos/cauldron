@@ -1,5 +1,4 @@
 #include <catch.hpp>
-#include <iostream>
 #include "../cauldron/just.h"
 #include "../cauldron/characters.h"
 #include "../cauldron/integers.h"

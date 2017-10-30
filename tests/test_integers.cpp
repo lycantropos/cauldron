@@ -1,5 +1,4 @@
 #include <catch.hpp>
-#include <iostream>
 #include "../cauldron/integers.h"
 #include "predicates.h"
 #include "operators.h"
