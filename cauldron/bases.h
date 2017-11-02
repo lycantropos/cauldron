@@ -44,6 +44,10 @@ class Strategy {
                         std::move(strategy.clone())};
   }
 
+  virtual Union<Value> operator||(const Union<Value> &strategy) const {
+    return strategy || static_cast<const Strategy<Value> &>(*this);
+  }
+
   /**
    * Returns a new strategy
    * that generates values from the strategy
@@ -136,6 +140,14 @@ class Union : public CloneHelper<Value, Union<Value>> {
   Union<Value> operator||(const Strategy<Value> &strategy) const override {
     std::vector<std::shared_ptr<Strategy<Value>>> strategies(strategies_);
     strategies.push_back(std::move(strategy.clone()));
+    return Union<Value>(strategies);
+  }
+
+  Union<Value> operator||(const Union<Value> &strategy) const override {
+    std::vector<std::shared_ptr<Strategy<Value>>> strategies(strategies_);
+    strategies.insert(strategies.begin(),
+                      strategy.strategies_.begin(),
+                      strategy.strategies_.end());
     return Union<Value>(strategies);
   }
 
