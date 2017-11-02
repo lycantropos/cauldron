@@ -8,6 +8,7 @@
 #include "../../factories.h"
 #include "../../predicates.h"
 #include "../../operators.h"
+#include "../../ordered_pair.h"
 #include "../../utils.h"
 
 
@@ -33,10 +34,12 @@ static void check_strategy() {
   static auto numbers_range = factories::integers_range<int>(min_integer,
                                                              max_integer);
 
-  Number min_number = std::numeric_limits<Number>::min();
-  Number max_number = std::numeric_limits<Number>::max();
-  auto numbers = std::make_shared<cauldron::Integers<Number>>(min_number,
-                                                              max_number);
+  Number min_number;
+  Number max_number;
+  std::tie(min_number, max_number) = ordered_pair(
+      std::numeric_limits<Number>::min(),
+      std::numeric_limits<Number>::max()
+  );
   auto number_stays_in_range = in_range_checker<Number>(min_number,
                                                         max_number);
   auto numbers_stay_in_range =
@@ -45,6 +48,8 @@ static void check_strategy() {
                            numbers_vector.end(),
                            number_stays_in_range);
       };
+  auto numbers = std::make_shared<cauldron::Integers<Number>>(min_number,
+                                                              max_number);
 
   SECTION("single element domain") {
     cauldron::Just<size_t> ones(1);
@@ -153,13 +158,17 @@ static void check_strategy() {
   }
 
   SECTION("mapping") {
+    cauldron::Converter<Number> to_even(to_even_operator(min_number,
+                                                         max_number));
+    cauldron::Converter<Number> to_odd(to_odd_operator(min_number,
+                                                       max_number));
     cauldron::Converter<std::vector<Number>> to_even_vector(
         [&](const std::vector<Number> &vector) -> std::vector<Number> {
           auto result = std::vector<Number>(vector.size());
           std::transform(vector.begin(),
                          vector.end(),
                          result.begin(),
-                         to_even<Number>);
+                         to_even);
           return result;
         });
     cauldron::Converter<std::vector<Number>> to_odd_vector(
@@ -168,7 +177,7 @@ static void check_strategy() {
           std::transform(vector.begin(),
                          vector.end(),
                          result.begin(),
-                         to_odd<Number>);
+                         to_odd);
           return result;
         });
 
@@ -179,6 +188,8 @@ static void check_strategy() {
     static size_t min_size = constants::min_capacity;
     static size_t max_size = sufficient_capacity(1, 2, // odd or even
                                                  cauldron::MAX_CYCLES);
+    auto size_stays_in_range = in_range_checker<size_t>(min_size,
+                                                        max_size);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
     cauldron::Vectors<Number> vectors(sizes,
@@ -190,8 +201,6 @@ static void check_strategy() {
 
       auto even_vector = (*even_vectors)();
       auto odd_vector = (*odd_vectors)();
-      auto size_stays_in_range = in_range_checker<size_t>(min_size,
-                                                          max_size);
 
       REQUIRE(size_stays_in_range(even_vector.size()));
       REQUIRE(size_stays_in_range(odd_vector.size()));

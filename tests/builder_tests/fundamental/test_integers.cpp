@@ -5,6 +5,7 @@
 #include "../../factories.h"
 #include "../../predicates.h"
 #include "../../operators.h"
+#include "../../ordered_pair.h"
 #include "../wrapper.h"
 
 
@@ -28,12 +29,16 @@ static void check_strategy() {
   static auto numbers_range = factories::integers_range<int>(min_integer,
                                                              max_integer);
 
-  Number min_number = std::numeric_limits<Number>::min();
-  Number max_number = std::numeric_limits<Number>::max();
-  auto numbers = std::make_shared<cauldron::Integers<Number>>(min_number,
-                                                              max_number);
+  Number min_number;
+  Number max_number;
+  std::tie(min_number, max_number) = ordered_pair(
+      std::numeric_limits<Number>::lowest(),
+      std::numeric_limits<Number>::max()
+  );
   auto number_stays_in_range = in_range_checker<Number>(min_number,
                                                         max_number);
+  auto numbers = std::make_shared<cauldron::Integers<Number>>(min_number,
+                                                              max_number);
 
   cauldron::Builder<IntegerWrapper, Number> numbers_wrappers(numbers);
 
@@ -102,13 +107,17 @@ static void check_strategy() {
   }
 
   SECTION("mapping") {
+    cauldron::Converter<Number> to_even(to_even_operator(min_number,
+                                                         max_number));
+    cauldron::Converter<Number> to_odd(to_odd_operator(min_number,
+                                                       max_number));
     cauldron::Converter<IntegerWrapper> to_even_wrapper(
         [&](const IntegerWrapper &wrapper) -> IntegerWrapper {
-          return IntegerWrapper(to_even<Number>(wrapper.field()));
+          return IntegerWrapper(to_even(wrapper.field()));
         });
     cauldron::Converter<IntegerWrapper> to_odd_wrapper(
         [&](const IntegerWrapper &wrapper) -> IntegerWrapper {
-          return IntegerWrapper(to_odd<Number>(wrapper.field()));
+          return IntegerWrapper(to_odd(wrapper.field()));
         });
 
     SECTION("parity") {

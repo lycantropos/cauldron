@@ -2,19 +2,17 @@
 #include "../cauldron/integers.h"
 #include "predicates.h"
 #include "operators.h"
+#include "ordered_pair.h"
 
 
 template<typename Number>
 static void check_strategy() {
-  static std::random_device random_device;
-
-  auto distribution = std::uniform_int_distribution<Number>();
-  std::vector<Number> borders{distribution(random_device),
-                              distribution(random_device)};
-  Number min_number = *std::min_element(borders.begin(),
-                                        borders.end());
-  Number max_number = *std::max_element(borders.begin(),
-                                        borders.end());
+  Number min_number;
+  Number max_number;
+  std::tie(min_number, max_number) = ordered_pair(
+      std::numeric_limits<Number>::min(),
+      std::numeric_limits<Number>::max()
+  );
   auto stays_in_range = in_range_checker<Number>(min_number,
                                                  max_number);
   cauldron::Integers<Number> numbers(min_number,
@@ -55,9 +53,14 @@ static void check_strategy() {
   }
 
   SECTION("mapping") {
+    cauldron::Converter<Number> to_even(to_even_operator(min_number,
+                                                         max_number));
+    cauldron::Converter<Number> to_odd(to_odd_operator(min_number,
+                                                       max_number));
+
     SECTION("parity") {
-      auto even_numbers = numbers.map(to_even<Number>);
-      auto odd_numbers = numbers.map(to_odd<Number>);
+      auto even_numbers = numbers.map(to_even);
+      auto odd_numbers = numbers.map(to_odd);
 
       auto even_number = (*even_numbers)();
       auto odd_number = (*odd_numbers)();
@@ -67,10 +70,8 @@ static void check_strategy() {
     }
 
     SECTION("impossible") {
-      auto invalid_even_numbers =
-          numbers.map(to_odd<Number>)->filter(even<Number>);
-      auto invalid_odd_numbers =
-          numbers.map(to_even<Number>)->filter(odd<Number>);
+      auto invalid_even_numbers = numbers.map(to_odd)->filter(even<Number>);
+      auto invalid_odd_numbers = numbers.map(to_even)->filter(odd<Number>);
 
       REQUIRE_THROWS_AS((*invalid_odd_numbers)(),
                         cauldron::OutOfCycles);

@@ -9,6 +9,7 @@
 #include "../../factories.h"
 #include "../../predicates.h"
 #include "../../operators.h"
+#include "../../ordered_pair.h"
 #include "../../utils.h"
 
 
@@ -27,19 +28,12 @@ static void check_strategy() {
                            non_positive<Number>);
       });
 
-  Number min_possible_number = std::numeric_limits<Number>::lowest();
-  Number min_possible_positive_number = std::numeric_limits<Number>::min();
-  Number max_possible_number = std::numeric_limits<Number>::max();
-
-  static std::random_device random_device;
-
-  auto distribution = std::uniform_real_distribution<Number>(
-      min_possible_number,
-      -min_possible_positive_number);
-  Number min_number = distribution(random_device);
-  Number max_number = max_possible_number + min_number;
-  auto numbers = std::make_shared<cauldron::Floats<Number>>(min_number,
-                                                            max_number);
+  Number min_number;
+  Number max_number;
+  std::tie(min_number, max_number) = ordered_pair(
+      std::numeric_limits<Number>::lowest(),
+      std::numeric_limits<Number>::max()
+  );
   auto number_stays_in_range = in_range_checker<Number>(min_number,
                                                         max_number);
   auto numbers_stay_in_range =
@@ -48,6 +42,8 @@ static void check_strategy() {
                            numbers_vector.end(),
                            number_stays_in_range);
       };
+  auto numbers = std::make_shared<cauldron::Floats<Number>>(min_number,
+                                                            max_number);
 
   SECTION("stays in range") {
     static size_t min_size = 0;

@@ -5,6 +5,7 @@
 #include "../../factories.h"
 #include "../../predicates.h"
 #include "../../operators.h"
+#include "../../ordered_pair.h"
 #include "../../utils.h"
 
 
@@ -30,10 +31,12 @@ static void check_strategy() {
   static auto numbers_range = factories::integers_range<int>(min_integer,
                                                              max_integer);
 
-  Number min_number = std::numeric_limits<Number>::min();
-  Number max_number = std::numeric_limits<Number>::max();
-  auto numbers = std::make_shared<cauldron::Integers<Number>>(min_number,
-                                                              max_number);
+  Number min_number;
+  Number max_number;
+  std::tie(min_number, max_number) = ordered_pair(
+      std::numeric_limits<Number>::min(),
+      std::numeric_limits<Number>::max()
+  );
   auto number_stays_in_range = in_range_checker<Number>(min_number,
                                                         max_number);
   auto numbers_stay_in_range = [&](const std::set<Number> &set) -> bool {
@@ -41,6 +44,8 @@ static void check_strategy() {
                        set.end(),
                        number_stays_in_range);
   };
+  auto numbers = std::make_shared<cauldron::Integers<Number>>(min_number,
+                                                              max_number);
 
   SECTION("single element domain") {
     auto ones = std::make_shared<cauldron::Just<size_t>>(1);
@@ -145,6 +150,10 @@ static void check_strategy() {
   }
 
   SECTION("mapping") {
+    cauldron::Converter<Number> to_even(to_even_operator(min_number,
+                                                         max_number));
+    cauldron::Converter<Number> to_odd(to_odd_operator(min_number,
+                                                       max_number));
     cauldron::Converter<std::set<Number>> to_even_set(
         [&](const std::set<Number> &set) -> std::set<Number> {
           std::vector<Number> vector;
@@ -152,7 +161,7 @@ static void check_strategy() {
           std::transform(set.begin(),
                          set.end(),
                          std::back_inserter(vector),
-                         to_even<Number>);
+                         to_even);
           return std::set<Number>(vector.begin(),
                                   vector.end());
         });
@@ -163,7 +172,7 @@ static void check_strategy() {
           std::transform(set.begin(),
                          set.end(),
                          std::back_inserter(vector),
-                         to_odd<Number>);
+                         to_odd);
           return std::set<Number>(vector.begin(),
                                   vector.end());
         });
