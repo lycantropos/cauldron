@@ -1,7 +1,7 @@
 #include <catch.hpp>
 #include <cauldron/just.h>
-#include <cauldron/characters.h>
 #include <cauldron/integers.h>
+#include <cauldron/characters.h>
 #include <cauldron/strings.h>
 #include "predicates.h"
 #include "factories.h"
@@ -44,45 +44,6 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
     REQUIRE(stays_in_range(string.length()));
     REQUIRE(is_string_from_alphabet(string,
                                     alphabet_characters));
-  }
-
-  SECTION("union") {
-    SECTION("single character alphabet") {
-      auto ones = std::make_shared<cauldron::Just<size_t>>(1);
-      for (char single_character: non_zero_characters_string) {
-        std::string single_character_string{single_character};
-        auto same_character = std::make_shared<cauldron::Characters>(
-            single_character_string);
-        cauldron::Strings same_character_strings(ones,
-                                                 same_character);
-        auto still_same_character_strings =
-            same_character_strings || same_character_strings;
-
-        auto string = still_same_character_strings();
-
-        REQUIRE(string == single_character_string);
-      }
-    }
-
-    SECTION("multiple characters alphabet") {
-      size_t min_length = 0;
-      auto stays_in_range = in_range_checker<size_t>(min_length,
-                                                     max_length);
-      auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                  max_length);
-      std::string alphabet_characters = factories::characters_string();
-      auto alphabet = std::make_shared<cauldron::Characters>(
-          alphabet_characters);
-      cauldron::Strings alphabet_strings(lengths,
-                                         alphabet);
-      auto still_alphabet_strings = alphabet_strings || alphabet_strings;
-
-      auto string = still_alphabet_strings();
-
-      REQUIRE(stays_in_range(string.length()));
-      REQUIRE(is_string_from_alphabet(string,
-                                      alphabet_characters));
-    }
   }
 
   SECTION("filtration") {

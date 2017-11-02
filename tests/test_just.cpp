@@ -7,22 +7,12 @@ static void check_strategy() {
   static_assert(std::is_default_constructible<Value>(),
                 "Expected type with default constructor.");
 
-  Value value{};
-  cauldron::Just<Value> same_value(value);
+  Value default_value{};
+  cauldron::Just<Value> same_value(default_value);
 
-  SECTION("generation") {
-    bool value_is_the_same = same_value() == value;
+  Value value = same_value();
 
-    REQUIRE(value_is_the_same);
-  }
-
-  SECTION("union") {
-    auto still_same_value = same_value || same_value;
-
-    bool value_is_still_the_same = still_same_value() == value;
-
-    REQUIRE(value_is_still_the_same);
-  }
+  REQUIRE(value == default_value);
 }
 
 

@@ -24,14 +24,6 @@ static void check_strategy() {
     REQUIRE(stays_in_range(number));
   }
 
-  SECTION("union") {
-    auto still_numbers = numbers || numbers;
-
-    Number number = still_numbers();
-
-    REQUIRE(stays_in_range(number));
-  }
-
   SECTION("filtration") {
     SECTION("parity") {
       auto even_numbers = numbers.filter(even<Number>);

@@ -62,7 +62,7 @@ static void check_strategy() {
 
   SECTION("multiple elements domain") {
     static size_t min_size = 0;
-    static size_t max_size = constants::max_capacity;
+    static size_t max_size = min_size + 1;
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
     static const auto sizes =
@@ -75,40 +75,6 @@ static void check_strategy() {
 
     REQUIRE(size_stays_in_range(set.size()));
     REQUIRE(numbers_stay_in_range(set));
-  }
-
-  SECTION("union") {
-    SECTION("single element domain") {
-      auto ones = std::make_shared<cauldron::Just<size_t>>(1);
-      for (const Number number: numbers_range) {
-        auto same_number = std::make_shared<cauldron::Just<Number>>(number);
-        cauldron::Sets<Number> same_number_sets(ones,
-                                                same_number);
-        auto still_same_number_sets = same_number_sets || same_number_sets;
-
-        auto set = still_same_number_sets();
-
-        REQUIRE(set == std::set<Number>{number});
-      }
-    }
-
-    SECTION("multiple elements domain") {
-      static size_t min_size = 0;
-      static size_t max_size = constants::max_capacity;
-      auto size_stays_in_range = in_range_checker<size_t>(min_size,
-                                                          max_size);
-      static const auto sizes =
-          std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                       max_size);
-      cauldron::Sets<Number> numbers_sets(sizes,
-                                          numbers);
-      auto still_numbers_sets = numbers_sets || numbers_sets;
-
-      auto set = still_numbers_sets();
-
-      REQUIRE(size_stays_in_range(set.size()));
-      REQUIRE(numbers_stay_in_range(set));
-    }
   }
 
   SECTION("filtration") {

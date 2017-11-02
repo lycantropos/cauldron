@@ -60,29 +60,6 @@ static void check_strategy() {
     REQUIRE(number_stays_in_range(wrapper.field()));
   }
 
-  SECTION("union") {
-    SECTION("single element domain") {
-      auto ones = std::make_shared<cauldron::Just<size_t>>(1);
-      for (Number number: numbers_range) {
-        auto same_number = std::make_shared<cauldron::Just<Number>>(number);
-        cauldron::Builder<IntegerWrapper, Number> number_wrappers(same_number);
-        auto still_same_number_wrappers = number_wrappers || number_wrappers;
-
-        auto same_number_wrapper = still_same_number_wrappers();
-
-        REQUIRE(same_number_wrapper == IntegerWrapper(number));
-      }
-    }
-
-    SECTION("multiple elements domain") {
-      auto still_numbers_wrappers = numbers_wrappers || numbers_wrappers;
-
-      auto wrapper = still_numbers_wrappers();
-
-      REQUIRE(number_stays_in_range(wrapper.field()));
-    }
-  }
-
   SECTION("filtration") {
     SECTION("parity") {
       auto even_wrappers = numbers_wrappers.filter(is_even_wrapper);

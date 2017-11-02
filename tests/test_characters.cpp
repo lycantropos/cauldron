@@ -9,13 +9,13 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
   std::string non_zero_characters = factories::non_zero_characters();
 
   SECTION("single character") {
-    for (char single_character: non_zero_characters) {
-      std::string single_character_string{single_character};
-      cauldron::Characters same_character(single_character_string);
+    for (char non_zero_character: non_zero_characters) {
+      std::string non_zero_character_string{non_zero_character};
+      cauldron::Characters same_character(non_zero_character_string);
 
       auto character = same_character();
 
-      REQUIRE(character == single_character);
+      REQUIRE(character == non_zero_character);
     }
   }
 
@@ -36,18 +36,6 @@ TEST_CASE("\"characters\" strategy", "[characters]") {
                       std::invalid_argument);
     REQUIRE_THROWS_AS(cauldron::Characters("\0"),
                       std::invalid_argument);
-  }
-
-  SECTION("union") {
-    for (char single_character: non_zero_characters) {
-      std::string single_character_string{single_character};
-      cauldron::Characters same_character(single_character_string);
-      auto still_same_character = same_character || same_character;
-
-      auto character = still_same_character();
-
-      REQUIRE(character == single_character);
-    }
   }
 
   SECTION("filtration") {

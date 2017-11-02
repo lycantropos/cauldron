@@ -29,45 +29,6 @@ TEST_CASE("booleans \"Builder\" strategy", "[Builder]") {
     REQUIRE(is_true_wrapper(true_wrapper));
   }
 
-  SECTION("union") {
-    auto false_values = std::make_shared<cauldron::Booleans>(0.);
-    auto true_values = std::make_shared<cauldron::Booleans>(1.);
-    cauldron::Builder<BooleanWrapper, bool> false_wrappers(false_values);
-    cauldron::Builder<BooleanWrapper, bool> true_wrappers(true_values);
-    auto still_false_wrappers = false_wrappers || false_wrappers;
-    auto still_true_wrappers = true_wrappers || true_wrappers;
-
-    auto false_wrapper = still_false_wrappers();
-    auto true_wrapper = still_true_wrappers();
-
-    REQUIRE(is_false_wrapper(false_wrapper));
-    REQUIRE(is_true_wrapper(true_wrapper));
-  }
-
-  SECTION("filtration") {
-    auto booleans = std::make_shared<cauldron::Booleans>();
-    cauldron::Builder<BooleanWrapper, bool> booleans_wrappers(booleans);
-
-    SECTION("truthfulness") {
-      auto false_wrappers = booleans_wrappers.filter(is_false_wrapper);
-      auto true_wrappers = booleans_wrappers.filter(is_true_wrapper);
-
-      auto false_wrapper = (*false_wrappers)();
-      auto true_wrapper = (*true_wrappers)();
-
-      REQUIRE(is_false_wrapper(false_wrapper));
-      REQUIRE(is_true_wrapper(true_wrapper));
-    }
-
-    SECTION("impossible") {
-      auto invalid_wrappers =
-          booleans_wrappers.filter(is_false_wrapper)->filter(is_true_wrapper);
-
-      REQUIRE_THROWS_AS((*invalid_wrappers)(),
-                        cauldron::OutOfCycles);
-    }
-  }
-
   SECTION("mapping") {
     cauldron::Converter<BooleanWrapper> to_false_wrapper(
         [&](const BooleanWrapper &wrapper) -> BooleanWrapper {

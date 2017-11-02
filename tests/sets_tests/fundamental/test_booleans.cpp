@@ -43,31 +43,6 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
     REQUIRE(is_true_set(true_set));
   }
 
-  SECTION("union") {
-    size_t min_size = 0;
-    size_t max_size = 1;
-    auto stays_in_range = in_range_checker<size_t>(min_size,
-                                                   max_size);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
-    auto false_values = std::make_shared<cauldron::Booleans>(0.);
-    auto true_values = std::make_shared<cauldron::Booleans>(1.);
-    cauldron::Sets<bool> false_sets(sizes,
-                                    false_values);
-    cauldron::Sets<bool> true_sets(sizes,
-                                   true_values);
-    auto still_false_sets = false_sets || false_sets;
-    auto still_true_sets = true_sets || true_sets;
-
-    auto false_set = still_false_sets();
-    auto true_set = still_true_sets();
-
-    REQUIRE(stays_in_range(false_set.size()));
-    REQUIRE(stays_in_range(true_set.size()));
-    REQUIRE(is_false_set(false_set));
-    REQUIRE(is_true_set(true_set));
-  }
-
   SECTION("filtration") {
     /* if `min_size`` equals to zero
      * than "impossible" section would not raise exception

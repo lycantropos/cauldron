@@ -12,14 +12,6 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
     REQUIRE(true_values());
   }
 
-  SECTION("union") {
-    auto still_false_values = false_values || false_values;
-    auto still_true_values = true_values || true_values;
-
-    REQUIRE(!(still_false_values)());
-    REQUIRE(still_true_values());
-  }
-
   SECTION("filtration") {
     SECTION("identical") {
       auto still_false_values = false_values.filter(negate);

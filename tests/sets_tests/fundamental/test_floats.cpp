@@ -58,24 +58,6 @@ static void check_strategy() {
     REQUIRE(numbers_stay_in_range(set));
   }
 
-  SECTION("union") {
-    static size_t min_size = 0;
-    static size_t max_size = constants::max_capacity;
-    auto size_stays_in_range = in_range_checker<size_t>(min_size,
-                                                        max_size);
-    static const auto sizes =
-        std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                     max_size);
-    cauldron::Sets<Number> numbers_sets(sizes,
-                                        numbers);
-    auto still_numbers_sets = numbers_sets || numbers_sets;
-
-    auto set = still_numbers_sets();
-
-    REQUIRE(size_stays_in_range(set.size()));
-    REQUIRE(numbers_stay_in_range(set));
-  }
-
   SECTION("filtration") {
     /* if `min_size`` equals to zero
      * than "impossible" section would not raise exception

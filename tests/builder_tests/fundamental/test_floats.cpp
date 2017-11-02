@@ -41,14 +41,6 @@ static void check_strategy() {
     REQUIRE(number_stays_in_range(wrapper.field()));
   }
 
-  SECTION("union") {
-    auto still_numbers_wrappers = numbers_wrappers || numbers_wrappers;
-
-    auto wrapper = still_numbers_wrappers();
-
-    REQUIRE(number_stays_in_range(wrapper.field()));
-  }
-
   SECTION("filtration") {
     SECTION("sign") {
       auto positive_wrappers = numbers_wrappers.filter(is_positive_wrapper);
