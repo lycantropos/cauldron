@@ -2,13 +2,13 @@
 #include "../cauldron/just.h"
 
 
-template<typename T>
+template<typename Value>
 static void check_strategy() {
-  static_assert(std::is_default_constructible<T>(),
+  static_assert(std::is_default_constructible<Value>(),
                 "Expected type with default constructor.");
 
-  T value{};
-  cauldron::Just<T> same_value(value);
+  Value value{};
+  cauldron::Just<Value> same_value(value);
 
   SECTION("generation") {
     bool value_is_the_same = same_value() == value;
