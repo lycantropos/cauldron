@@ -1,7 +1,7 @@
 #include <catch.hpp>
-#include "../../../cauldron/booleans.h"
-#include "../../../cauldron/builder.h"
-#include "../wrapper.h"
+#include <cauldron/booleans.h>
+#include <cauldron/builder.h>
+#include <tests/builder_tests/wrapper.h>
 
 
 TEST_CASE("booleans \"Builder\" strategy", "[Builder]") {

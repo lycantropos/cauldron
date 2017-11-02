@@ -1,12 +1,12 @@
 #include <catch.hpp>
-#include "../../../cauldron/just.h"
-#include "../../../cauldron/integers.h"
-#include "../../../cauldron/sets.h"
-#include "../../factories.h"
-#include "../../predicates.h"
-#include "../../operators.h"
-#include "../../ordered_pair.h"
-#include "../../utils.h"
+#include <cauldron/just.h>
+#include <cauldron/integers.h>
+#include <cauldron/sets.h>
+#include <tests/factories.h>
+#include <tests/predicates.h>
+#include <tests/operators.h>
+#include <tests/ordered_pair.h>
+#include <tests/utils.h>
 
 
 template<typename Number>

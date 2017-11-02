@@ -1,5 +1,5 @@
 #include <catch.hpp>
-#include "../cauldron/just.h"
+#include <cauldron/just.h>
 
 
 template<typename Value>

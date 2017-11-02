@@ -1,5 +1,5 @@
 #include <catch.hpp>
-#include "../cauldron/booleans.h"
+#include <cauldron/booleans.h>
 #include "predicates.h"
 
 

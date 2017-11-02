@@ -1,13 +1,13 @@
 #include <catch.hpp>
-#include "../../../cauldron/just.h"
-#include "../../../cauldron/integers.h"
-#include "../../../cauldron/characters.h"
-#include "../../../cauldron/strings.h"
-#include "../../../cauldron/builder.h"
-#include "../../factories.h"
-#include "../../predicates.h"
-#include "../../operators.h"
-#include "../wrapper.h"
+#include <cauldron/just.h>
+#include <cauldron/integers.h>
+#include <cauldron/characters.h>
+#include <cauldron/strings.h>
+#include <cauldron/builder.h>
+#include <tests/factories.h>
+#include <tests/predicates.h>
+#include <tests/operators.h>
+#include <tests/builder_tests/wrapper.h>
 
 
 TEST_CASE("strings \"Builder\" strategy", "[Builder]") {

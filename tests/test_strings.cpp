@@ -1,8 +1,8 @@
 #include <catch.hpp>
-#include "../cauldron/just.h"
-#include "../cauldron/characters.h"
-#include "../cauldron/integers.h"
-#include "../cauldron/strings.h"
+#include <cauldron/just.h>
+#include <cauldron/characters.h>
+#include <cauldron/integers.h>
+#include <cauldron/strings.h>
 #include "predicates.h"
 #include "factories.h"
 #include "operators.h"

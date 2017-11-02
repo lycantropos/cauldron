@@ -1,9 +1,9 @@
 #include <catch.hpp>
-#include "../../../cauldron/booleans.h"
-#include "../../../cauldron/integers.h"
-#include "../../../cauldron/sets.h"
-#include "../../predicates.h"
-#include "../../globals.h"
+#include <cauldron/booleans.h>
+#include <cauldron/integers.h>
+#include <cauldron/sets.h>
+#include <tests/predicates.h>
+#include <tests/globals.h>
 
 
 TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {

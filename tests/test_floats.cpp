@@ -1,5 +1,5 @@
 #include <catch.hpp>
-#include "../cauldron/floats.h"
+#include <cauldron/floats.h>
 #include "predicates.h"
 #include "operators.h"
 #include "ordered_pair.h"
