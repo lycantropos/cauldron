@@ -8,36 +8,36 @@
 #include "../wrapper.h"
 
 
-template<typename T>
+template<typename Number>
 static void check_strategy() {
-  using FloatWrapper = Wrapper<T>;
+  using FloatWrapper = Wrapper<Number>;
 
   cauldron::Requirement<FloatWrapper> is_positive_wrapper(
       [&](FloatWrapper wrapper) -> bool {
-        return positive<T>(wrapper.field());
+        return positive<Number>(wrapper.field());
       });
   cauldron::Requirement<FloatWrapper> is_non_positive_wrapper(
       [&](FloatWrapper wrapper) -> bool {
-        return non_positive<T>(wrapper.field());
+        return non_positive<Number>(wrapper.field());
       });
 
-  T min_possible_number = std::numeric_limits<T>::lowest();
-  T min_possible_positive_number = std::numeric_limits<T>::min();
-  T max_possible_number = std::numeric_limits<T>::max();
+  Number min_possible_number = std::numeric_limits<Number>::lowest();
+  Number min_possible_positive_number = std::numeric_limits<Number>::min();
+  Number max_possible_number = std::numeric_limits<Number>::max();
 
   static std::random_device random_device;
 
-  auto distribution = std::uniform_real_distribution<T>(
+  auto distribution = std::uniform_real_distribution<Number>(
       min_possible_number,
       -min_possible_positive_number);
-  T min_number = distribution(random_device);
-  T max_number = max_possible_number + min_number;
-  auto numbers = std::make_shared<cauldron::Floats<T>>(min_number,
-                                                       max_number);
-  auto number_stays_in_range = in_range_checker<T>(min_number,
-                                                   max_number);
+  Number min_number = distribution(random_device);
+  Number max_number = max_possible_number + min_number;
+  auto numbers = std::make_shared<cauldron::Floats<Number>>(min_number,
+                                                            max_number);
+  auto number_stays_in_range = in_range_checker<Number>(min_number,
+                                                        max_number);
 
-  cauldron::Builder<FloatWrapper, T> numbers_wrappers(numbers);
+  cauldron::Builder<FloatWrapper, Number> numbers_wrappers(numbers);
 
   SECTION("stays in range") {
     auto wrapper = numbers_wrappers();

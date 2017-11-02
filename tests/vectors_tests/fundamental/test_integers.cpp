@@ -11,36 +11,36 @@
 #include "../../utils.h"
 
 
-template<typename T>
+template<typename Number>
 static void check_strategy() {
-  cauldron::Requirement<std::vector<T>> is_even_vector(
-      [&](const std::vector<T> &vector) -> bool {
+  cauldron::Requirement<std::vector<Number>> is_even_vector(
+      [&](const std::vector<Number> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
-                           even<T>);
+                           even<Number>);
       });
-  cauldron::Requirement<std::vector<T>> is_odd_vector(
-      [&](const std::vector<T> &vector) -> bool {
+  cauldron::Requirement<std::vector<Number>> is_odd_vector(
+      [&](const std::vector<Number> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
-                           odd<T>);
+                           odd<Number>);
       });
 
   // ``signed char`` is the smallest tested integer type
-  static signed char min_integer = std::is_unsigned<T>() ?
+  static signed char min_integer = std::is_unsigned<Number>() ?
                                    0 : std::numeric_limits<signed char>::min();
   static signed char max_integer = std::numeric_limits<signed char>::max();
   static auto numbers_range = factories::integers_range<int>(min_integer,
                                                              max_integer);
 
-  T min_number = std::numeric_limits<T>::min();
-  T max_number = std::numeric_limits<T>::max();
-  auto numbers = std::make_shared<cauldron::Integers<T>>(min_number,
-                                                         max_number);
-  auto number_stays_in_range = in_range_checker<T>(min_number,
-                                                   max_number);
+  Number min_number = std::numeric_limits<Number>::min();
+  Number max_number = std::numeric_limits<Number>::max();
+  auto numbers = std::make_shared<cauldron::Integers<Number>>(min_number,
+                                                              max_number);
+  auto number_stays_in_range = in_range_checker<Number>(min_number,
+                                                        max_number);
   auto numbers_stay_in_range =
-      [&](const std::vector<T> &numbers_vector) -> bool {
+      [&](const std::vector<Number> &numbers_vector) -> bool {
         return std::all_of(numbers_vector.begin(),
                            numbers_vector.end(),
                            number_stays_in_range);
@@ -48,15 +48,15 @@ static void check_strategy() {
 
   SECTION("single element domain") {
     cauldron::Just<size_t> ones(1);
-    for (T number: numbers_range) {
-      cauldron::Just<T> same_number(number);
-      cauldron::Vectors<T> same_number_vectors(
+    for (Number number: numbers_range) {
+      cauldron::Just<Number> same_number(number);
+      cauldron::Vectors<Number> same_number_vectors(
           std::make_shared<cauldron::Just<size_t>>(ones),
-          std::make_shared<cauldron::Just<T>>(same_number));
+          std::make_shared<cauldron::Just<Number>>(same_number));
 
       auto vector = same_number_vectors();
 
-      REQUIRE(vector == std::vector<T>{number});
+      REQUIRE(vector == std::vector<Number>{number});
     }
   }
 
@@ -68,8 +68,8 @@ static void check_strategy() {
     static const auto sizes =
         std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                      max_size);
-    cauldron::Vectors<T> numbers_vectors(sizes,
-                                         numbers);
+    cauldron::Vectors<Number> numbers_vectors(sizes,
+                                              numbers);
 
     auto vector = numbers_vectors();
 
@@ -80,17 +80,17 @@ static void check_strategy() {
   SECTION("union") {
     SECTION("single element domain") {
       cauldron::Just<size_t> ones(1);
-      for (T number: numbers_range) {
-        cauldron::Just<T> same_number(number);
-        cauldron::Vectors<T> same_number_vectors(
+      for (Number number: numbers_range) {
+        cauldron::Just<Number> same_number(number);
+        cauldron::Vectors<Number> same_number_vectors(
             std::make_shared<cauldron::Just<size_t>>(ones),
-            std::make_shared<cauldron::Just<T>>(same_number));
+            std::make_shared<cauldron::Just<Number>>(same_number));
         auto still_same_number_vectors =
             same_number_vectors || same_number_vectors;
 
         auto vector = same_number_vectors();
 
-        REQUIRE(vector == std::vector<T>{number});
+        REQUIRE(vector == std::vector<Number>{number});
       }
     }
 
@@ -102,8 +102,8 @@ static void check_strategy() {
       static const auto sizes =
           std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                        max_size);
-      cauldron::Vectors<T> numbers_vectors(sizes,
-                                           numbers);
+      cauldron::Vectors<Number> numbers_vectors(sizes,
+                                                numbers);
       auto still_numbers_vectors = numbers_vectors || numbers_vectors;
 
       auto vector = still_numbers_vectors();
@@ -123,8 +123,8 @@ static void check_strategy() {
                                                  cauldron::MAX_CYCLES);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
-    cauldron::Vectors<T> vectors(sizes,
-                                 numbers);
+    cauldron::Vectors<Number> vectors(sizes,
+                                      numbers);
 
     SECTION("parity") {
       auto even_vectors = vectors.filter(is_even_vector);
@@ -153,22 +153,22 @@ static void check_strategy() {
   }
 
   SECTION("mapping") {
-    cauldron::Converter<std::vector<T>> to_even_vector(
-        [&](const std::vector<T> &vector) -> std::vector<T> {
-          auto result = std::vector<T>(vector.size());
+    cauldron::Converter<std::vector<Number>> to_even_vector(
+        [&](const std::vector<Number> &vector) -> std::vector<Number> {
+          auto result = std::vector<Number>(vector.size());
           std::transform(vector.begin(),
                          vector.end(),
                          result.begin(),
-                         to_even<T>);
+                         to_even<Number>);
           return result;
         });
-    cauldron::Converter<std::vector<T>> to_odd_vector(
-        [&](const std::vector<T> &vector) -> std::vector<T> {
-          auto result = std::vector<T>(vector.size());
+    cauldron::Converter<std::vector<Number>> to_odd_vector(
+        [&](const std::vector<Number> &vector) -> std::vector<Number> {
+          auto result = std::vector<Number>(vector.size());
           std::transform(vector.begin(),
                          vector.end(),
                          result.begin(),
-                         to_odd<T>);
+                         to_odd<Number>);
           return result;
         });
 
@@ -181,8 +181,8 @@ static void check_strategy() {
                                                  cauldron::MAX_CYCLES);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
-    cauldron::Vectors<T> vectors(sizes,
-                                 numbers);
+    cauldron::Vectors<Number> vectors(sizes,
+                                      numbers);
 
     SECTION("parity") {
       auto even_vectors = vectors.map(to_even_vector);

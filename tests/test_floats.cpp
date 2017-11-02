@@ -4,43 +4,47 @@
 #include "operators.h"
 
 
-template<typename T>
+template<typename Number>
 static void check_strategy() {
-  T min_possible_number = std::numeric_limits<T>::lowest();
-  T min_possible_positive_number = std::numeric_limits<T>::min();
-  T max_possible_number = std::numeric_limits<T>::max();
+  Number min_possible_number = std::numeric_limits<Number>::lowest();
+  Number min_possible_positive_number = std::numeric_limits<Number>::min();
+  Number max_possible_number = std::numeric_limits<Number>::max();
 
   static std::random_device random_device;
 
-  auto distribution = std::uniform_real_distribution<T>(
+  auto distribution = std::uniform_real_distribution<Number>(
       min_possible_number,
       -min_possible_positive_number);
-  T min_number = distribution(random_device);
-  T max_number = max_possible_number + min_number;
-  cauldron::Floats<T> numbers(min_number,
-                              max_number);
-  auto stays_in_range = in_range_checker<T>(min_number,
-                                            max_number);
+  Number min_number = distribution(random_device);
+  Number max_number = max_possible_number + min_number;
+  cauldron::Floats<Number> numbers(min_number,
+                                   max_number);
+  auto stays_in_range = in_range_checker<Number>(min_number,
+                                                 max_number);
 
-  cauldron::Converter<T> to_positive(to_positive_operator(max_number));
-  cauldron::Converter<T> to_non_positive(to_non_positive_operator(min_number));
+  cauldron::Converter<Number> to_positive(
+      to_positive_operator(max_number)
+  );
+  cauldron::Converter<Number> to_non_positive(
+      to_non_positive_operator(min_number)
+  );
 
   SECTION("stays in range") {
-    T number = numbers();
+    Number number = numbers();
 
     REQUIRE(stays_in_range(number));
   }
 
   SECTION("invalid min/max values") {
-    REQUIRE_THROWS_AS(cauldron::Floats<T>(min_number,
-                                          max_possible_number),
+    REQUIRE_THROWS_AS(cauldron::Floats<Number>(min_number,
+                                               max_possible_number),
                       std::invalid_argument);
   }
 
   SECTION("filtration") {
     SECTION("sign") {
-      auto positive_numbers = numbers.filter(positive<T>);
-      auto non_positive_numbers = numbers.filter(non_positive<T>);
+      auto positive_numbers = numbers.filter(positive<Number>);
+      auto non_positive_numbers = numbers.filter(non_positive<Number>);
 
       auto positive_number = (*positive_numbers)();
       auto non_positive_number = (*non_positive_numbers)();
@@ -53,7 +57,7 @@ static void check_strategy() {
 
     SECTION("impossible") {
       auto invalid_numbers =
-          numbers.filter(positive<T>)->filter(non_positive<T>);
+          numbers.filter(positive<Number>)->filter(non_positive<Number>);
 
       REQUIRE_THROWS_AS((*invalid_numbers)(),
                         cauldron::OutOfCycles);
@@ -76,9 +80,9 @@ static void check_strategy() {
 
     SECTION("impossible") {
       auto invalid_positive_numbers =
-          numbers.map(to_non_positive)->filter(positive<T>);
+          numbers.map(to_non_positive)->filter(positive<Number>);
       auto invalid_non_positive_numbers =
-          numbers.map(to_positive)->filter(non_positive<T>);
+          numbers.map(to_positive)->filter(non_positive<Number>);
 
       REQUIRE_THROWS_AS((*invalid_non_positive_numbers)(),
                         cauldron::OutOfCycles);

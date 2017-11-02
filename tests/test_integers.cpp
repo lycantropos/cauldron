@@ -4,24 +4,24 @@
 #include "operators.h"
 
 
-template<typename T>
+template<typename Number>
 static void check_strategy() {
   static std::random_device random_device;
 
-  auto distribution = std::uniform_int_distribution<T>();
-  std::vector<T> borders{distribution(random_device),
-                         distribution(random_device)};
-  T min_number = *std::min_element(borders.begin(),
-                                   borders.end());
-  T max_number = *std::max_element(borders.begin(),
-                                   borders.end());
-  auto stays_in_range = in_range_checker<T>(min_number,
-                                            max_number);
-  cauldron::Integers<T> numbers(min_number,
-                                max_number);
+  auto distribution = std::uniform_int_distribution<Number>();
+  std::vector<Number> borders{distribution(random_device),
+                              distribution(random_device)};
+  Number min_number = *std::min_element(borders.begin(),
+                                        borders.end());
+  Number max_number = *std::max_element(borders.begin(),
+                                        borders.end());
+  auto stays_in_range = in_range_checker<Number>(min_number,
+                                                 max_number);
+  cauldron::Integers<Number> numbers(min_number,
+                                     max_number);
 
   SECTION("stays in range") {
-    T number = numbers();
+    Number number = numbers();
 
     REQUIRE(stays_in_range(number));
   }
@@ -29,15 +29,15 @@ static void check_strategy() {
   SECTION("union") {
     auto still_numbers = numbers || numbers;
 
-    T number = still_numbers();
+    Number number = still_numbers();
 
     REQUIRE(stays_in_range(number));
   }
 
   SECTION("filtration") {
     SECTION("parity") {
-      auto even_numbers = numbers.filter(even<T>);
-      auto odd_numbers = numbers.filter(odd<T>);
+      auto even_numbers = numbers.filter(even<Number>);
+      auto odd_numbers = numbers.filter(odd<Number>);
 
       auto even_number = (*even_numbers)();
       auto odd_number = (*odd_numbers)();
@@ -47,7 +47,7 @@ static void check_strategy() {
     }
 
     SECTION("impossible") {
-      auto invalid_numbers = numbers.filter(even<T>)->filter(odd<T>);
+      auto invalid_numbers = numbers.filter(even<Number>)->filter(odd<Number>);
 
       REQUIRE_THROWS_AS((*invalid_numbers)(),
                         cauldron::OutOfCycles);
@@ -56,8 +56,8 @@ static void check_strategy() {
 
   SECTION("mapping") {
     SECTION("parity") {
-      auto even_numbers = numbers.map(to_even<T>);
-      auto odd_numbers = numbers.map(to_odd<T>);
+      auto even_numbers = numbers.map(to_even<Number>);
+      auto odd_numbers = numbers.map(to_odd<Number>);
 
       auto even_number = (*even_numbers)();
       auto odd_number = (*odd_numbers)();
@@ -67,8 +67,10 @@ static void check_strategy() {
     }
 
     SECTION("impossible") {
-      auto invalid_even_numbers = numbers.map(to_odd<T>)->filter(even<T>);
-      auto invalid_odd_numbers = numbers.map(to_even<T>)->filter(odd<T>);
+      auto invalid_even_numbers =
+          numbers.map(to_odd<Number>)->filter(even<Number>);
+      auto invalid_odd_numbers =
+          numbers.map(to_even<Number>)->filter(odd<Number>);
 
       REQUIRE_THROWS_AS((*invalid_odd_numbers)(),
                         cauldron::OutOfCycles);

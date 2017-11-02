@@ -9,37 +9,37 @@
 #include "../../utils.h"
 
 
-template<typename T>
+template<typename Number>
 static void check_strategy() {
-  cauldron::Requirement<std::set<T>> is_positive_set(
-      [&](std::set<T> set) -> bool {
+  cauldron::Requirement<std::set<Number>> is_positive_set(
+      [&](std::set<Number> set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
-                           positive<T>);
+                           positive<Number>);
       });
-  cauldron::Requirement<std::set<T>> is_non_positive_set(
-      [&](std::set<T> set) -> bool {
+  cauldron::Requirement<std::set<Number>> is_non_positive_set(
+      [&](std::set<Number> set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
-                           non_positive<T>);
+                           non_positive<Number>);
       });
 
-  T min_possible_number = std::numeric_limits<T>::lowest();
-  T min_possible_positive_number = std::numeric_limits<T>::min();
-  T max_possible_number = std::numeric_limits<T>::max();
+  Number min_possible_number = std::numeric_limits<Number>::lowest();
+  Number min_possible_positive_number = std::numeric_limits<Number>::min();
+  Number max_possible_number = std::numeric_limits<Number>::max();
 
   static std::random_device random_device;
 
-  auto distribution = std::uniform_real_distribution<T>(
+  auto distribution = std::uniform_real_distribution<Number>(
       min_possible_number,
       -min_possible_positive_number);
-  T min_number = distribution(random_device);
-  T max_number = max_possible_number + min_number;
-  auto numbers = std::make_shared<cauldron::Floats<T>>(min_number,
-                                                       max_number);
-  auto number_stays_in_range = in_range_checker<T>(min_number,
-                                                   max_number);
-  auto numbers_stay_in_range = [&](const std::set<T> &set) -> bool {
+  Number min_number = distribution(random_device);
+  Number max_number = max_possible_number + min_number;
+  auto numbers = std::make_shared<cauldron::Floats<Number>>(min_number,
+                                                            max_number);
+  auto number_stays_in_range = in_range_checker<Number>(min_number,
+                                                        max_number);
+  auto numbers_stay_in_range = [&](const std::set<Number> &set) -> bool {
     return std::all_of(set.begin(),
                        set.end(),
                        number_stays_in_range);
@@ -53,8 +53,8 @@ static void check_strategy() {
     static const auto sizes =
         std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                      max_size);
-    cauldron::Sets<T> numbers_sets(sizes,
-                                   numbers);
+    cauldron::Sets<Number> numbers_sets(sizes,
+                                        numbers);
 
     auto set = numbers_sets();
 
@@ -70,8 +70,8 @@ static void check_strategy() {
     static const auto sizes =
         std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                      max_size);
-    cauldron::Sets<T> numbers_sets(sizes,
-                                   numbers);
+    cauldron::Sets<Number> numbers_sets(sizes,
+                                        numbers);
     auto still_numbers_sets = numbers_sets || numbers_sets;
 
     auto set = still_numbers_sets();
@@ -90,8 +90,8 @@ static void check_strategy() {
                                                  cauldron::MAX_CYCLES);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
-    cauldron::Sets<T> sets(sizes,
-                           numbers);
+    cauldron::Sets<Number> sets(sizes,
+                                numbers);
 
     SECTION("sign") {
       auto positive_sets = sets.filter(is_positive_set);
@@ -122,27 +122,27 @@ static void check_strategy() {
   SECTION("mapping") {
     auto to_positive = to_positive_operator(max_number);
     auto to_non_positive = to_non_positive_operator(min_number);
-    cauldron::Converter<std::set<T>> to_positive_set(
-        [&](const std::set<T> &set) -> std::set<T> {
-          std::vector<T> vector;
+    cauldron::Converter<std::set<Number>> to_positive_set(
+        [&](const std::set<Number> &set) -> std::set<Number> {
+          std::vector<Number> vector;
           vector.reserve(set.size());
           std::transform(set.begin(),
                          set.end(),
                          std::back_inserter(vector),
                          to_positive);
-          return std::set<T>(vector.begin(),
-                             vector.end());
+          return std::set<Number>(vector.begin(),
+                                  vector.end());
         });
-    cauldron::Converter<std::set<T>> to_non_positive_set(
-        [&](const std::set<T> &set) -> std::set<T> {
-          std::vector<T> vector;
+    cauldron::Converter<std::set<Number>> to_non_positive_set(
+        [&](const std::set<Number> &set) -> std::set<Number> {
+          std::vector<Number> vector;
           vector.reserve(set.size());
           std::transform(set.begin(),
                          set.end(),
                          std::back_inserter(vector),
                          to_non_positive);
-          return std::set<T>(vector.begin(),
-                             vector.end());
+          return std::set<Number>(vector.begin(),
+                                  vector.end());
         });
 
     /* if `min_size`` equals to zero
@@ -154,8 +154,8 @@ static void check_strategy() {
                                                  cauldron::MAX_CYCLES);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
-    cauldron::Sets<T> sets(sizes,
-                           numbers);
+    cauldron::Sets<Number> sets(sizes,
+                                numbers);
 
     SECTION("sign") {
       auto positive_sets = sets.map(to_positive_set);

@@ -12,38 +12,38 @@
 #include "../../utils.h"
 
 
-template<typename T>
+template<typename Number>
 static void check_strategy() {
-  cauldron::Requirement<std::vector<T>> is_positive_vector(
-      [&](const std::vector<T> &vector) -> bool {
+  cauldron::Requirement<std::vector<Number>> is_positive_vector(
+      [&](const std::vector<Number> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
-                           positive<T>);
+                           positive<Number>);
       });
-  cauldron::Requirement<std::vector<T>> is_non_positive_vector(
-      [&](const std::vector<T> &vector) -> bool {
+  cauldron::Requirement<std::vector<Number>> is_non_positive_vector(
+      [&](const std::vector<Number> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
-                           non_positive<T>);
+                           non_positive<Number>);
       });
 
-  T min_possible_number = std::numeric_limits<T>::lowest();
-  T min_possible_positive_number = std::numeric_limits<T>::min();
-  T max_possible_number = std::numeric_limits<T>::max();
+  Number min_possible_number = std::numeric_limits<Number>::lowest();
+  Number min_possible_positive_number = std::numeric_limits<Number>::min();
+  Number max_possible_number = std::numeric_limits<Number>::max();
 
   static std::random_device random_device;
 
-  auto distribution = std::uniform_real_distribution<T>(
+  auto distribution = std::uniform_real_distribution<Number>(
       min_possible_number,
       -min_possible_positive_number);
-  T min_number = distribution(random_device);
-  T max_number = max_possible_number + min_number;
-  auto numbers = std::make_shared<cauldron::Floats<T>>(min_number,
-                                                       max_number);
-  auto number_stays_in_range = in_range_checker<T>(min_number,
-                                                   max_number);
+  Number min_number = distribution(random_device);
+  Number max_number = max_possible_number + min_number;
+  auto numbers = std::make_shared<cauldron::Floats<Number>>(min_number,
+                                                            max_number);
+  auto number_stays_in_range = in_range_checker<Number>(min_number,
+                                                        max_number);
   auto numbers_stay_in_range =
-      [&](const std::vector<T> &numbers_vector) -> bool {
+      [&](const std::vector<Number> &numbers_vector) -> bool {
         return std::all_of(numbers_vector.begin(),
                            numbers_vector.end(),
                            number_stays_in_range);
@@ -57,8 +57,8 @@ static void check_strategy() {
     static const auto sizes =
         std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                      max_size);
-    cauldron::Vectors<T> numbers_vectors(sizes,
-                                         numbers);
+    cauldron::Vectors<Number> numbers_vectors(sizes,
+                                              numbers);
 
     auto vector = numbers_vectors();
 
@@ -74,8 +74,8 @@ static void check_strategy() {
     static const auto sizes =
         std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                      max_size);
-    cauldron::Vectors<T> numbers_vectors(sizes,
-                                         numbers);
+    cauldron::Vectors<Number> numbers_vectors(sizes,
+                                              numbers);
     auto still_numbers_vectors = numbers_vectors || numbers_vectors;
 
     auto vector = still_numbers_vectors();
@@ -95,8 +95,8 @@ static void check_strategy() {
     static const auto sizes =
         std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                      max_size);
-    cauldron::Vectors<T> vectors(sizes,
-                                 numbers);
+    cauldron::Vectors<Number> vectors(sizes,
+                                      numbers);
 
     SECTION("sign") {
       auto positive_vectors = vectors.filter(is_positive_vector);
@@ -127,18 +127,18 @@ static void check_strategy() {
   SECTION("mapping") {
     auto to_positive = to_positive_operator(max_number);
     auto to_non_positive = to_non_positive_operator(min_number);
-    cauldron::Converter<std::vector<T>> to_positive_vector(
-        [&](const std::vector<T> &vector) -> std::vector<T> {
-          auto result = std::vector<T>(vector.size());
+    cauldron::Converter<std::vector<Number>> to_positive_vector(
+        [&](const std::vector<Number> &vector) -> std::vector<Number> {
+          auto result = std::vector<Number>(vector.size());
           std::transform(vector.begin(),
                          vector.end(),
                          result.begin(),
                          to_positive);
           return result;
         });
-    cauldron::Converter<std::vector<T>> to_non_positive_vector(
-        [&](const std::vector<T> &vector) -> std::vector<T> {
-          auto result = std::vector<T>(vector.size());
+    cauldron::Converter<std::vector<Number>> to_non_positive_vector(
+        [&](const std::vector<Number> &vector) -> std::vector<Number> {
+          auto result = std::vector<Number>(vector.size());
           std::transform(vector.begin(),
                          vector.end(),
                          result.begin(),
@@ -156,8 +156,8 @@ static void check_strategy() {
                                        cauldron::MAX_CYCLES);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
-    cauldron::Vectors<T> vectors(sizes,
-                                 numbers);
+    cauldron::Vectors<Number> vectors(sizes,
+                                      numbers);
 
     SECTION("sign") {
       auto positive_vectors = vectors.map(to_positive_vector);

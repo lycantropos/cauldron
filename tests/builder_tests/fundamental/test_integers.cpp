@@ -8,44 +8,44 @@
 #include "../wrapper.h"
 
 
-template<typename T>
+template<typename Number>
 static void check_strategy() {
-  using IntegerWrapper = Wrapper<T>;
+  using IntegerWrapper = Wrapper<Number>;
 
   cauldron::Requirement<IntegerWrapper> is_even_wrapper(
       [&](IntegerWrapper wrapper) -> bool {
-        return even<T>(wrapper.field());
+        return even<Number>(wrapper.field());
       });
   cauldron::Requirement<IntegerWrapper> is_odd_wrapper(
       [&](IntegerWrapper wrapper) -> bool {
-        return odd<T>(wrapper.field());
+        return odd<Number>(wrapper.field());
       });
 
   // ``signed char`` is the smallest tested integer type
-  static signed char min_integer = std::is_unsigned<T>() ?
+  static signed char min_integer = std::is_unsigned<Number>() ?
                                    0 : std::numeric_limits<signed char>::min();
   static signed char max_integer = std::numeric_limits<signed char>::max();
   static auto numbers_range = factories::integers_range<int>(min_integer,
                                                              max_integer);
 
-  T min_number = std::numeric_limits<T>::min();
-  T max_number = std::numeric_limits<T>::max();
-  auto numbers = std::make_shared<cauldron::Integers<T>>(min_number,
-                                                         max_number);
-  auto number_stays_in_range = in_range_checker<T>(min_number,
-                                                   max_number);
+  Number min_number = std::numeric_limits<Number>::min();
+  Number max_number = std::numeric_limits<Number>::max();
+  auto numbers = std::make_shared<cauldron::Integers<Number>>(min_number,
+                                                              max_number);
+  auto number_stays_in_range = in_range_checker<Number>(min_number,
+                                                        max_number);
 
-  cauldron::Builder<IntegerWrapper, T> numbers_wrappers(numbers);
+  cauldron::Builder<IntegerWrapper, Number> numbers_wrappers(numbers);
 
   SECTION("single element domain") {
     auto ones = std::make_shared<cauldron::Just<size_t>>(1);
-    for (T number: numbers_range) {
-      auto same_number = std::make_shared<cauldron::Just<T>>(number);
-      cauldron::Builder<IntegerWrapper, T> same_number_wrappers(same_number);
+    for (Number number: numbers_range) {
+      auto same_number = std::make_shared<cauldron::Just<Number>>(number);
+      cauldron::Builder<IntegerWrapper, Number> number_wrappers(same_number);
 
-      auto same_number_wrapper = same_number_wrappers();
+      auto wrapper = number_wrappers();
 
-      REQUIRE(same_number_wrapper == IntegerWrapper(number));
+      REQUIRE(wrapper == IntegerWrapper(number));
     }
   }
 
@@ -58,11 +58,10 @@ static void check_strategy() {
   SECTION("union") {
     SECTION("single element domain") {
       auto ones = std::make_shared<cauldron::Just<size_t>>(1);
-      for (T number: numbers_range) {
-        auto same_number = std::make_shared<cauldron::Just<T>>(number);
-        cauldron::Builder<IntegerWrapper, T> same_number_wrappers(same_number);
-        auto still_same_number_wrappers =
-            same_number_wrappers || same_number_wrappers;
+      for (Number number: numbers_range) {
+        auto same_number = std::make_shared<cauldron::Just<Number>>(number);
+        cauldron::Builder<IntegerWrapper, Number> number_wrappers(same_number);
+        auto still_same_number_wrappers = number_wrappers || number_wrappers;
 
         auto same_number_wrapper = still_same_number_wrappers();
 
@@ -105,11 +104,11 @@ static void check_strategy() {
   SECTION("mapping") {
     cauldron::Converter<IntegerWrapper> to_even_wrapper(
         [&](const IntegerWrapper &wrapper) -> IntegerWrapper {
-          return IntegerWrapper(to_even<T>(wrapper.field()));
+          return IntegerWrapper(to_even<Number>(wrapper.field()));
         });
     cauldron::Converter<IntegerWrapper> to_odd_wrapper(
         [&](const IntegerWrapper &wrapper) -> IntegerWrapper {
-          return IntegerWrapper(to_odd<T>(wrapper.field()));
+          return IntegerWrapper(to_odd<Number>(wrapper.field()));
         });
 
     SECTION("parity") {
