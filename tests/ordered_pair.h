@@ -20,11 +20,11 @@ static auto ordered_pair_helper(std::true_type,
   static std::random_device random_device;
   std::uniform_int_distribution<Number> left_number_distribution(
       min_number,
-      max_number / 4 + min_number / 4
+      std::max(min_number + 1, max_number / 4 + min_number / 4)
   );
   Number left_number = left_number_distribution(random_device);
   std::uniform_int_distribution<Number> right_number_distribution(
-      max_number / 2 + min_number / 2,
+      std::min(max_number - 1, max_number / 2 + min_number / 2),
       max_number
   );
   Number right_number = right_number_distribution(random_device);
