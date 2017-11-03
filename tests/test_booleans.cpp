@@ -3,7 +3,7 @@
 #include "predicates.h"
 
 
-TEST_CASE("\"booleans\" strategy", "[booleans]") {
+TEST_CASE("\"Booleans\" strategy", "[Booleans]") {
   cauldron::Booleans false_values(0.);
   cauldron::Booleans true_values(1.);
 

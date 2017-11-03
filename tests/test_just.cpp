@@ -16,7 +16,7 @@ static void check_strategy() {
 }
 
 
-TEST_CASE("\"just\" strategy", "[just]") {
+TEST_CASE("\"Just\" strategy", "[Just]") {
   SECTION("fundamental") {
     SECTION("unsigned char") {
       check_strategy<bool>();

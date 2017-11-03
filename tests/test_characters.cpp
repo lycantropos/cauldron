@@ -5,7 +5,7 @@
 #include "factories.h"
 
 
-TEST_CASE("\"characters\" strategy", "[characters]") {
+TEST_CASE("\"Characters\" strategy", "[Characters]") {
   std::string non_zero_characters = factories::non_zero_characters();
 
   SECTION("single character") {

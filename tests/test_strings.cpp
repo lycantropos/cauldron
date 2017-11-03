@@ -8,7 +8,7 @@
 #include "operators.h"
 
 
-TEST_CASE("\"strings\" strategy", "[strings]") {
+TEST_CASE("\"Strings\" strategy", "[Strings]") {
   std::string non_zero_characters_string = factories::non_zero_characters();
   size_t max_length = constants::max_capacity;
 
