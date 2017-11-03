@@ -44,6 +44,11 @@ class Strategy {
                         std::move(strategy.clone())};
   }
 
+  /**
+   * Same result as for any other strategy.
+   * Basically added for possible overriding
+   * with support of strategies' union associativity.
+   */
   virtual Union<Value> operator||(const Union<Value> &strategy) const {
     return strategy || static_cast<const Strategy<Value> &>(*this);
   }
