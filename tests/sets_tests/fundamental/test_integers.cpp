@@ -62,7 +62,7 @@ static void check_strategy() {
 
   SECTION("multiple elements domain") {
     static size_t min_size = 0;
-    static size_t max_size = min_size + 1;
+    static size_t max_size = constants::max_capacity;
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
     static const auto sizes =
