@@ -52,6 +52,7 @@ set(TESTS_HEADER_FILES
         tests/factories.h
         tests/operators.h
         tests/predicates.h
+        tests/statistics.h
         tests/ordered_pair.h
         tests/utils.h
         tests/builder_tests/wrapper.h)
