@@ -1,14 +1,14 @@
 #include <catch.hpp>
-#include "../cauldron/just.h"
-#include "../cauldron/characters.h"
-#include "../cauldron/integers.h"
-#include "../cauldron/strings.h"
+#include <cauldron/just.h>
+#include <cauldron/integers.h>
+#include <cauldron/characters.h>
+#include <cauldron/strings.h>
 #include "predicates.h"
 #include "factories.h"
 #include "operators.h"
 
 
-TEST_CASE("\"strings\" strategy", "[strings]") {
+TEST_CASE("\"Strings\" strategy", "[Strings]") {
   std::string non_zero_characters_string = factories::non_zero_characters();
   size_t max_length = constants::max_capacity;
 
@@ -29,18 +29,17 @@ TEST_CASE("\"strings\" strategy", "[strings]") {
 
   SECTION("multiple characters alphabet") {
     size_t min_length = 0;
-
+    auto stays_in_range = in_range_checker<size_t>(min_length,
+                                                   max_length);
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
                                                                 max_length);
     std::string alphabet_characters = factories::characters_string();
     auto alphabet = std::make_shared<cauldron::Characters>(
         alphabet_characters);
-    cauldron::Strings strings(lengths,
-                              alphabet);
+    cauldron::Strings alphabet_strings(lengths,
+                                       alphabet);
 
-    auto string = strings();
-    auto stays_in_range = in_range_checker<size_t>(min_length,
-                                                   max_length);
+    auto string = alphabet_strings();
 
     REQUIRE(stays_in_range(string.length()));
     REQUIRE(is_string_from_alphabet(string,

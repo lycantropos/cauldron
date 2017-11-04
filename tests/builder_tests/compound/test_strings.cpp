@@ -1,13 +1,13 @@
 #include <catch.hpp>
-#include "../../../cauldron/just.h"
-#include "../../../cauldron/integers.h"
-#include "../../../cauldron/characters.h"
-#include "../../../cauldron/strings.h"
-#include "../../../cauldron/builder.h"
-#include "../../factories.h"
-#include "../../predicates.h"
-#include "../../operators.h"
-#include "../wrapper.h"
+#include <cauldron/just.h>
+#include <cauldron/integers.h>
+#include <cauldron/characters.h>
+#include <cauldron/strings.h>
+#include <cauldron/builder.h>
+#include <tests/factories.h>
+#include <tests/predicates.h>
+#include <tests/operators.h>
+#include <tests/builder_tests/wrapper.h>
 
 
 TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
@@ -39,14 +39,15 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
           same_character_strings_wrappers(same_character_strings);
 
       auto wrapper = same_character_strings_wrappers();
-      StringWrapper single_character_string_wrapper(single_character_string);
 
-      REQUIRE(wrapper == single_character_string_wrapper);
+      REQUIRE(wrapper == StringWrapper(single_character_string));
     }
   }
 
   SECTION("multiple characters alphabet") {
     size_t min_length = 0;
+    auto length_stays_in_range = in_range_checker<size_t>(min_length,
+                                                          max_length);
     auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
                                                                 max_length);
     std::string alphabet_characters = factories::characters_string(
@@ -58,12 +59,10 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
                                                        alphabet);
     cauldron::Builder<StringWrapper, std::string> strings_wrappers(strings);
 
-    auto string_wrapper = strings_wrappers();
-    auto length_stays_in_range = in_range_checker<size_t>(min_length,
-                                                          max_length);
+    auto wrapper = strings_wrappers();
 
-    REQUIRE(length_stays_in_range(string_wrapper.field().length()));
-    REQUIRE(is_string_from_alphabet(string_wrapper.field(),
+    REQUIRE(length_stays_in_range(wrapper.field().length()));
+    REQUIRE(is_string_from_alphabet(wrapper.field(),
                                     alphabet_characters));
   }
 

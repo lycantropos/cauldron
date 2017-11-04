@@ -1,13 +1,13 @@
 #include <catch.hpp>
-#include "../../../cauldron/just.h"
-#include "../../../cauldron/booleans.h"
-#include "../../../cauldron/integers.h"
-#include "../../../cauldron/characters.h"
-#include "../../../cauldron/sets.h"
-#include "../../factories.h"
-#include "../../predicates.h"
-#include "../../operators.h"
-#include "../../utils.h"
+#include <cauldron/just.h>
+#include <cauldron/booleans.h>
+#include <cauldron/integers.h>
+#include <cauldron/characters.h>
+#include <cauldron/sets.h>
+#include <tests/factories.h>
+#include <tests/predicates.h>
+#include <tests/operators.h>
+#include <tests/utils.h>
 
 
 TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
@@ -37,31 +37,15 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
 
       auto same_character_set = same_character_sets();
 
-      REQUIRE(std::all_of(same_character_set.begin(),
-                          same_character_set.end(),
-                          [=](char character) -> bool {
-                            return character == single_character;
-                          }));
+      REQUIRE(same_character_set.size() == 1);
+      REQUIRE(same_character_set == std::set<char>{single_character});
     }
   }
 
   SECTION("multiple characters") {
     std::string characters_string = factories::characters_string();
-    size_t min_size = 0;
-    size_t max_size = sufficient_set_size(characters_string.length(),
-                                          cauldron::MAX_CYCLES);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
-    auto characters = std::make_shared<cauldron::Characters>(
-        characters_string);
-    cauldron::Sets<char> characters_sets(sizes,
-                                         characters);
     std::set<char> characters_domain(characters_string.begin(),
                                      characters_string.end());
-
-    auto characters_set = characters_sets();
-    auto stays_in_range = in_range_checker<size_t>(min_size,
-                                                   max_size);
     auto is_character_from_domain = [=](char character) -> bool {
       return is_object_in_set<char>(character, characters_domain);
     };
@@ -71,9 +55,22 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
                              set.end(),
                              is_character_from_domain);
         };
+    size_t min_size = 0;
+    size_t max_size = sufficient_set_size(characters_string.length(),
+                                          cauldron::MAX_CYCLES);
+    auto stays_in_range = in_range_checker<size_t>(min_size,
+                                                   max_size);
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                              max_size);
+    auto characters = std::make_shared<cauldron::Characters>(
+        characters_string);
+    cauldron::Sets<char> characters_sets(sizes,
+                                         characters);
 
-    REQUIRE(stays_in_range(characters_set.size()));
-    REQUIRE(is_set_from_characters_domain(characters_set));
+    auto set = characters_sets();
+
+    REQUIRE(stays_in_range(set.size()));
+    REQUIRE(is_set_from_characters_domain(set));
   }
 
   SECTION("filtration") {

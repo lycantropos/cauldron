@@ -1,53 +1,56 @@
 #include <catch.hpp>
-#include "../../../cauldron/just.h"
-#include "../../../cauldron/integers.h"
-#include "../../../cauldron/builder.h"
-#include "../../factories.h"
-#include "../../predicates.h"
-#include "../../operators.h"
-#include "../wrapper.h"
+#include <cauldron/just.h>
+#include <cauldron/integers.h>
+#include <cauldron/builder.h>
+#include <tests/factories.h>
+#include <tests/predicates.h>
+#include <tests/operators.h>
+#include <tests/ordered_pair.h>
+#include <tests/builder_tests/wrapper.h>
 
 
-template<typename T>
+template<typename Number>
 static void check_strategy() {
-  using IntegerWrapper = Wrapper<T>;
+  using IntegerWrapper = Wrapper<Number>;
 
   cauldron::Requirement<IntegerWrapper> is_even_wrapper(
       [&](IntegerWrapper wrapper) -> bool {
-        return even<T>(wrapper.field());
+        return even<Number>(wrapper.field());
       });
   cauldron::Requirement<IntegerWrapper> is_odd_wrapper(
       [&](IntegerWrapper wrapper) -> bool {
-        return odd<T>(wrapper.field());
+        return odd<Number>(wrapper.field());
       });
 
   // ``signed char`` is the smallest tested integer type
-  static signed char min_integer = std::is_unsigned<T>() ?
+  static signed char min_integer = std::is_unsigned<Number>() ?
                                    0 : std::numeric_limits<signed char>::min();
   static signed char max_integer = std::numeric_limits<signed char>::max();
   static auto numbers_range = factories::integers_range<int>(min_integer,
                                                              max_integer);
 
-  T min_number = std::numeric_limits<T>::min();
-  T max_number = std::numeric_limits<T>::max();
-  auto numbers = std::make_shared<cauldron::Integers<T>>(min_number,
-                                                         max_number);
-  auto number_stays_in_range = in_range_checker<T>(min_number,
-                                                   max_number);
+  Number min_number;
+  Number max_number;
+  std::tie(min_number, max_number) = ordered_pair(
+      std::numeric_limits<Number>::lowest(),
+      std::numeric_limits<Number>::max()
+  );
+  auto number_stays_in_range = in_range_checker<Number>(min_number,
+                                                        max_number);
+  auto numbers = std::make_shared<cauldron::Integers<Number>>(min_number,
+                                                              max_number);
 
-  cauldron::Builder<IntegerWrapper, T> numbers_wrappers(numbers);
+  cauldron::Builder<IntegerWrapper, Number> numbers_wrappers(numbers);
 
   SECTION("single element domain") {
     auto ones = std::make_shared<cauldron::Just<size_t>>(1);
-    for (T number: numbers_range) {
-      auto single_number_wrapper = IntegerWrapper(number);
-      auto same_number = std::make_shared<cauldron::Just<T>>(number);
-      cauldron::Builder<IntegerWrapper, T> same_number_wrappers(same_number);
+    for (Number number: numbers_range) {
+      auto same_number = std::make_shared<cauldron::Just<Number>>(number);
+      cauldron::Builder<IntegerWrapper, Number> number_wrappers(same_number);
 
-      auto same_number_wrapper = same_number_wrappers();
+      auto wrapper = number_wrappers();
 
-      bool wrappers_are_equal = same_number_wrapper == single_number_wrapper;
-      REQUIRE(wrappers_are_equal);
+      REQUIRE(wrapper == IntegerWrapper(number));
     }
   }
 
@@ -81,13 +84,17 @@ static void check_strategy() {
   }
 
   SECTION("mapping") {
+    cauldron::Converter<Number> to_even(to_even_operator(min_number,
+                                                         max_number));
+    cauldron::Converter<Number> to_odd(to_odd_operator(min_number,
+                                                       max_number));
     cauldron::Converter<IntegerWrapper> to_even_wrapper(
         [&](const IntegerWrapper &wrapper) -> IntegerWrapper {
-          return IntegerWrapper(to_even<T>(wrapper.field()));
+          return IntegerWrapper(to_even(wrapper.field()));
         });
     cauldron::Converter<IntegerWrapper> to_odd_wrapper(
         [&](const IntegerWrapper &wrapper) -> IntegerWrapper {
-          return IntegerWrapper(to_odd<T>(wrapper.field()));
+          return IntegerWrapper(to_odd(wrapper.field()));
         });
 
     SECTION("parity") {

@@ -7,11 +7,12 @@
 
 namespace factories {
 template<typename T>
-std::vector<T> integers_range(T min_value,
-                              T max_value) {
-  auto length = static_cast<size_t>(max_value - min_value + 1);
-  std::vector<T> integers(length);
-  for (T integer = min_value; integer <= max_value; integer++) {
+std::vector<T> integers_range(T min_integer,
+                              T max_integer) {
+  auto length = static_cast<size_t>(max_integer - min_integer + 1);
+  std::vector<T> integers;
+  integers.reserve(length);
+  for (T integer = min_integer; integer <= max_integer; ++integer) {
     integers.push_back(integer);
   }
   return integers;

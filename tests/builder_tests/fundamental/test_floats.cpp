@@ -1,43 +1,39 @@
 #include <catch.hpp>
-#include "../../../cauldron/just.h"
-#include "../../../cauldron/integers.h"
-#include "../../../cauldron/floats.h"
-#include "../../../cauldron/builder.h"
-#include "../../predicates.h"
-#include "../../operators.h"
-#include "../wrapper.h"
+#include <cauldron/just.h>
+#include <cauldron/integers.h>
+#include <cauldron/floats.h>
+#include <cauldron/builder.h>
+#include <tests/predicates.h>
+#include <tests/operators.h>
+#include <tests/ordered_pair.h>
+#include <tests/builder_tests/wrapper.h>
 
 
-template<typename T>
+template<typename Number>
 static void check_strategy() {
-  using FloatWrapper = Wrapper<T>;
+  using FloatWrapper = Wrapper<Number>;
 
   cauldron::Requirement<FloatWrapper> is_positive_wrapper(
       [&](FloatWrapper wrapper) -> bool {
-        return positive<T>(wrapper.field());
+        return positive<Number>(wrapper.field());
       });
   cauldron::Requirement<FloatWrapper> is_non_positive_wrapper(
       [&](FloatWrapper wrapper) -> bool {
-        return non_positive<T>(wrapper.field());
+        return non_positive<Number>(wrapper.field());
       });
 
-  T min_possible_number = std::numeric_limits<T>::lowest();
-  T min_possible_positive_number = std::numeric_limits<T>::min();
-  T max_possible_number = std::numeric_limits<T>::max();
+  Number min_number;
+  Number max_number;
+  std::tie(min_number, max_number) = ordered_pair(
+      std::numeric_limits<Number>::lowest(),
+      std::numeric_limits<Number>::max()
+  );
+  auto number_stays_in_range = in_range_checker<Number>(min_number,
+                                                        max_number);
+  auto numbers = std::make_shared<cauldron::Floats<Number>>(min_number,
+                                                            max_number);
 
-  static std::random_device random_device;
-
-  auto distribution = std::uniform_real_distribution<T>(
-      min_possible_number,
-      -min_possible_positive_number);
-  T min_number = distribution(random_device);
-  T max_number = max_possible_number + min_number;
-  auto numbers = std::make_shared<cauldron::Floats<T>>(min_number,
-                                                       max_number);
-  auto number_stays_in_range = in_range_checker<T>(min_number,
-                                                   max_number);
-
-  cauldron::Builder<FloatWrapper, T> numbers_wrappers(numbers);
+  cauldron::Builder<FloatWrapper, Number> numbers_wrappers(numbers);
 
   SECTION("stays in range") {
     auto wrapper = numbers_wrappers();
@@ -46,7 +42,7 @@ static void check_strategy() {
   }
 
   SECTION("filtration") {
-    SECTION("parity") {
+    SECTION("sign") {
       auto positive_wrappers = numbers_wrappers.filter(is_positive_wrapper);
       auto non_positive_wrappers =
           numbers_wrappers.filter(is_non_positive_wrapper);
@@ -82,7 +78,7 @@ static void check_strategy() {
           return FloatWrapper(to_non_positive(wrapper.field()));
         });
 
-    SECTION("parity") {
+    SECTION("sign") {
       auto positive_wrappers = numbers_wrappers.map(to_positive_wrapper);
       auto non_positive_wrappers =
           numbers_wrappers.map(to_non_positive_wrapper);
@@ -114,15 +110,15 @@ static void check_strategy() {
 
 
 TEST_CASE("floats \"Builder\" strategy", "[Builder]") {
-  SECTION("unsigned char") {
+  SECTION("float") {
     check_strategy<float>();
   }
 
-  SECTION("unsigned char") {
+  SECTION("double") {
     check_strategy<double>();
   }
 
-  SECTION("unsigned char") {
+  SECTION("long double") {
     check_strategy<long double>();
   }
 }

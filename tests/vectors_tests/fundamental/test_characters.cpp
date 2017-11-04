@@ -1,24 +1,24 @@
 #include <catch.hpp>
-#include "../../../cauldron/just.h"
-#include "../../../cauldron/booleans.h"
-#include "../../../cauldron/integers.h"
-#include "../../../cauldron/characters.h"
-#include "../../../cauldron/strings.h"
-#include "../../../cauldron/vectors.h"
-#include "../../factories.h"
-#include "../../predicates.h"
-#include "../../operators.h"
+#include <cauldron/just.h>
+#include <cauldron/booleans.h>
+#include <cauldron/integers.h>
+#include <cauldron/characters.h>
+#include <cauldron/strings.h>
+#include <cauldron/vectors.h>
+#include <tests/factories.h>
+#include <tests/predicates.h>
+#include <tests/operators.h>
 
 
 TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
   cauldron::Requirement<std::vector<char>> is_lower_vector(
-      [&](const std::vector<char> vector) -> bool {
+      [&](const std::vector<char> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
                            is_lower);
       });
   cauldron::Requirement<std::vector<char>> is_upper_vector(
-      [&](const std::vector<char> vector) -> bool {
+      [&](const std::vector<char> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
                            is_upper);
@@ -37,30 +37,18 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
 
       auto vector = same_character_vectors();
 
-      REQUIRE(std::all_of(vector.begin(),
-                          vector.end(),
-                          [=](char character) -> bool {
-                            return character == single_character;
-                          }));
+      REQUIRE(vector == std::vector<char>(vector.size(), single_character));
     }
   }
 
   SECTION("multiple characters") {
     size_t min_size = 0;
     size_t max_size = constants::max_capacity;
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
-    std::string characters_string = factories::characters_string();
-    auto characters = std::make_shared<cauldron::Characters>(
-        characters_string);
-    cauldron::Vectors<char> characters_vectors(sizes,
-                                               characters);
-    std::vector<char> characters_domain(characters_string.begin(),
-                                        characters_string.end());
-
-    auto vector = characters_vectors();
     auto stays_in_range = in_range_checker<size_t>(min_size,
                                                    max_size);
+    std::string characters_string = factories::characters_string();
+    std::vector<char> characters_domain(characters_string.begin(),
+                                        characters_string.end());
     auto is_character_from_domain = [=](char character) -> bool {
       return is_object_in_vector<char>(character, characters_domain);
     };
@@ -70,6 +58,14 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
                              vector.end(),
                              is_character_from_domain);
         };
+    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                              max_size);
+    auto characters = std::make_shared<cauldron::Characters>(
+        characters_string);
+    cauldron::Vectors<char> characters_vectors(sizes,
+                                               characters);
+
+    auto vector = characters_vectors();
 
     REQUIRE(stays_in_range(vector.size()));
     REQUIRE(is_vector_from_characters_domain(vector));
@@ -82,6 +78,8 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
      */
     size_t min_size = constants::min_capacity;
     size_t max_size = constants::max_capacity;
+    auto stays_in_range = in_range_checker<size_t>(min_size,
+                                                   max_size);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
     auto alphabetic_characters =
@@ -95,8 +93,6 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
 
       auto lower_vector = (*lower_vectors)();
       auto upper_vector = (*upper_vectors)();
-      auto stays_in_range = in_range_checker<size_t>(min_size,
-                                                     max_size);
 
       REQUIRE(stays_in_range(lower_vector.size()));
       REQUIRE(stays_in_range(upper_vector.size()));
@@ -139,6 +135,8 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
      */
     size_t min_size = constants::min_capacity;
     size_t max_size = constants::max_capacity;
+    auto stays_in_range = in_range_checker<size_t>(min_size,
+                                                   max_size);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
     auto alphabetic_characters =
@@ -152,8 +150,6 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
 
       auto lower_vector = (*lower_vectors)();
       auto upper_vector = (*upper_vectors)();
-      auto stays_in_range = in_range_checker<size_t>(min_size,
-                                                     max_size);
 
       REQUIRE(stays_in_range(lower_vector.size()));
       REQUIRE(stays_in_range(upper_vector.size()));

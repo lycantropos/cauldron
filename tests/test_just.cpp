@@ -1,18 +1,23 @@
 #include <catch.hpp>
-#include "../cauldron/just.h"
+#include <cauldron/just.h>
 
 
-template<typename T>
+template<typename Value>
 static void check_strategy() {
-  T value{};
-  cauldron::Just<T> just_value(value);
-  bool values_are_equal = just_value() == value;
-  REQUIRE(values_are_equal);
+  static_assert(std::is_default_constructible<Value>(),
+                "Expected type with default constructor.");
+
+  Value default_value{};
+  cauldron::Just<Value> same_value(default_value);
+
+  Value value = same_value();
+
+  REQUIRE(value == default_value);
 }
 
 
-TEST_CASE("\"just\" strategy", "[just]") {
-  SECTION("primitives") {
+TEST_CASE("\"Just\" strategy", "[Just]") {
+  SECTION("fundamental") {
     SECTION("unsigned char") {
       check_strategy<bool>();
     }
@@ -58,13 +63,17 @@ TEST_CASE("\"just\" strategy", "[just]") {
     }
   }
 
-  SECTION("objects") {
+  SECTION("compound") {
     SECTION("string") {
       check_strategy<std::string>();
     }
 
     SECTION("vector") {
       check_strategy<std::vector<std::string>>();
+    }
+
+    SECTION("set") {
+      check_strategy<std::set<std::string>>();
     }
   }
 }

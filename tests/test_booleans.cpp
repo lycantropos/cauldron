@@ -1,9 +1,9 @@
 #include <catch.hpp>
-#include "../cauldron/booleans.h"
+#include <cauldron/booleans.h>
 #include "predicates.h"
 
 
-TEST_CASE("\"booleans\" strategy", "[booleans]") {
+TEST_CASE("\"Booleans\" strategy", "[Booleans]") {
   cauldron::Booleans false_values(0.);
   cauldron::Booleans true_values(1.);
 
@@ -17,8 +17,8 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
       auto still_false_values = false_values.filter(negate);
       auto still_true_values = true_values.filter(identity);
 
-      REQUIRE((*still_false_values)() == false_values());
-      REQUIRE((*still_true_values)() == true_values());
+      REQUIRE(!(*still_false_values)());
+      REQUIRE((*still_true_values)());
     }
 
     SECTION("impossible") {
@@ -38,9 +38,9 @@ TEST_CASE("\"booleans\" strategy", "[booleans]") {
     auto now_true_values = still_false_values->map(negate);
     auto now_false_values = still_true_values->map(negate);
 
-    REQUIRE((*still_false_values)() == false_values());
-    REQUIRE((*still_true_values)() == true_values());
-    REQUIRE((*now_true_values)() != false_values());
-    REQUIRE((*now_false_values)() != true_values());
+    REQUIRE(!(*still_false_values)());
+    REQUIRE((*still_true_values)());
+    REQUIRE((*now_true_values)());
+    REQUIRE(!(*now_false_values)());
   }
 }

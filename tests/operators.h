@@ -4,19 +4,61 @@
 
 
 template<typename Number>
-Number to_even(Number number) {
-  static_assert(std::is_integral<Number>(),
-                "``Number`` should be integral type.");
-  return Number(number / 2) * 2;
+Number step_to_one(Number number) {
+  if (number > 0) {
+    number--;
+  } else {
+    number++;
+  }
+  return number;
 }
 
 
 template<typename Number>
-Number to_odd(Number number) {
+std::function<Number(Number)> to_even_operator(Number min_number,
+                                               Number max_number) {
   static_assert(std::is_integral<Number>(),
                 "``Number`` should be integral type.");
-  Number sign = number < 0 ? -1 : 1;
-  return Number(number / 2 - sign) * 2 + sign;
+
+  if (min_number >= max_number) {
+    throw std::invalid_argument("``min_number`` should be less "
+                                    "than ``max_number``.");
+  }
+
+  return [=](Number number) -> Number {
+    number = step_to_one(number);
+    number &= ~1;
+    if (number > max_number) {
+      return number - 2;
+    } else if (number < min_number) {
+      return number + 2;
+    }
+    return number;
+  };
+}
+
+
+template<typename Number>
+std::function<Number(Number)> to_odd_operator(Number min_number,
+                                              Number max_number) {
+  static_assert(std::is_integral<Number>(),
+                "``Number`` should be integral type.");
+
+  if (min_number >= max_number) {
+    throw std::invalid_argument("``min_number`` should be less "
+                                    "than ``max_number``.");
+  }
+
+  return [=](Number number) -> Number {
+    number &= ~1;
+    number = step_to_one(number);
+    if (number > max_number) {
+      return number - 2;
+    } else if (number < min_number) {
+      return number + 2;
+    }
+    return number;
+  };
 }
 
 

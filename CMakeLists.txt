@@ -11,6 +11,9 @@ include(CodeCoverage)
 
 set(CMAKE_CXX_STANDARD 14)
 
+SET(BASEPATH "${CMAKE_SOURCE_DIR}")
+INCLUDE_DIRECTORIES("${BASEPATH}")
+
 string(CONCAT
         CMAKE_CXX_FLAGS
         "${CMAKE_CXX_FLAGS} "
@@ -49,6 +52,8 @@ set(TESTS_HEADER_FILES
         tests/factories.h
         tests/operators.h
         tests/predicates.h
+        tests/statistics.h
+        tests/ordered_pair.h
         tests/utils.h
         tests/builder_tests/wrapper.h)
 set(TESTS_SOURCE_FILES
@@ -78,7 +83,12 @@ set(TESTS_SOURCE_FILES
         tests/builder_tests/fundamental/test_integers.cpp
         tests/builder_tests/fundamental/test_floats.cpp
         tests/builder_tests/fundamental/test_characters.cpp
-        tests/builder_tests/compound/test_strings.cpp)
+        tests/builder_tests/compound/test_strings.cpp
+        tests/union_tests/fundamental/test_booleans.cpp
+        tests/union_tests/fundamental/test_integers.cpp
+        tests/union_tests/fundamental/test_floats.cpp
+        tests/union_tests/fundamental/test_characters.cpp
+        tests/union_tests/compound/test_strings.cpp)
 add_executable(main
         ${HEADER_FILES} ${SOURCE_FILES}
         ${TESTS_HEADER_FILES} ${TESTS_SOURCE_FILES})

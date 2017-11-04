@@ -1,21 +1,21 @@
 #include <catch.hpp>
-#include "../cauldron/characters.h"
+#include <cauldron/characters.h>
 #include "operators.h"
 #include "predicates.h"
 #include "factories.h"
 
 
-TEST_CASE("\"characters\" strategy", "[characters]") {
+TEST_CASE("\"Characters\" strategy", "[Characters]") {
   std::string non_zero_characters = factories::non_zero_characters();
 
   SECTION("single character") {
-    for (char single_character: non_zero_characters) {
-      std::string single_character_string{single_character};
-      cauldron::Characters same_character(single_character_string);
+    for (char non_zero_character: non_zero_characters) {
+      std::string non_zero_character_string{non_zero_character};
+      cauldron::Characters same_character(non_zero_character_string);
 
       auto character = same_character();
 
-      REQUIRE(character == single_character);
+      REQUIRE(character == non_zero_character);
     }
   }
 

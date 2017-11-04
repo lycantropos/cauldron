@@ -1,77 +1,81 @@
 #include <catch.hpp>
-#include "../../../cauldron/just.h"
-#include "../../../cauldron/booleans.h"
-#include "../../../cauldron/integers.h"
-#include "../../../cauldron/characters.h"
-#include "../../../cauldron/strings.h"
-#include "../../../cauldron/vectors.h"
-#include "../../factories.h"
-#include "../../predicates.h"
-#include "../../operators.h"
-#include "../../utils.h"
+#include <cauldron/just.h>
+#include <cauldron/booleans.h>
+#include <cauldron/integers.h>
+#include <cauldron/characters.h>
+#include <cauldron/strings.h>
+#include <cauldron/vectors.h>
+#include <tests/factories.h>
+#include <tests/predicates.h>
+#include <tests/operators.h>
+#include <tests/ordered_pair.h>
+#include <tests/utils.h>
 
 
-template<typename T>
+template<typename Number>
 static void check_strategy() {
-  cauldron::Requirement<std::vector<T>> is_even_vector(
-      [&](std::vector<T> vector) -> bool {
+  cauldron::Requirement<std::vector<Number>> is_even_vector(
+      [&](const std::vector<Number> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
-                           even<T>);
+                           even<Number>);
       });
-  cauldron::Requirement<std::vector<T>> is_odd_vector(
-      [&](std::vector<T> vector) -> bool {
+  cauldron::Requirement<std::vector<Number>> is_odd_vector(
+      [&](const std::vector<Number> &vector) -> bool {
         return std::all_of(vector.begin(),
                            vector.end(),
-                           odd<T>);
+                           odd<Number>);
       });
 
   // ``signed char`` is the smallest tested integer type
-  static signed char min_integer = std::is_unsigned<T>() ?
+  static signed char min_integer = std::is_unsigned<Number>() ?
                                    0 : std::numeric_limits<signed char>::min();
   static signed char max_integer = std::numeric_limits<signed char>::max();
   static auto numbers_range = factories::integers_range<int>(min_integer,
                                                              max_integer);
 
-  T min_number = std::numeric_limits<T>::min();
-  T max_number = std::numeric_limits<T>::max();
-  auto numbers = std::make_shared<cauldron::Integers<T>>(min_number,
-                                                         max_number);
-  auto number_stays_in_range = in_range_checker<T>(min_number,
-                                                   max_number);
+  Number min_number;
+  Number max_number;
+  std::tie(min_number, max_number) = ordered_pair(
+      std::numeric_limits<Number>::min(),
+      std::numeric_limits<Number>::max()
+  );
+  auto number_stays_in_range = in_range_checker<Number>(min_number,
+                                                        max_number);
   auto numbers_stay_in_range =
-      [&](const std::vector<T> &numbers_vector) -> bool {
+      [&](const std::vector<Number> &numbers_vector) -> bool {
         return std::all_of(numbers_vector.begin(),
                            numbers_vector.end(),
                            number_stays_in_range);
       };
+  auto numbers = std::make_shared<cauldron::Integers<Number>>(min_number,
+                                                              max_number);
 
   SECTION("single element domain") {
     cauldron::Just<size_t> ones(1);
-    for (T number: numbers_range) {
-      std::vector<T> single_number_vector{number};
-      cauldron::Just<T> same_number(number);
-      cauldron::Vectors<T> same_number_vectors(
+    for (Number number: numbers_range) {
+      cauldron::Just<Number> same_number(number);
+      cauldron::Vectors<Number> same_number_vectors(
           std::make_shared<cauldron::Just<size_t>>(ones),
-          std::make_shared<cauldron::Just<T>>(same_number));
+          std::make_shared<cauldron::Just<Number>>(same_number));
 
       auto vector = same_number_vectors();
 
-      bool vectors_are_equal = vector == single_number_vector;
-      REQUIRE(vectors_are_equal);
+      REQUIRE(vector == std::vector<Number>{number});
     }
   }
 
   SECTION("multiple elements domain") {
     static size_t min_size = 0;
     static size_t max_size = constants::max_capacity;
-    static const std::shared_ptr<cauldron::Integers<size_t>> &sizes =
-        std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                     max_size);
-    cauldron::Vectors<T> numbers_vectors(sizes,
-                                         numbers);
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
+    static const auto sizes =
+        std::make_shared<cauldron::Integers<size_t>>(min_size,
+                                                     max_size);
+    cauldron::Vectors<Number> numbers_vectors(sizes,
+                                              numbers);
+
     auto vector = numbers_vectors();
 
     REQUIRE(size_stays_in_range(vector.size()));
@@ -88,8 +92,8 @@ static void check_strategy() {
                                                  cauldron::MAX_CYCLES);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
-    cauldron::Vectors<T> vectors(sizes,
-                                 numbers);
+    cauldron::Vectors<Number> vectors(sizes,
+                                      numbers);
 
     SECTION("parity") {
       auto even_vectors = vectors.filter(is_even_vector);
@@ -118,22 +122,26 @@ static void check_strategy() {
   }
 
   SECTION("mapping") {
-    cauldron::Converter<std::vector<T>> to_even_vector(
-        [&](const std::vector<T> &vector) -> std::vector<T> {
-          auto result = std::vector<T>(vector.size());
+    cauldron::Converter<Number> to_even(to_even_operator(min_number,
+                                                         max_number));
+    cauldron::Converter<Number> to_odd(to_odd_operator(min_number,
+                                                       max_number));
+    cauldron::Converter<std::vector<Number>> to_even_vector(
+        [&](const std::vector<Number> &vector) -> std::vector<Number> {
+          auto result = std::vector<Number>(vector.size());
           std::transform(vector.begin(),
                          vector.end(),
                          result.begin(),
-                         to_even<T>);
+                         to_even);
           return result;
         });
-    cauldron::Converter<std::vector<T>> to_odd_vector(
-        [&](const std::vector<T> &vector) -> std::vector<T> {
-          auto result = std::vector<T>(vector.size());
+    cauldron::Converter<std::vector<Number>> to_odd_vector(
+        [&](const std::vector<Number> &vector) -> std::vector<Number> {
+          auto result = std::vector<Number>(vector.size());
           std::transform(vector.begin(),
                          vector.end(),
                          result.begin(),
-                         to_odd<T>);
+                         to_odd);
           return result;
         });
 
@@ -144,10 +152,12 @@ static void check_strategy() {
     static size_t min_size = constants::min_capacity;
     static size_t max_size = sufficient_capacity(1, 2, // odd or even
                                                  cauldron::MAX_CYCLES);
+    auto size_stays_in_range = in_range_checker<size_t>(min_size,
+                                                        max_size);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
-    cauldron::Vectors<T> vectors(sizes,
-                                 numbers);
+    cauldron::Vectors<Number> vectors(sizes,
+                                      numbers);
 
     SECTION("parity") {
       auto even_vectors = vectors.map(to_even_vector);
@@ -155,8 +165,6 @@ static void check_strategy() {
 
       auto even_vector = (*even_vectors)();
       auto odd_vector = (*odd_vectors)();
-      auto size_stays_in_range = in_range_checker<size_t>(min_size,
-                                                          max_size);
 
       REQUIRE(size_stays_in_range(even_vector.size()));
       REQUIRE(size_stays_in_range(odd_vector.size()));

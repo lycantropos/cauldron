@@ -1,71 +1,81 @@
 #include <catch.hpp>
-#include "../../../cauldron/just.h"
-#include "../../../cauldron/integers.h"
-#include "../../../cauldron/sets.h"
-#include "../../factories.h"
-#include "../../predicates.h"
-#include "../../operators.h"
-#include "../../utils.h"
+#include <cauldron/just.h>
+#include <cauldron/integers.h>
+#include <cauldron/sets.h>
+#include <tests/factories.h>
+#include <tests/predicates.h>
+#include <tests/operators.h>
+#include <tests/ordered_pair.h>
+#include <tests/utils.h>
 
 
-template<typename T>
+template<typename Number>
 static void check_strategy() {
-  cauldron::Requirement<std::set<T>> is_even_set(
-      [&](std::set<T> set) -> bool {
+  cauldron::Requirement<std::set<Number>> is_even_set(
+      [&](std::set<Number> set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
-                           even<T>);
+                           even<Number>);
       });
-  cauldron::Requirement<std::set<T>> is_odd_set(
-      [&](std::set<T> set) -> bool {
+  cauldron::Requirement<std::set<Number>> is_odd_set(
+      [&](std::set<Number> set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
-                           odd<T>);
+                           odd<Number>);
       });
 
   // ``signed char`` is the smallest tested integer type
-  static signed char min_integer = std::is_unsigned<T>() ?
+  static signed char min_integer = std::is_unsigned<Number>() ?
                                    0 : std::numeric_limits<signed char>::min();
   static signed char max_integer = std::numeric_limits<signed char>::max();
   static auto numbers_range = factories::integers_range<int>(min_integer,
                                                              max_integer);
 
-  T min_number = std::numeric_limits<T>::min();
-  T max_number = std::numeric_limits<T>::max();
-  auto numbers = std::make_shared<cauldron::Integers<T>>(min_number,
-                                                         max_number);
-  auto number_stays_in_range = in_range_checker<T>(min_number,
-                                                   max_number);
-  auto numbers_stay_in_range = [&](const std::set<T> &set) -> bool {
+  Number min_number;
+  Number max_number;
+  std::tie(min_number, max_number) = ordered_pair(
+      std::numeric_limits<Number>::min(),
+      std::numeric_limits<Number>::max()
+  );
+  auto number_stays_in_range = in_range_checker<Number>(min_number,
+                                                        max_number);
+  auto numbers_stay_in_range = [&](const std::set<Number> &set) -> bool {
     return std::all_of(set.begin(),
                        set.end(),
                        number_stays_in_range);
   };
+  auto numbers = std::make_shared<cauldron::Integers<Number>>(min_number,
+                                                              max_number);
 
   SECTION("single element domain") {
     auto ones = std::make_shared<cauldron::Just<size_t>>(1);
-    for (const T number: numbers_range) {
-      auto single_number_set = std::set<T>{number};
-      auto same_number = std::make_shared<cauldron::Just<T>>(number);
-      cauldron::Sets<T> same_number_sets(ones,
-                                         same_number);
+    for (const Number number: numbers_range) {
+      auto same_number = std::make_shared<cauldron::Just<Number>>(number);
+      cauldron::Sets<Number> same_number_sets(ones,
+                                              same_number);
 
-      auto numbers_set = same_number_sets();
+      auto set = same_number_sets();
 
-      REQUIRE(numbers_set == single_number_set);
+      REQUIRE(set == std::set<Number>{number});
     }
   }
 
   SECTION("multiple elements domain") {
-    static size_t min_size = 0;
-    static size_t max_size = constants::max_capacity;
+    size_t min_size;
+    size_t max_size;
+    std::tie(min_size, max_size) = ordered_pair(
+        0ul,
+        std::min(constants::max_capacity,
+                 size_t(max_number - min_number) / 2)
+    );
+    auto size_stays_in_range = in_range_checker<size_t>(min_size,
+                                                        max_size);
     static const auto sizes =
         std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                      max_size);
-    cauldron::Sets<T> numbers_sets(sizes,
-                                   numbers);
-    auto size_stays_in_range = in_range_checker<size_t>(min_size,
-                                                        max_size);
+    cauldron::Sets<Number> numbers_sets(sizes,
+                                        numbers);
+
     auto set = numbers_sets();
 
     REQUIRE(size_stays_in_range(set.size()));
@@ -82,8 +92,8 @@ static void check_strategy() {
                                                  cauldron::MAX_CYCLES);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
-    cauldron::Sets<T> sets(sizes,
-                           numbers);
+    cauldron::Sets<Number> sets(sizes,
+                                numbers);
 
     SECTION("parity") {
       auto even_sets = sets.filter(is_even_set);
@@ -111,27 +121,31 @@ static void check_strategy() {
   }
 
   SECTION("mapping") {
-    cauldron::Converter<std::set<T>> to_even_set(
-        [&](const std::set<T> &set) -> std::set<T> {
-          std::vector<T> vector;
+    cauldron::Converter<Number> to_even(to_even_operator(min_number,
+                                                         max_number));
+    cauldron::Converter<Number> to_odd(to_odd_operator(min_number,
+                                                       max_number));
+    cauldron::Converter<std::set<Number>> to_even_set(
+        [&](const std::set<Number> &set) -> std::set<Number> {
+          std::vector<Number> vector;
           vector.reserve(set.size());
           std::transform(set.begin(),
                          set.end(),
                          std::back_inserter(vector),
-                         to_even<T>);
-          return std::set<T>(vector.begin(),
-                             vector.end());
+                         to_even);
+          return std::set<Number>(vector.begin(),
+                                  vector.end());
         });
-    cauldron::Converter<std::set<T>> to_odd_set(
-        [&](const std::set<T> &set) -> std::set<T> {
-          std::vector<T> vector;
+    cauldron::Converter<std::set<Number>> to_odd_set(
+        [&](const std::set<Number> &set) -> std::set<Number> {
+          std::vector<Number> vector;
           vector.reserve(set.size());
           std::transform(set.begin(),
                          set.end(),
                          std::back_inserter(vector),
-                         to_odd<T>);
-          return std::set<T>(vector.begin(),
-                             vector.end());
+                         to_odd);
+          return std::set<Number>(vector.begin(),
+                                  vector.end());
         });
 
     /* if `min_size`` equals to zero
@@ -143,8 +157,8 @@ static void check_strategy() {
                                                  cauldron::MAX_CYCLES);
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
-    cauldron::Sets<T> sets(sizes,
-                           numbers);
+    cauldron::Sets<Number> sets(sizes,
+                                numbers);
 
     SECTION("parity") {
       auto even_sets = sets.map(to_even_set);
