@@ -61,8 +61,13 @@ static void check_strategy() {
   }
 
   SECTION("multiple elements domain") {
-    static size_t min_size = 0;
-    static size_t max_size = constants::max_capacity;
+    size_t min_size;
+    size_t max_size;
+    std::tie(min_size, max_size) = ordered_pair(
+        0ul,
+        std::min(constants::max_capacity,
+                 size_t(max_number - min_number) / 2)
+    );
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
     static const auto sizes =
