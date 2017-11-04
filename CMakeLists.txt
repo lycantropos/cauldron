@@ -83,7 +83,12 @@ set(TESTS_SOURCE_FILES
         tests/builder_tests/fundamental/test_integers.cpp
         tests/builder_tests/fundamental/test_floats.cpp
         tests/builder_tests/fundamental/test_characters.cpp
-        tests/builder_tests/compound/test_strings.cpp)
+        tests/builder_tests/compound/test_strings.cpp
+        tests/union_tests/fundamental/test_booleans.cpp
+        tests/union_tests/fundamental/test_integers.cpp
+        tests/union_tests/fundamental/test_floats.cpp
+        tests/union_tests/fundamental/test_characters.cpp
+        tests/union_tests/compound/test_strings.cpp)
 add_executable(main
         ${HEADER_FILES} ${SOURCE_FILES}
         ${TESTS_HEADER_FILES} ${TESTS_SOURCE_FILES})
