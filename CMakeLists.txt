@@ -11,8 +11,8 @@ include(CodeCoverage)
 
 set(CMAKE_CXX_STANDARD 14)
 
-SET(BASEPATH "${CMAKE_SOURCE_DIR}")
-INCLUDE_DIRECTORIES("${BASEPATH}")
+set(BASEPATH "${CMAKE_SOURCE_DIR}")
+include_directories("${BASEPATH}")
 
 string(CONCAT
         CMAKE_CXX_FLAGS
