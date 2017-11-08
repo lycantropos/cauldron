@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 project(cauldron)
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
-
 # add the project specific cmake modules directory to the cmake module path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
 # include the cmake code coverage module
@@ -45,7 +42,12 @@ set(SOURCE_FILES
         cauldron/characters.cpp
         cauldron/strings.cpp)
 
-add_library(cauldron ${HEADER_FILES} ${SOURCE_FILES})
+add_library(cauldron STATIC ${HEADER_FILES} ${SOURCE_FILES})
+
+install(TARGETS cauldron
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/lib")
+install(FILES ${HEADER_FILES}
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/include/cauldron")
 
 set(TESTS_HEADER_FILES
         tests/globals.h
@@ -92,7 +94,3 @@ set(TESTS_SOURCE_FILES
 add_executable(main
         ${HEADER_FILES} ${SOURCE_FILES}
         ${TESTS_HEADER_FILES} ${TESTS_SOURCE_FILES})
-target_link_libraries(main ${CONAN_LIBS})
-
-enable_testing()
-add_test(NAME cauldron_tests COMMAND main)
