@@ -3,6 +3,7 @@
 #include <cauldron/integers.h>
 #include <cauldron/floats.h>
 #include <cauldron/builder.h>
+
 #include <tests/predicates.h>
 #include <tests/operators.h>
 #include <tests/ordered_pair.h>

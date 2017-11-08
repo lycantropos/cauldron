@@ -2,6 +2,7 @@
 #include <cauldron/just.h>
 #include <cauldron/characters.h>
 #include <cauldron/builder.h>
+
 #include <tests/factories.h>
 #include <tests/predicates.h>
 #include <tests/operators.h>

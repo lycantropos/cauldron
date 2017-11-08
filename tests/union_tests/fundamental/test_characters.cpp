@@ -1,9 +1,10 @@
 #include <catch.hpp>
 #include <cauldron/integers.h>
+#include <cauldron/characters.h>
+
 #include <tests/statistics.h>
 #include <tests/ordered_pair.h>
 #include <tests/factories.h>
-#include <cauldron/characters.h>
 
 
 static auto characters_factory(size_t min_length,

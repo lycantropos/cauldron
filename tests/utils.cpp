@@ -1,4 +1,7 @@
-#include <catch.hpp>
+#include <cmath>
+#include <limits>
+#include <stdexcept>
+
 #include "utils.h"
 
 
