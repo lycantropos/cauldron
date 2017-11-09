@@ -7,12 +7,6 @@ option(TESTS "enables building tests script" OFF)
 
 # add the project specific cmake modules directory to the cmake module path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
-# include the cmake code coverage module
-include(CodeCoverage)
-
-set(CMAKE_CXX_STANDARD 14)
-
-include_directories(${CMAKE_SOURCE_DIR})
 
 string(CONCAT
         CMAKE_CXX_FLAGS
@@ -20,12 +14,11 @@ string(CONCAT
         # for WARNING
         "-Wall "
         # for warnings between C and C++
-        "-pedantic "
-        # for code coverage
-        "-g -O0 -fprofile-arcs -ftest-coverage")
+        "-pedantic")
 
-# cmake code coverage module target
-setup_target_for_coverage(${PROJECT_NAME}_coverage main coverage)
+set(CMAKE_CXX_STANDARD 14)
+
+include_directories(${CMAKE_SOURCE_DIR})
 
 set(HEADER_FILES
         cauldron/sieve.h
@@ -54,6 +47,22 @@ install(FILES ${HEADER_FILES}
         DESTINATION "${CMAKE_INSTALL_PREFIX}/include/cauldron")
 
 if (TESTS)
+    include(CheckIncludeFileCXX)
+
+    check_include_file_cxx(catch.hpp HAVE_CATCH_HPP)
+    if (NOT HAVE_CATCH_HPP)
+        message(FATAL_ERROR "Catch header not found.")
+    endif ()
+
+    # include the cmake code coverage module
+    include(CodeCoverage)
+
+    string(CONCAT
+            CMAKE_CXX_FLAGS
+            "${CMAKE_CXX_FLAGS} "
+            # for code coverage
+            "-g -O0 -fprofile-arcs -ftest-coverage")
+
     set(TESTS_HEADER_FILES
             tests/globals.h
             tests/factories.h
@@ -99,4 +108,7 @@ if (TESTS)
     add_executable(main
             ${HEADER_FILES} ${SOURCE_FILES}
             ${TESTS_HEADER_FILES} ${TESTS_SOURCE_FILES})
+
+    # cmake code coverage module target
+    setup_target_for_coverage(${PROJECT_NAME}_coverage main coverage)
 endif ()
