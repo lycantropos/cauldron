@@ -18,7 +18,7 @@ COPY tests/ ./tests/
 
 WORKDIR build
 
-RUN cmake .. && \
+RUN cmake -DTESTS=ON .. && \
     make -j2 && \
     make install
 

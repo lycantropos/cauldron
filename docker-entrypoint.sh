@@ -2,7 +2,7 @@
 
 set -ex
 
-cmake ..
+cmake -DTESTS=ON ..
 make -j2
 make install
 
