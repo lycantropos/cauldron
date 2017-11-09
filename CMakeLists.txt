@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
-project(cauldron)
+project(cauldron
+        VERSION 0.0.0
+        DESCRIPTION "Property-based testing inspired by hypothesis")
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+option(TESTS "enables building tests script" OFF)
 
 # add the project specific cmake modules directory to the cmake module path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
@@ -11,8 +12,7 @@ include(CodeCoverage)
 
 set(CMAKE_CXX_STANDARD 14)
 
-SET(BASEPATH "${CMAKE_SOURCE_DIR}")
-INCLUDE_DIRECTORIES("${BASEPATH}")
+include_directories(${CMAKE_SOURCE_DIR})
 
 string(CONCAT
         CMAKE_CXX_FLAGS
@@ -45,54 +45,58 @@ set(SOURCE_FILES
         cauldron/characters.cpp
         cauldron/strings.cpp)
 
-add_library(cauldron ${HEADER_FILES} ${SOURCE_FILES})
+add_library(cauldron STATIC ${SOURCE_FILES})
+set_target_properties(cauldron PROPERTIES VERSION ${PROJECT_VERSION})
 
-set(TESTS_HEADER_FILES
-        tests/globals.h
-        tests/factories.h
-        tests/operators.h
-        tests/predicates.h
-        tests/statistics.h
-        tests/ordered_pair.h
-        tests/utils.h
-        tests/builder_tests/wrapper.h)
-set(TESTS_SOURCE_FILES
-        tests/globals.cpp
-        tests/factories.cpp
-        tests/operators.cpp
-        tests/predicates.cpp
-        tests/utils.cpp
-        tests/main.cpp
-        tests/test_just.cpp
-        tests/test_booleans.cpp
-        tests/test_integers.cpp
-        tests/test_floats.cpp
-        tests/test_characters.cpp
-        tests/test_strings.cpp
-        tests/vectors_tests/fundamental/test_booleans.cpp
-        tests/vectors_tests/fundamental/test_integers.cpp
-        tests/vectors_tests/fundamental/test_floats.cpp
-        tests/vectors_tests/fundamental/test_characters.cpp
-        tests/vectors_tests/compound/test_strings.cpp
-        tests/sets_tests/fundamental/test_booleans.cpp
-        tests/sets_tests/fundamental/test_integers.cpp
-        tests/sets_tests/fundamental/test_floats.cpp
-        tests/sets_tests/fundamental/test_characters.cpp
-        tests/sets_tests/compound/test_strings.cpp
-        tests/builder_tests/fundamental/test_booleans.cpp
-        tests/builder_tests/fundamental/test_integers.cpp
-        tests/builder_tests/fundamental/test_floats.cpp
-        tests/builder_tests/fundamental/test_characters.cpp
-        tests/builder_tests/compound/test_strings.cpp
-        tests/union_tests/fundamental/test_booleans.cpp
-        tests/union_tests/fundamental/test_integers.cpp
-        tests/union_tests/fundamental/test_floats.cpp
-        tests/union_tests/fundamental/test_characters.cpp
-        tests/union_tests/compound/test_strings.cpp)
-add_executable(main
-        ${HEADER_FILES} ${SOURCE_FILES}
-        ${TESTS_HEADER_FILES} ${TESTS_SOURCE_FILES})
-target_link_libraries(main ${CONAN_LIBS})
+install(TARGETS cauldron
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/lib")
+install(FILES ${HEADER_FILES}
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/include/cauldron")
 
-enable_testing()
-add_test(NAME cauldron_tests COMMAND main)
+if (TESTS)
+    set(TESTS_HEADER_FILES
+            tests/globals.h
+            tests/factories.h
+            tests/operators.h
+            tests/predicates.h
+            tests/statistics.h
+            tests/ordered_pair.h
+            tests/utils.h
+            tests/builder_tests/wrapper.h)
+    set(TESTS_SOURCE_FILES
+            tests/globals.cpp
+            tests/factories.cpp
+            tests/operators.cpp
+            tests/predicates.cpp
+            tests/utils.cpp
+            tests/main.cpp
+            tests/test_just.cpp
+            tests/test_booleans.cpp
+            tests/test_integers.cpp
+            tests/test_floats.cpp
+            tests/test_characters.cpp
+            tests/test_strings.cpp
+            tests/vectors_tests/fundamental/test_booleans.cpp
+            tests/vectors_tests/fundamental/test_integers.cpp
+            tests/vectors_tests/fundamental/test_floats.cpp
+            tests/vectors_tests/fundamental/test_characters.cpp
+            tests/vectors_tests/compound/test_strings.cpp
+            tests/sets_tests/fundamental/test_booleans.cpp
+            tests/sets_tests/fundamental/test_integers.cpp
+            tests/sets_tests/fundamental/test_floats.cpp
+            tests/sets_tests/fundamental/test_characters.cpp
+            tests/sets_tests/compound/test_strings.cpp
+            tests/builder_tests/fundamental/test_booleans.cpp
+            tests/builder_tests/fundamental/test_integers.cpp
+            tests/builder_tests/fundamental/test_floats.cpp
+            tests/builder_tests/fundamental/test_characters.cpp
+            tests/builder_tests/compound/test_strings.cpp
+            tests/union_tests/fundamental/test_booleans.cpp
+            tests/union_tests/fundamental/test_integers.cpp
+            tests/union_tests/fundamental/test_floats.cpp
+            tests/union_tests/fundamental/test_characters.cpp
+            tests/union_tests/compound/test_strings.cpp)
+    add_executable(main
+            ${HEADER_FILES} ${SOURCE_FILES}
+            ${TESTS_HEADER_FILES} ${TESTS_SOURCE_FILES})
+endif ()

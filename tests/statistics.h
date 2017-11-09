@@ -1,8 +1,9 @@
 #pragma once
 
+#include <algorithm>
 #include <functional>
-#include <random>
 #include <map>
+#include <random>
 
 
 template<typename Map>

@@ -1,5 +1,6 @@
 #include <catch.hpp>
 #include <cauldron/floats.h>
+
 #include <tests/statistics.h>
 #include <tests/ordered_pair.h>
 

@@ -5,11 +5,12 @@ services:
   - docker
 
 addons:
-    apt:
-        sources:
-            - ubuntu-toolchain-r-test
-        packages:
-            - lcov
+  apt:
+    sources:
+        - ubuntu-toolchain-r-test
+    packages:
+        - docker-ce
+        - lcov
 
 script:
   - ./run-tests.sh

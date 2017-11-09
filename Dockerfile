@@ -1,19 +1,12 @@
-FROM lycantropos/cmake:3.9.1
+ARG CMAKE_VERSION
 
-RUN apt-get update && \
-    apt-get install -y python-dev \
-                       python-pip \
-                       python-setuptools
+FROM lycantropos/cmake:${CMAKE_VERSION}
 
-RUN python -m pip install conan
+ARG CATCH2_VERSION
+ENV CATCH2_VERSION=${CATCH2_VERSION}
+RUN wget -P /usr/local/include https://github.com/catchorg/Catch2/releases/download/v${CATCH2_VERSION}/catch.hpp
 
 WORKDIR /opt/cauldron
-
-COPY conanfile.txt .
-
-RUN mkdir build && \
-    cd build && \
-    conan install ..
 
 RUN apt-get update && \
     apt-get install -y lcov
@@ -25,7 +18,8 @@ COPY tests/ ./tests/
 
 WORKDIR build
 
-RUN cmake .. && \
-    cmake --build . --target all -- -j 2
+RUN cmake -DTESTS=ON .. && \
+    make -j2 && \
+    make install
 
-CMD ["./bin/main"]
+CMD ["./main"]

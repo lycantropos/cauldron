@@ -2,14 +2,13 @@
 
 set -ex
 
-conan install ..
-cmake ..
-cmake --build . --target all -- -j 2
+cmake -DTESTS=ON ..
+make -j2
+make install
 
-./bin/main
+./main
 
 lcov --directory . --capture --output-file coverage.info
 lcov --remove coverage.info '/usr/*' \
-                            '/opt/cauldron/tests/*' \
-                            '/root/.conan/*' \
+                            '*/tests/*' \
                             --output-file coverage.info

@@ -3,6 +3,7 @@
 #include <cauldron/integers.h>
 #include <cauldron/characters.h>
 #include <cauldron/strings.h>
+
 #include <tests/factories.h>
 #include <tests/ordered_pair.h>
 #include <tests/statistics.h>

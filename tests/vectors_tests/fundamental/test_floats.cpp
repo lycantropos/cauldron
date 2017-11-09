@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include <catch.hpp>
 #include <cauldron/just.h>
 #include <cauldron/booleans.h>
@@ -6,6 +8,7 @@
 #include <cauldron/characters.h>
 #include <cauldron/strings.h>
 #include <cauldron/vectors.h>
+
 #include <tests/factories.h>
 #include <tests/predicates.h>
 #include <tests/operators.h>

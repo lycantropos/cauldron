@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-docker-compose up --exit-code-from cauldron
+docker-compose up --build --exit-code-from cauldron
 
 STATUS=$?
 

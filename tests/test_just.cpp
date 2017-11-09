@@ -1,3 +1,5 @@
+#include <set>
+
 #include <catch.hpp>
 #include <cauldron/just.h>
 

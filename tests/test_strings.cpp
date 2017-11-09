@@ -3,6 +3,7 @@
 #include <cauldron/integers.h>
 #include <cauldron/characters.h>
 #include <cauldron/strings.h>
+
 #include "predicates.h"
 #include "factories.h"
 #include "operators.h"
