@@ -54,6 +54,12 @@ install(FILES ${HEADER_FILES}
         DESTINATION "${CMAKE_INSTALL_PREFIX}/include/cauldron")
 
 if (TESTS)
+    include(CheckIncludeFileCXX)
+    check_include_file_cxx(catch.hpp HAVE_CATCH_HPP)
+    if (NOT HAVE_CATCH_HPP)
+        message(FATAL_ERROR "Catch header not found.")
+    endif ()
+
     set(TESTS_HEADER_FILES
             tests/globals.h
             tests/factories.h
