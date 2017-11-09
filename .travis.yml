@@ -1,5 +1,5 @@
 sudo: false
-distro: trusty
+dist: trusty
 
 services:
   - docker
