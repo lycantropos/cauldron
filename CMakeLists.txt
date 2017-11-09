@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
-project(cauldron)
+project(cauldron
+        VERSION 0.0.0
+        DESCRIPTION "Property-based testing inspired by hypothesis")
 
 option(TESTS "enables building tests script" OFF)
 
@@ -10,8 +12,7 @@ include(CodeCoverage)
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(BASEPATH "${CMAKE_SOURCE_DIR}")
-include_directories("${BASEPATH}")
+include_directories(${CMAKE_SOURCE_DIR})
 
 string(CONCAT
         CMAKE_CXX_FLAGS
@@ -44,7 +45,8 @@ set(SOURCE_FILES
         cauldron/characters.cpp
         cauldron/strings.cpp)
 
-add_library(cauldron STATIC ${HEADER_FILES} ${SOURCE_FILES})
+add_library(cauldron STATIC ${SOURCE_FILES})
+set_target_properties(cauldron PROPERTIES VERSION ${PROJECT_VERSION})
 
 install(TARGETS cauldron
         DESTINATION "${CMAKE_INSTALL_PREFIX}/lib")
