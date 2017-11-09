@@ -1,15 +1,18 @@
-sudo: false
-dist: trusty
+sudo: true
 
 services:
   - docker
 
 addons:
-    apt:
-        sources:
-            - ubuntu-toolchain-r-test
-        packages:
-            - lcov
+  apt:
+    sources:
+        - ubuntu-toolchain-r-test
+    packages:
+        - lcov
+
+install:
+  - ./install-docker.sh
+  - ./install-docker-compose.sh
 
 script:
   - ./run-tests.sh
