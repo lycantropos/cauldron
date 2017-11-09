@@ -1,5 +1,6 @@
 #include <catch.hpp>
 #include <cauldron/characters.h>
+
 #include "operators.h"
 #include "predicates.h"
 #include "factories.h"

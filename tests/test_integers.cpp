@@ -1,5 +1,6 @@
 #include <catch.hpp>
 #include <cauldron/integers.h>
+
 #include "predicates.h"
 #include "operators.h"
 #include "ordered_pair.h"
