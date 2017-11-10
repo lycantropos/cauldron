@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.9)
 project(cauldron
         VERSION 0.0.0
         DESCRIPTION "Property-based testing inspired by hypothesis")
