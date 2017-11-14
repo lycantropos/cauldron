@@ -92,7 +92,7 @@ class Builder : public CloneHelper<Object, Builder<Object, Value...>> {
   clone_strategies(
       const std::unique_ptr<cauldron::Strategy<Value>> &... strategy
   ) const {
-    return std::make_tuple((*strategy).clone()...);
+    return std::make_tuple(strategy->clone()...);
   }
 };
 }

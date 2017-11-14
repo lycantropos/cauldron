@@ -140,7 +140,7 @@ class Union : public CloneHelper<Value, Union<Value>> {
 
   Union<Value> operator||(const Strategy<Value> &strategy) const override {
     std::vector<std::shared_ptr<Strategy<Value>>> strategies(strategies_);
-    strategies.push_back(std::move(strategy.clone()));
+    strategies.push_back(strategy.clone());
     return Union<Value>(strategies);
   }
 
@@ -182,14 +182,14 @@ class Filtered : public CloneHelper<Value, Filtered<Value>> {
    */
   Filtered(const Filtered<Value> &mapped) :
       sieve_(mapped.sieve_),
-      strategy_((*mapped.strategy_).clone()) {}
+      strategy_(mapped.strategy_->clone()) {}
 
   Filtered<Value> filter(
       const Requirement<Value> &requirement
   ) const override {
     auto sieve = sieve_.expand(requirement);
     return Filtered<Value>(sieve,
-                           strategy_);
+                           strategy_->clone());
   }
 
   /**
@@ -235,12 +235,12 @@ class Mapped : public CloneHelper<Value, Mapped<Value>> {
    */
   Mapped(const Mapped<Value> &mapped) :
       facility_(mapped.facility_),
-      strategy_((*mapped.strategy_).clone()) {}
+      strategy_(mapped.strategy_->clone()) {}
 
   Mapped<Value> map(const Converter<Value> &converter) const override {
     auto facility = facility_.expand(converter);
     return Mapped(facility,
-                  (*strategy_).clone());
+                  strategy_->clone());
   }
 
   /**

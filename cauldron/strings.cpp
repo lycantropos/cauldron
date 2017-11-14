@@ -11,8 +11,8 @@ Strings::Strings(const Strategy<size_t> &lengths,
 
 
 Strings::Strings(const Strings &strings) :
-    lengths_((*strings.lengths_).clone()),
-    alphabet_((*strings.alphabet_).clone()) {}
+    lengths_(strings.lengths_->clone()),
+    alphabet_(strings.alphabet_->clone()) {}
 
 
 std::string Strings::operator()() const {

@@ -32,8 +32,8 @@ class Sets : public CloneHelper<std::set<Element>, Sets<Element>> {
    * which is not copyable.
    */
   Sets(const Sets<Element> &sets) :
-      sizes_((*sets.sizes_).clone()),
-      elements_((*sets.elements_).clone()) {};
+      sizes_(sets.sizes_->clone()),
+      elements_(sets.elements_->clone()) {};
 
   /**
    * Generates pseudo-random ``std::set`` instance.

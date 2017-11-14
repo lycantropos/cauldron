@@ -31,8 +31,8 @@ class Vectors : public CloneHelper<std::vector<Element>, Vectors<Element>> {
    * which is not copyable.
    */
   Vectors(const Vectors<Element> &vectors) :
-      sizes_((*vectors.sizes_).clone()),
-      elements_((*vectors.elements_).clone()) {};
+      sizes_(vectors.sizes_->clone()),
+      elements_(vectors.elements_->clone()) {};
 
   /**
    * Generates pseudo-random ``std::vector`` instance.
