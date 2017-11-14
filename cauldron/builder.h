@@ -26,7 +26,7 @@ class Builder : public CloneHelper<Object, Builder<Object, Value...>> {
   /**
    * Default copy constructor doesn't fit
    * since we're using ``std::unique_ptr`` as class members
-   * which are not copyable.
+   * which is not copyable.
    */
   Builder(const Builder<Object, Value...> &builder) :
       strategies_(builder.clone_strategies()) {}

@@ -29,7 +29,7 @@ class Sets : public CloneHelper<std::set<Element>, Sets<Element>> {
   /**
    * Default copy constructor doesn't fit
    * since we're using ``std::unique_ptr`` as class members
-   * which are not copyable.
+   * which is not copyable.
    */
   Sets(const Sets<Element> &sets) :
       sizes_((*sets.sizes_).clone()),

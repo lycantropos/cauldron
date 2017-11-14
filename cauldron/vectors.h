@@ -28,7 +28,7 @@ class Vectors : public CloneHelper<std::vector<Element>, Vectors<Element>> {
   /**
    * Default copy constructor doesn't fit
    * since we're using ``std::unique_ptr`` as class members
-   * which are not copyable.
+   * which is not copyable.
    */
   Vectors(const Vectors<Element> &vectors) :
       sizes_((*vectors.sizes_).clone()),

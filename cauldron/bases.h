@@ -178,7 +178,7 @@ class Filtered : public CloneHelper<Value, Filtered<Value>> {
   /**
    * Default copy constructor doesn't fit
    * since we're using ``std::unique_ptr`` as class member
-   * which are not copyable.
+   * which is not copyable.
    */
   Filtered(const Filtered<Value> &mapped) :
       sieve_(mapped.sieve_),
@@ -231,7 +231,7 @@ class Mapped : public CloneHelper<Value, Mapped<Value>> {
   /**
    * Default copy constructor doesn't fit
    * since we're using ``std::unique_ptr`` as class member
-   * which are not copyable.
+   * which is not copyable.
    */
   Mapped(const Mapped<Value> &mapped) :
       facility_(mapped.facility_),

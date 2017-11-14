@@ -20,7 +20,7 @@ class Strings : public CloneHelper<std::string, Strings> {
   /**
    * Default copy constructor doesn't fit
    * since we're using ``std::unique_ptr`` as class members
-   * which are not copyable.
+   * which is not copyable.
    */
   Strings(const Strings &strings);
 
