@@ -31,9 +31,8 @@ static void check_strategy() {
   );
   auto number_stays_in_range = in_range_checker<Number>(min_number,
                                                         max_number);
-  auto numbers = std::make_shared<cauldron::Floats<Number>>(min_number,
-                                                            max_number);
-
+  cauldron::Floats<Number> numbers(min_number,
+                                   max_number);
   cauldron::Builder<FloatWrapper, Number> numbers_wrappers(numbers);
 
   SECTION("stays in range") {

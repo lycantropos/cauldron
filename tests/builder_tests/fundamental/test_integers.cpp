@@ -38,15 +38,14 @@ static void check_strategy() {
   );
   auto number_stays_in_range = in_range_checker<Number>(min_number,
                                                         max_number);
-  auto numbers = std::make_shared<cauldron::Integers<Number>>(min_number,
-                                                              max_number);
+  cauldron::Integers<Number> numbers(min_number,
+                                     max_number);
 
   cauldron::Builder<IntegerWrapper, Number> numbers_wrappers(numbers);
 
   SECTION("single element domain") {
-    auto ones = std::make_shared<cauldron::Just<size_t>>(1);
     for (Number number: numbers_range) {
-      auto same_number = std::make_shared<cauldron::Just<Number>>(number);
+      cauldron::Just<Number> same_number(number);
       cauldron::Builder<IntegerWrapper, Number> number_wrappers(same_number);
 
       auto wrapper = number_wrappers();

@@ -32,9 +32,8 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
     for (char single_character: non_zero_characters) {
       std::string single_character_string{single_character};
       cauldron::Characters same_character(single_character_string);
-      auto same_character_strings = std::make_shared<cauldron::Strings>(
-          lengths,
-          same_character);
+      cauldron::Strings same_character_strings(lengths,
+                                               same_character);
       cauldron::Builder<StringWrapper, std::string>
           same_character_strings_wrappers(same_character_strings);
 
@@ -54,8 +53,8 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
         constants::min_capacity,
         constants::max_capacity);
     cauldron::Characters alphabet(alphabet_characters);
-    auto strings = std::make_shared<cauldron::Strings>(lengths,
-                                                       alphabet);
+    cauldron::Strings strings(lengths,
+                              alphabet);
     cauldron::Builder<StringWrapper, std::string> strings_wrappers(strings);
 
     auto wrapper = strings_wrappers();
@@ -70,18 +69,13 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
      * than "impossible" section would not raise exception
      * since it is possible to avoid filters with empty string/wrapper.
      */
-    size_t min_size = constants::min_capacity;
-    size_t max_size = min_size + 1;
     size_t min_length = constants::min_capacity;
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
     cauldron::Integers<size_t> lengths(min_length,
                                        max_length);
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
-    auto alphabetic_strings = std::make_shared<cauldron::Strings>(
-        lengths,
-        *alphabetic_characters);
+    cauldron::Strings alphabetic_strings(lengths,
+                                         *alphabetic_characters);
     cauldron::Builder<StringWrapper, std::string> alphabetic(
         alphabetic_strings);
 
@@ -91,8 +85,6 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
 
       auto lower_wrapper = (*lower_wrappers)();
       auto upper_wrapper = (*upper_wrappers)();
-      auto sizes_stays_in_range = in_range_checker<size_t>(min_size,
-                                                           max_size);
       auto length_stays_in_range = in_range_checker<size_t>(min_length,
                                                             max_length);
 
@@ -134,9 +126,8 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
                                        max_length);
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
-    auto alphabetic_strings = std::make_shared<cauldron::Strings>(
-        lengths,
-        *alphabetic_characters);
+    cauldron::Strings alphabetic_strings(lengths,
+                                         *alphabetic_characters);
     cauldron::Builder<StringWrapper, std::string> alphabetic(
         alphabetic_strings);
 

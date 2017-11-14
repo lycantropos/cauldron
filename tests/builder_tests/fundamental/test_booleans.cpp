@@ -18,8 +18,8 @@ TEST_CASE("booleans \"Builder\" strategy", "[Builder]") {
       });
 
   SECTION("single element domain") {
-    auto false_values = std::make_shared<cauldron::Booleans>(0.);
-    auto true_values = std::make_shared<cauldron::Booleans>(1.);
+    cauldron::Booleans false_values(0.);
+    cauldron::Booleans true_values(1.);
     cauldron::Builder<BooleanWrapper, bool> false_wrappers(false_values);
     cauldron::Builder<BooleanWrapper, bool> true_wrappers(true_values);
 
@@ -40,7 +40,7 @@ TEST_CASE("booleans \"Builder\" strategy", "[Builder]") {
           return BooleanWrapper(true);
         });
 
-    auto booleans = std::make_shared<cauldron::Booleans>();
+    cauldron::Booleans booleans;
     cauldron::Builder<BooleanWrapper, bool> booleans_wrappers(booleans);
 
     SECTION("truthfulness") {
