@@ -14,8 +14,15 @@ class Strings : public CloneHelper<std::string, Strings> {
    * @param lengths: strategy to generate strings lengths from.
    * @param alphabet: strategy to generate strings characters from.
    */
-  Strings(std::shared_ptr<Strategy<size_t>> lengths,
-          std::shared_ptr<Strategy<char>> alphabet);
+  Strings(const Strategy<size_t> &lengths,
+          const Strategy<char> &alphabet);
+
+  /**
+   * Default copy constructor doesn't fit
+   * since we're using ``std::unique_ptr`` as class members
+   * which are not copyable.
+   */
+  Strings(const Strings &strings);
 
   /**
    * Generates pseudo-random ``std::string`` instance.
@@ -23,7 +30,7 @@ class Strings : public CloneHelper<std::string, Strings> {
   std::string operator()() const override;
 
  private:
-  std::shared_ptr<Strategy<size_t>> lengths_;
-  std::shared_ptr<Strategy<char>> alphabet_;
+  std::unique_ptr<Strategy<size_t>> lengths_;
+  std::unique_ptr<Strategy<char>> alphabet_;
 };
 }

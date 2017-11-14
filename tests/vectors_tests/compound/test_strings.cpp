@@ -32,16 +32,16 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
   std::string non_zero_characters_string = factories::non_zero_characters();
 
   SECTION("single character alphabet") {
-    auto ones = std::make_shared<cauldron::Just<size_t>>(1);
+    auto sizes = std::make_shared<cauldron::Just<size_t>>(1);
+    auto lengths = cauldron::Just<size_t>(1);
     for (char single_character: non_zero_characters_string) {
       std::string single_character_string{single_character};
-      auto same_character = std::make_shared<cauldron::Characters>(
-          single_character_string);
+      auto same_character = cauldron::Characters(single_character_string);
       auto same_character_strings = std::make_shared<cauldron::Strings>(
-          ones,
+          lengths,
           same_character);
       cauldron::Vectors<std::string> same_character_strings_vectors(
-          ones,
+          sizes,
           same_character_strings);
 
       auto vector = same_character_strings_vectors();
@@ -66,17 +66,14 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
                                return length_stays_in_range(string.length());
                              });
         };
-    auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                max_length);
-
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
-
+    auto lengths = cauldron::Integers<size_t>(min_length,
+                                              max_length);
     std::string alphabet_characters = factories::characters_string(
         constants::min_capacity,
         constants::max_capacity);
-    auto alphabet = std::make_shared<cauldron::Characters>(
-        alphabet_characters);
+    auto alphabet = cauldron::Characters(alphabet_characters);
     auto strings = std::make_shared<cauldron::Strings>(lengths,
                                                        alphabet);
     cauldron::Vectors<std::string> strings_vectors(sizes,
@@ -104,15 +101,14 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
     size_t min_length = constants::min_capacity;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
-    auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                max_length);
-
+    auto lengths = cauldron::Integers<size_t>(min_length,
+                                              max_length);
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters_string)
             .filter(is_alphabetic);
     auto alphabetic_strings = std::make_shared<cauldron::Strings>(
         lengths,
-        std::move(alphabetic_characters));
+        *alphabetic_characters);
     cauldron::Vectors<std::string> alphabetic(sizes,
                                               alphabetic_strings);
 
@@ -181,15 +177,15 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
     size_t min_length = constants::min_capacity;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
-    auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                max_length);
+    auto lengths = cauldron::Integers<size_t>(min_length,
+                                              max_length);
 
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters_string)
             .filter(is_alphabetic);
     auto alphabetic_strings = std::make_shared<cauldron::Strings>(
         lengths,
-        std::move(alphabetic_characters));
+        *alphabetic_characters);
     cauldron::Vectors<std::string> alphabetic(sizes,
                                               alphabetic_strings);
 
