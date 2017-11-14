@@ -178,9 +178,9 @@ class Filtered : public CloneHelper<Value, Filtered<Value>> {
    * since we're using ``std::unique_ptr`` as class member
    * which is not copyable.
    */
-  Filtered(const Filtered<Value> &mapped) :
-      sieve_(mapped.sieve_),
-      strategy_(mapped.strategy_->clone()) {}
+  Filtered(const Filtered<Value> &strategy) :
+      sieve_(strategy.sieve_),
+      strategy_(strategy.strategy_->clone()) {}
 
   Filtered<Value> filter(
       const Requirement<Value> &requirement
@@ -231,9 +231,9 @@ class Mapped : public CloneHelper<Value, Mapped<Value>> {
    * since we're using ``std::unique_ptr`` as class member
    * which is not copyable.
    */
-  Mapped(const Mapped<Value> &mapped) :
-      facility_(mapped.facility_),
-      strategy_(mapped.strategy_->clone()) {}
+  Mapped(const Mapped<Value> &strategy) :
+      facility_(strategy.facility_),
+      strategy_(strategy.strategy_->clone()) {}
 
   Mapped<Value> map(const Converter<Value> &converter) const override {
     auto facility = facility_.expand(converter);
