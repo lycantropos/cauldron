@@ -188,8 +188,8 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
       auto lower_vectors = alphabetic.map(to_lower_vector);
       auto upper_vectors = alphabetic.map(to_upper_vector);
 
-      auto lower_vector = (*lower_vectors)();
-      auto upper_vector = (*upper_vectors)();
+      auto lower_vector = lower_vectors();
+      auto upper_vector = upper_vectors();
       auto sizes_stays_in_range = in_range_checker<size_t>(min_size,
                                                            max_size);
       auto length_stays_in_range = in_range_checker<size_t>(min_length,
@@ -213,9 +213,9 @@ TEST_CASE("strings \"Vectors\" strategy", "[Vectors]") {
 
     SECTION("impossible") {
       auto invalid_lower_vectors =
-          alphabetic.map(to_upper_vector)->filter(is_lower_vector);
+          alphabetic.map(to_upper_vector).filter(is_lower_vector);
       auto invalid_upper_vectors =
-          alphabetic.map(to_lower_vector)->filter(is_upper_vector);
+          alphabetic.map(to_lower_vector).filter(is_upper_vector);
 
       REQUIRE_THROWS_AS((*invalid_lower_vectors)(),
                         cauldron::OutOfCycles);

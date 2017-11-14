@@ -47,8 +47,8 @@ TEST_CASE("booleans \"Builder\" strategy", "[Builder]") {
       auto false_wrappers = booleans_wrappers.map(to_false_wrapper);
       auto true_wrappers = booleans_wrappers.map(to_true_wrapper);
 
-      auto false_set = (*false_wrappers)();
-      auto true_set = (*true_wrappers)();
+      auto false_set = false_wrappers();
+      auto true_set = true_wrappers();
 
       REQUIRE(is_false_wrapper(false_set));
       REQUIRE(is_true_wrapper(true_set));
@@ -56,9 +56,9 @@ TEST_CASE("booleans \"Builder\" strategy", "[Builder]") {
 
     SECTION("impossible") {
       auto invalid_false_wrappers =
-          booleans_wrappers.map(to_false_wrapper)->filter(is_true_wrapper);
+          booleans_wrappers.map(to_false_wrapper).filter(is_true_wrapper);
       auto invalid_true_wrappers =
-          booleans_wrappers.map(to_false_wrapper)->filter(is_true_wrapper);
+          booleans_wrappers.map(to_false_wrapper).filter(is_true_wrapper);
 
       REQUIRE_THROWS_AS((*invalid_false_wrappers)(),
                         cauldron::OutOfCycles);

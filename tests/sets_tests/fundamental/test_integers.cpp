@@ -166,8 +166,8 @@ static void check_strategy() {
       auto even_sets = sets.map(to_even_set);
       auto odd_sets = sets.map(to_odd_set);
 
-      auto even_set = (*even_sets)();
-      auto odd_set = (*odd_sets)();
+      auto even_set = even_sets();
+      auto odd_set = odd_sets();
       auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                           max_size);
 
@@ -180,8 +180,8 @@ static void check_strategy() {
     }
 
     SECTION("impossible") {
-      auto invalid_even_sets = sets.map(to_odd_set)->filter(is_even_set);
-      auto invalid_odd_sets = sets.map(to_even_set)->filter(is_odd_set);
+      auto invalid_even_sets = sets.map(to_odd_set).filter(is_even_set);
+      auto invalid_odd_sets = sets.map(to_even_set).filter(is_odd_set);
 
       REQUIRE_THROWS_AS((*invalid_even_sets)(),
                         cauldron::OutOfCycles);

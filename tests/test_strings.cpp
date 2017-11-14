@@ -99,8 +99,8 @@ TEST_CASE("\"Strings\" strategy", "[Strings]") {
       auto lower_strings = alphabetic.map(to_lower_string);
       auto upper_strings = alphabetic.map(to_upper_string);
 
-      auto lower_string = (*lower_strings)();
-      auto upper_string = (*upper_strings)();
+      auto lower_string = lower_strings();
+      auto upper_string = upper_strings();
       auto stays_in_range = in_range_checker<size_t>(min_length,
                                                      max_length);
 
@@ -112,9 +112,9 @@ TEST_CASE("\"Strings\" strategy", "[Strings]") {
 
     SECTION("impossible") {
       auto invalid_lower_strings =
-          alphabetic.map(to_upper_string)->filter(is_lower_string);
+          alphabetic.map(to_upper_string).filter(is_lower_string);
       auto invalid_upper_strings =
-          alphabetic.map(to_lower_string)->filter(is_upper_string);
+          alphabetic.map(to_lower_string).filter(is_upper_string);
 
       REQUIRE_THROWS_AS((*invalid_lower_strings)(),
                         cauldron::OutOfCycles);

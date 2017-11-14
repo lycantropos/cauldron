@@ -164,8 +164,8 @@ static void check_strategy() {
       auto even_vectors = vectors.map(to_even_vector);
       auto odd_vectors = vectors.map(to_odd_vector);
 
-      auto even_vector = (*even_vectors)();
-      auto odd_vector = (*odd_vectors)();
+      auto even_vector = even_vectors();
+      auto odd_vector = odd_vectors();
 
       REQUIRE(size_stays_in_range(even_vector.size()));
       REQUIRE(size_stays_in_range(odd_vector.size()));
@@ -177,9 +177,9 @@ static void check_strategy() {
 
     SECTION("impossible") {
       auto invalid_even_vectors =
-          vectors.map(to_odd_vector)->filter(is_even_vector);
+          vectors.map(to_odd_vector).filter(is_even_vector);
       auto invalid_odd_vectors =
-          vectors.map(to_even_vector)->filter(is_odd_vector);
+          vectors.map(to_even_vector).filter(is_odd_vector);
 
       REQUIRE_THROWS_AS((*invalid_even_vectors)(),
                         cauldron::OutOfCycles);

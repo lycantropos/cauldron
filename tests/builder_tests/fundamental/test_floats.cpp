@@ -83,8 +83,8 @@ static void check_strategy() {
       auto non_positive_wrappers =
           numbers_wrappers.map(to_non_positive_wrapper);
 
-      auto positive_wrapper = (*positive_wrappers)();
-      auto non_positive_wrapper = (*non_positive_wrappers)();
+      auto positive_wrapper = positive_wrappers();
+      auto non_positive_wrapper = non_positive_wrappers();
 
       REQUIRE(number_stays_in_range(positive_wrapper.field()));
       REQUIRE(number_stays_in_range(non_positive_wrapper.field()));
@@ -95,10 +95,10 @@ static void check_strategy() {
     SECTION("impossible") {
       auto invalid_positive_wrappers =
           numbers_wrappers.map(to_non_positive_wrapper)
-              ->filter(is_positive_wrapper);
+              .filter(is_positive_wrapper);
       auto invalid_non_positive_wrappers =
           numbers_wrappers.map(to_positive_wrapper)
-              ->filter(is_non_positive_wrapper);
+              .filter(is_non_positive_wrapper);
 
       REQUIRE_THROWS_AS((*invalid_positive_wrappers)(),
                         cauldron::OutOfCycles);

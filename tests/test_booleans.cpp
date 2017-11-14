@@ -36,12 +36,12 @@ TEST_CASE("\"Booleans\" strategy", "[Booleans]") {
   SECTION("mapping") {
     auto still_false_values = false_values.map(identity);
     auto still_true_values = true_values.map(identity);
-    auto now_true_values = still_false_values->map(negate);
-    auto now_false_values = still_true_values->map(negate);
+    auto now_true_values = still_false_values.map(negate);
+    auto now_false_values = still_true_values.map(negate);
 
-    REQUIRE(!(*still_false_values)());
-    REQUIRE((*still_true_values)());
-    REQUIRE((*now_true_values)());
-    REQUIRE(!(*now_false_values)());
+    REQUIRE(!still_false_values());
+    REQUIRE(still_true_values());
+    REQUIRE(now_true_values());
+    REQUIRE(!now_false_values());
   }
 }

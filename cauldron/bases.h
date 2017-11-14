@@ -58,12 +58,10 @@ class Strategy {
    * that generates values from the strategy
    * modified with provided ``strategies::Converter`` instance.
    */
-  virtual std::unique_ptr<Mapped<Value>> map(
-      const Converter<Value> &converter
-  ) const {
+  virtual Mapped<Value> map(const Converter<Value> &converter) const {
     Facility<Value> facility{converter};
-    return std::make_unique<Mapped<Value>>(facility,
-                                           std::move(clone()));
+    return Mapped<Value>(facility,
+                         clone());
   }
 
   /**
@@ -219,16 +217,23 @@ template<typename Value>
 class Mapped : public CloneHelper<Value, Mapped<Value>> {
  public:
   explicit Mapped(const Facility<Value> &facility,
-                  std::shared_ptr<Strategy<Value>> strategy) :
+                  std::unique_ptr<Strategy<Value>> strategy) :
       facility_(facility),
       strategy_(std::move(strategy)) {};
 
-  std::unique_ptr<Mapped<Value>> map(
-      const Converter<Value> &converter
-  ) const override {
+  /**
+   * Default copy constructor doesn't fit
+   * since we're using ``std::unique_ptr`` as class members
+   * which are not copyable.
+   */
+  Mapped(const Mapped<Value> &mapped) :
+      facility_(mapped.facility_),
+      strategy_((*mapped.strategy_).clone()) {}
+
+  Mapped<Value> map(const Converter<Value> &converter) const override {
     auto facility = facility_.expand(converter);
-    return std::make_unique<Mapped>(facility,
-                                    strategy_);
+    return Mapped(facility,
+                  (*strategy_).clone());
   }
 
   /**
@@ -242,6 +247,6 @@ class Mapped : public CloneHelper<Value, Mapped<Value>> {
 
  protected:
   Facility<Value> facility_;
-  std::shared_ptr<Strategy<Value>> strategy_;
+  std::unique_ptr<Strategy<Value>> strategy_;
 };
 }

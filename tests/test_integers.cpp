@@ -55,16 +55,16 @@ static void check_strategy() {
       auto even_numbers = numbers.map(to_even);
       auto odd_numbers = numbers.map(to_odd);
 
-      auto even_number = (*even_numbers)();
-      auto odd_number = (*odd_numbers)();
+      auto even_number = even_numbers();
+      auto odd_number = odd_numbers();
 
       REQUIRE(even(even_number));
       REQUIRE(odd(odd_number));
     }
 
     SECTION("impossible") {
-      auto invalid_even_numbers = numbers.map(to_odd)->filter(even<Number>);
-      auto invalid_odd_numbers = numbers.map(to_even)->filter(odd<Number>);
+      auto invalid_even_numbers = numbers.map(to_odd).filter(even<Number>);
+      auto invalid_odd_numbers = numbers.map(to_even).filter(odd<Number>);
 
       REQUIRE_THROWS_AS((*invalid_odd_numbers)(),
                         cauldron::OutOfCycles);

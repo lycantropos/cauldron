@@ -68,8 +68,8 @@ static void check_strategy() {
       auto positive_numbers = numbers.map(to_positive);
       auto non_positive_numbers = numbers.map(to_non_positive);
 
-      auto positive_number = (*positive_numbers)();
-      auto non_positive_number = (*non_positive_numbers)();
+      auto positive_number = positive_numbers();
+      auto non_positive_number = non_positive_numbers();
 
       REQUIRE(stays_in_range(positive_number));
       REQUIRE(stays_in_range(non_positive_number));
@@ -79,9 +79,9 @@ static void check_strategy() {
 
     SECTION("impossible") {
       auto invalid_positive_numbers =
-          numbers.map(to_non_positive)->filter(positive<Number>);
+          numbers.map(to_non_positive).filter(positive<Number>);
       auto invalid_non_positive_numbers =
-          numbers.map(to_positive)->filter(non_positive<Number>);
+          numbers.map(to_positive).filter(non_positive<Number>);
 
       REQUIRE_THROWS_AS((*invalid_non_positive_numbers)(),
                         cauldron::OutOfCycles);

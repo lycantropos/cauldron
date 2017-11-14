@@ -94,8 +94,8 @@ TEST_CASE("characters \"Builder\" strategy", "[Builder]") {
       auto lower_wrappers = alphabetic.map(to_lower_wrapper);
       auto upper_wrappers = alphabetic.map(to_upper_wrapper);
 
-      auto lower_wrapper = (*lower_wrappers)();
-      auto upper_wrapper = (*upper_wrappers)();
+      auto lower_wrapper = lower_wrappers();
+      auto upper_wrapper = upper_wrappers();
 
       REQUIRE(is_lower_wrapper(lower_wrapper));
       REQUIRE(is_upper_wrapper(upper_wrapper));
@@ -103,9 +103,9 @@ TEST_CASE("characters \"Builder\" strategy", "[Builder]") {
 
     SECTION("impossible") {
       auto invalid_lower_wrappers =
-          alphabetic.map(to_upper_wrapper)->filter(is_lower_wrapper);
+          alphabetic.map(to_upper_wrapper).filter(is_lower_wrapper);
       auto invalid_upper_wrappers =
-          alphabetic.map(to_lower_wrapper)->filter(is_upper_wrapper);
+          alphabetic.map(to_lower_wrapper).filter(is_upper_wrapper);
 
       REQUIRE_THROWS_AS((*invalid_lower_wrappers)(),
                         cauldron::OutOfCycles);

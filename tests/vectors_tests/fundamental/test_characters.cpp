@@ -149,8 +149,8 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
       auto lower_vectors = alphabetic.map(to_lower_vector);
       auto upper_vectors = alphabetic.map(to_upper_vector);
 
-      auto lower_vector = (*lower_vectors)();
-      auto upper_vector = (*upper_vectors)();
+      auto lower_vector = lower_vectors();
+      auto upper_vector = upper_vectors();
 
       REQUIRE(stays_in_range(lower_vector.size()));
       REQUIRE(stays_in_range(upper_vector.size()));
@@ -160,9 +160,9 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
 
     SECTION("impossible") {
       auto invalid_lower_vectors =
-          alphabetic.map(to_upper_vector)->filter(is_lower_vector);
+          alphabetic.map(to_upper_vector).filter(is_lower_vector);
       auto invalid_upper_vectors =
-          alphabetic.map(to_lower_vector)->filter(is_upper_vector);
+          alphabetic.map(to_lower_vector).filter(is_upper_vector);
 
       REQUIRE_THROWS_AS((*invalid_lower_vectors)(),
                         cauldron::OutOfCycles);

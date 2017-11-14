@@ -202,8 +202,8 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
       auto lower_sets = alphabetic.map(to_lower_set);
       auto upper_sets = alphabetic.map(to_upper_set);
 
-      auto lower_set = (*lower_sets)();
-      auto upper_set = (*upper_sets)();
+      auto lower_set = lower_sets();
+      auto upper_set = upper_sets();
 
       REQUIRE(sizes_stays_in_range(lower_set.size()));
       REQUIRE(sizes_stays_in_range(upper_set.size()));
@@ -215,9 +215,9 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
 
     SECTION("impossible") {
       auto invalid_lower_sets =
-          alphabetic.map(to_upper_set)->filter(is_lower_set);
+          alphabetic.map(to_upper_set).filter(is_lower_set);
       auto invalid_upper_sets =
-          alphabetic.map(to_lower_set)->filter(is_upper_set);
+          alphabetic.map(to_lower_set).filter(is_upper_set);
 
       REQUIRE_THROWS_AS((*invalid_lower_sets)(),
                         cauldron::OutOfCycles);

@@ -141,8 +141,8 @@ static void check_strategy() {
       auto positive_vectors = vectors.map(to_positive_vector);
       auto non_positive_vectors = vectors.map(to_non_positive_vector);
 
-      auto positive_vector = (*positive_vectors)();
-      auto non_positive_vector = (*non_positive_vectors)();
+      auto positive_vector = positive_vectors();
+      auto non_positive_vector = non_positive_vectors();
       auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                           max_size);
 
@@ -156,9 +156,9 @@ static void check_strategy() {
 
     SECTION("impossible") {
       auto invalid_positive_vectors =
-          vectors.map(to_non_positive_vector)->filter(is_positive_vector);
+          vectors.map(to_non_positive_vector).filter(is_positive_vector);
       auto invalid_non_positive_vectors =
-          vectors.map(to_positive_vector)->filter(is_non_positive_vector);
+          vectors.map(to_positive_vector).filter(is_non_positive_vector);
 
       REQUIRE_THROWS_AS((*invalid_positive_vectors)(),
                         cauldron::OutOfCycles);
