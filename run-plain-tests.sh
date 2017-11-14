@@ -3,7 +3,7 @@
 set -ex
 
 cmake -DTESTS=ON ..
-make -j2
+make -j$(nproc --all)
 make install
 
 ./main
