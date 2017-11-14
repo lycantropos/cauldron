@@ -41,17 +41,16 @@ static void check_strategy() {
                        set.end(),
                        number_stays_in_range);
   };
-  auto numbers = std::make_shared<cauldron::Floats<Number>>(min_number,
-                                                            max_number);
+  cauldron::Floats<Number> numbers(min_number,
+                                   max_number);
 
   SECTION("stays in range") {
     static size_t min_size = 0;
     static size_t max_size = constants::max_capacity;
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
-    static const auto sizes =
-        std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                     max_size);
+    static cauldron::Integers<size_t> sizes(min_size,
+                                            max_size);
     cauldron::Sets<Number> numbers_sets(sizes,
                                         numbers);
 
@@ -69,8 +68,8 @@ static void check_strategy() {
     static size_t min_size = constants::min_capacity;
     static size_t max_size = sufficient_capacity(1, 2, // non- or positive
                                                  cauldron::MAX_CYCLES);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
+    static cauldron::Integers<size_t> sizes(min_size,
+                                            max_size);
     cauldron::Sets<Number> sets(sizes,
                                 numbers);
 
@@ -133,8 +132,8 @@ static void check_strategy() {
     static size_t min_size = constants::min_capacity;
     static size_t max_size = sufficient_capacity(1, 2, // non- or positive
                                                  cauldron::MAX_CYCLES);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
     cauldron::Sets<Number> sets(sizes,
                                 numbers);
 
