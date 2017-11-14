@@ -88,14 +88,14 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Sets<char> alphabetic(sizes,
-                                    *alphabetic_characters);
+                                    alphabetic_characters);
 
     SECTION("case") {
       auto lower_sets = alphabetic.filter(is_lower_set);
       auto upper_sets = alphabetic.filter(is_upper_set);
 
-      auto lower_set = (*lower_sets)();
-      auto upper_set = (*upper_sets)();
+      auto lower_set = lower_sets();
+      auto upper_set = upper_sets();
       auto stays_in_range = in_range_checker<size_t>(min_size,
                                                      max_size);
 
@@ -107,9 +107,9 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
 
     SECTION("impossible") {
       auto invalid_sets =
-          alphabetic.filter(is_lower_set)->filter(is_upper_set);
+          alphabetic.filter(is_lower_set).filter(is_upper_set);
 
-      REQUIRE_THROWS_AS((*invalid_sets)(),
+      REQUIRE_THROWS_AS(invalid_sets(),
                         cauldron::OutOfCycles);
     }
   }
@@ -151,7 +151,7 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Sets<char> alphabetic(sizes,
-                                    *alphabetic_characters);
+                                    alphabetic_characters);
 
     SECTION("case") {
       auto lower_sets = alphabetic.map(to_lower_set);
@@ -174,9 +174,9 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
       auto invalid_upper_sets =
           alphabetic.map(to_lower_set).filter(is_upper_set);
 
-      REQUIRE_THROWS_AS((*invalid_lower_sets)(),
+      REQUIRE_THROWS_AS(invalid_lower_sets(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_upper_sets)(),
+      REQUIRE_THROWS_AS(invalid_upper_sets(),
                         cauldron::OutOfCycles);
     }
   }

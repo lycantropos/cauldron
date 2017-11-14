@@ -100,8 +100,8 @@ static void check_strategy() {
       auto even_vectors = vectors.filter(is_even_vector);
       auto odd_vectors = vectors.filter(is_odd_vector);
 
-      auto even_vector = (*even_vectors)();
-      auto odd_vector = (*odd_vectors)();
+      auto even_vector = even_vectors();
+      auto odd_vector = odd_vectors();
       auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                           max_size);
 
@@ -115,9 +115,9 @@ static void check_strategy() {
 
     SECTION("impossible") {
       auto invalid_vectors =
-          vectors.filter(is_even_vector)->filter(is_odd_vector);
+          vectors.filter(is_even_vector).filter(is_odd_vector);
 
-      REQUIRE_THROWS_AS((*invalid_vectors)(),
+      REQUIRE_THROWS_AS(invalid_vectors(),
                         cauldron::OutOfCycles);
     }
   }
@@ -181,9 +181,9 @@ static void check_strategy() {
       auto invalid_odd_vectors =
           vectors.map(to_even_vector).filter(is_odd_vector);
 
-      REQUIRE_THROWS_AS((*invalid_even_vectors)(),
+      REQUIRE_THROWS_AS(invalid_even_vectors(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_odd_vectors)(),
+      REQUIRE_THROWS_AS(invalid_odd_vectors(),
                         cauldron::OutOfCycles);
     }
   }

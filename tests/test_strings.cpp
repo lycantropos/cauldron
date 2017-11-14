@@ -56,14 +56,14 @@ TEST_CASE("\"Strings\" strategy", "[Strings]") {
     cauldron::Characters non_zero_characters(non_zero_characters_string);
     auto alphabetic_characters = non_zero_characters.filter(is_alphabetic);
     cauldron::Strings alphabetic(lengths,
-                                 *alphabetic_characters);
+                                 alphabetic_characters);
 
     SECTION("case") {
       auto lower_strings = alphabetic.filter(is_lower_string);
       auto upper_strings = alphabetic.filter(is_upper_string);
 
-      auto lower_string = (*lower_strings)();
-      auto upper_string = (*upper_strings)();
+      auto lower_string = lower_strings();
+      auto upper_string = upper_strings();
       auto stays_in_range = in_range_checker<size_t>(min_length,
                                                      max_length);
 
@@ -75,9 +75,9 @@ TEST_CASE("\"Strings\" strategy", "[Strings]") {
 
     SECTION("impossible") {
       auto invalid_strings =
-          alphabetic.filter(is_lower_string)->filter(is_upper_string);
+          alphabetic.filter(is_lower_string).filter(is_upper_string);
 
-      REQUIRE_THROWS_AS((*invalid_strings)(),
+      REQUIRE_THROWS_AS(invalid_strings(),
                         cauldron::OutOfCycles);
     }
   }
@@ -93,7 +93,7 @@ TEST_CASE("\"Strings\" strategy", "[Strings]") {
     cauldron::Characters non_zero_characters(non_zero_characters_string);
     auto alphabetic_characters = non_zero_characters.filter(is_alphabetic);
     cauldron::Strings alphabetic(lengths,
-                                 *alphabetic_characters);
+                                 alphabetic_characters);
 
     SECTION("case") {
       auto lower_strings = alphabetic.map(to_lower_string);
@@ -116,9 +116,9 @@ TEST_CASE("\"Strings\" strategy", "[Strings]") {
       auto invalid_upper_strings =
           alphabetic.map(to_lower_string).filter(is_upper_string);
 
-      REQUIRE_THROWS_AS((*invalid_lower_strings)(),
+      REQUIRE_THROWS_AS(invalid_lower_strings(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_upper_strings)(),
+      REQUIRE_THROWS_AS(invalid_upper_strings(),
                         cauldron::OutOfCycles);
     }
   }

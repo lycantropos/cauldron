@@ -116,7 +116,7 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Strings alphabetic_strings(lengths,
-                                         *alphabetic_characters);
+                                         alphabetic_characters);
     cauldron::Sets<std::string> alphabetic(sizes,
                                            alphabetic_strings);
 
@@ -124,8 +124,8 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
       auto lower_sets = alphabetic.filter(is_lower_set);
       auto upper_sets = alphabetic.filter(is_upper_set);
 
-      auto lower_set = (*lower_sets)();
-      auto upper_set = (*upper_sets)();
+      auto lower_set = lower_sets();
+      auto upper_set = upper_sets();
 
       REQUIRE(sizes_stays_in_range(lower_set.size()));
       REQUIRE(sizes_stays_in_range(upper_set.size()));
@@ -137,9 +137,9 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
 
     SECTION("impossible") {
       auto invalid_sets =
-          alphabetic.filter(is_lower_set)->filter(is_upper_set);
+          alphabetic.filter(is_lower_set).filter(is_upper_set);
 
-      REQUIRE_THROWS_AS((*invalid_sets)(),
+      REQUIRE_THROWS_AS(invalid_sets(),
                         cauldron::OutOfCycles);
     }
   }
@@ -194,7 +194,7 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Strings alphabetic_strings(lengths,
-                                         *alphabetic_characters);
+                                         alphabetic_characters);
     cauldron::Sets<std::string> alphabetic(sizes,
                                            alphabetic_strings);
 
@@ -219,9 +219,9 @@ TEST_CASE("strings \"Sets\" strategy", "[Sets]") {
       auto invalid_upper_sets =
           alphabetic.map(to_lower_set).filter(is_upper_set);
 
-      REQUIRE_THROWS_AS((*invalid_lower_sets)(),
+      REQUIRE_THROWS_AS(invalid_lower_sets(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_upper_sets)(),
+      REQUIRE_THROWS_AS(invalid_upper_sets(),
                         cauldron::OutOfCycles);
     }
   }

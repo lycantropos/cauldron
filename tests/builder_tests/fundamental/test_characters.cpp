@@ -53,14 +53,14 @@ TEST_CASE("characters \"Builder\" strategy", "[Builder]") {
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Builder<CharacterWrapper, char> alphabetic(
-        *alphabetic_characters);
+        alphabetic_characters);
 
     SECTION("case") {
       auto lower_wrappers = alphabetic.filter(is_lower_wrapper);
       auto upper_wrappers = alphabetic.filter(is_upper_wrapper);
 
-      auto lower_wrapper = (*lower_wrappers)();
-      auto upper_wrapper = (*upper_wrappers)();
+      auto lower_wrapper = lower_wrappers();
+      auto upper_wrapper = upper_wrappers();
 
       REQUIRE(is_lower_wrapper(lower_wrapper));
       REQUIRE(is_upper_wrapper(upper_wrapper));
@@ -68,9 +68,9 @@ TEST_CASE("characters \"Builder\" strategy", "[Builder]") {
 
     SECTION("impossible") {
       auto invalid_wrappers =
-          alphabetic.filter(is_lower_wrapper)->filter(is_upper_wrapper);
+          alphabetic.filter(is_lower_wrapper).filter(is_upper_wrapper);
 
-      REQUIRE_THROWS_AS((*invalid_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_wrappers(),
                         cauldron::OutOfCycles);
     }
   }
@@ -88,7 +88,7 @@ TEST_CASE("characters \"Builder\" strategy", "[Builder]") {
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Builder<CharacterWrapper, char> alphabetic(
-        *alphabetic_characters);
+        alphabetic_characters);
 
     SECTION("case") {
       auto lower_wrappers = alphabetic.map(to_lower_wrapper);
@@ -107,9 +107,9 @@ TEST_CASE("characters \"Builder\" strategy", "[Builder]") {
       auto invalid_upper_wrappers =
           alphabetic.map(to_lower_wrapper).filter(is_upper_wrapper);
 
-      REQUIRE_THROWS_AS((*invalid_lower_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_lower_wrappers(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_upper_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_upper_wrappers(),
                         cauldron::OutOfCycles);
     }
   }

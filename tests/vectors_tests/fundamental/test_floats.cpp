@@ -72,6 +72,8 @@ static void check_strategy() {
     size_t min_size = constants::min_capacity;
     size_t max_size = sufficient_capacity(1, 2, // non- or positive
                                           cauldron::MAX_CYCLES);
+    auto size_stays_in_range = in_range_checker<size_t>(min_size,
+                                                        max_size);
     cauldron::Integers<size_t> sizes(min_size,
                                      max_size);
     cauldron::Vectors<Number> vectors(sizes,
@@ -81,10 +83,8 @@ static void check_strategy() {
       auto positive_vectors = vectors.filter(is_positive_vector);
       auto non_positive_vectors = vectors.filter(is_non_positive_vector);
 
-      auto positive_vector = (*positive_vectors)();
-      auto non_positive_vector = (*non_positive_vectors)();
-      auto size_stays_in_range = in_range_checker<size_t>(min_size,
-                                                          max_size);
+      auto positive_vector = positive_vectors();
+      auto non_positive_vector = non_positive_vectors();
 
       REQUIRE(size_stays_in_range(positive_vector.size()));
       REQUIRE(size_stays_in_range(non_positive_vector.size()));
@@ -96,9 +96,9 @@ static void check_strategy() {
 
     SECTION("impossible") {
       auto invalid_vectors =
-          vectors.filter(is_positive_vector)->filter(is_non_positive_vector);
+          vectors.filter(is_positive_vector).filter(is_non_positive_vector);
 
-      REQUIRE_THROWS_AS((*invalid_vectors)(),
+      REQUIRE_THROWS_AS(invalid_vectors(),
                         cauldron::OutOfCycles);
     }
   }
@@ -160,9 +160,9 @@ static void check_strategy() {
       auto invalid_non_positive_vectors =
           vectors.map(to_positive_vector).filter(is_non_positive_vector);
 
-      REQUIRE_THROWS_AS((*invalid_positive_vectors)(),
+      REQUIRE_THROWS_AS(invalid_positive_vectors(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_non_positive_vectors)(),
+      REQUIRE_THROWS_AS(invalid_non_positive_vectors(),
                         cauldron::OutOfCycles);
     }
   }

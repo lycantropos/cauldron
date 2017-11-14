@@ -86,14 +86,14 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Vectors<char> alphabetic(sizes,
-                                       *alphabetic_characters);
+                                       alphabetic_characters);
 
     SECTION("case") {
       auto lower_vectors = alphabetic.filter(is_lower_vector);
       auto upper_vectors = alphabetic.filter(is_upper_vector);
 
-      auto lower_vector = (*lower_vectors)();
-      auto upper_vector = (*upper_vectors)();
+      auto lower_vector = lower_vectors();
+      auto upper_vector = upper_vectors();
 
       REQUIRE(stays_in_range(lower_vector.size()));
       REQUIRE(stays_in_range(upper_vector.size()));
@@ -103,9 +103,9 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
 
     SECTION("impossible") {
       auto invalid_vectors =
-          alphabetic.filter(is_lower_vector)->filter(is_upper_vector);
+          alphabetic.filter(is_lower_vector).filter(is_upper_vector);
 
-      REQUIRE_THROWS_AS((*invalid_vectors)(),
+      REQUIRE_THROWS_AS(invalid_vectors(),
                         cauldron::OutOfCycles);
     }
   }
@@ -143,7 +143,7 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Vectors<char> alphabetic(sizes,
-                                       *alphabetic_characters);
+                                       alphabetic_characters);
 
     SECTION("case") {
       auto lower_vectors = alphabetic.map(to_lower_vector);
@@ -164,9 +164,9 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
       auto invalid_upper_vectors =
           alphabetic.map(to_lower_vector).filter(is_upper_vector);
 
-      REQUIRE_THROWS_AS((*invalid_lower_vectors)(),
+      REQUIRE_THROWS_AS(invalid_lower_vectors(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_upper_vectors)(),
+      REQUIRE_THROWS_AS(invalid_upper_vectors(),
                         cauldron::OutOfCycles);
     }
   }

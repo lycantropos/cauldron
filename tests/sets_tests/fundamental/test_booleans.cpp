@@ -63,8 +63,8 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
       auto false_sets = booleans_sets.filter(is_false_set);
       auto true_sets = booleans_sets.filter(is_true_set);
 
-      auto false_set = (*false_sets)();
-      auto true_set = (*true_sets)();
+      auto false_set = false_sets();
+      auto true_set = true_sets();
       auto stays_in_range = in_range_checker(min_size,
                                              max_size);
 
@@ -76,9 +76,9 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
 
     SECTION("impossible") {
       auto invalid_sets =
-          booleans_sets.filter(is_false_set)->filter(is_true_set);
+          booleans_sets.filter(is_false_set).filter(is_true_set);
 
-      REQUIRE_THROWS_AS((*invalid_sets)(),
+      REQUIRE_THROWS_AS(invalid_sets(),
                         cauldron::OutOfCycles);
     }
   }
@@ -136,9 +136,9 @@ TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
       auto invalid_true_sets =
           booleans_sets.map(to_false_set).filter(is_true_set);
 
-      REQUIRE_THROWS_AS((*invalid_false_sets)(),
+      REQUIRE_THROWS_AS(invalid_false_sets(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_true_sets)(),
+      REQUIRE_THROWS_AS(invalid_true_sets(),
                         cauldron::OutOfCycles);
     }
   }

@@ -46,17 +46,17 @@ TEST_CASE("\"Characters\" strategy", "[Characters]") {
       auto lower_characters = non_zero.filter(is_lower);
       auto upper_characters = non_zero.filter(is_upper);
 
-      auto lower_character = (*lower_characters)();
-      auto upper_character = (*upper_characters)();
+      auto lower_character = lower_characters();
+      auto upper_character = upper_characters();
 
       REQUIRE(is_lower(lower_character));
       REQUIRE(is_upper(upper_character));
     }
 
     SECTION("impossible") {
-      auto invalid_characters = non_zero.filter(is_lower)->filter(is_upper);
+      auto invalid_characters = non_zero.filter(is_lower).filter(is_upper);
 
-      REQUIRE_THROWS_AS((*invalid_characters)(),
+      REQUIRE_THROWS_AS(invalid_characters(),
                         cauldron::OutOfCycles);
     }
   }
@@ -66,8 +66,8 @@ TEST_CASE("\"Characters\" strategy", "[Characters]") {
     auto alphabetic = non_zero.filter(is_alphabetic);
 
     SECTION("case") {
-      auto lower_characters = alphabetic->map(to_lower);
-      auto upper_characters = alphabetic->map(to_upper);
+      auto lower_characters = alphabetic.map(to_lower);
+      auto upper_characters = alphabetic.map(to_upper);
 
       auto lower_character = lower_characters();
       auto upper_character = upper_characters();
@@ -79,7 +79,7 @@ TEST_CASE("\"Characters\" strategy", "[Characters]") {
     SECTION("impossible") {
       auto invalid_characters = non_zero.map(to_upper).filter(is_lower);
 
-      REQUIRE_THROWS_AS((*invalid_characters)(),
+      REQUIRE_THROWS_AS(invalid_characters(),
                         cauldron::OutOfCycles);
     }
   }

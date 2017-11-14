@@ -45,16 +45,11 @@ class Sets : public CloneHelper<std::set<Element>, Sets<Element>> {
         [&result](Element value) -> bool {
           return result.find(value) == result.end();
         });
-    std::unique_ptr<ElementsStrategy> elements(
-        (*elements_).filter(element_unique));
-    // FIXME: workaround using lambda to get producer from strategy
-    auto elements_producer = [&]() -> Element {
-      return (*elements)();
-    };
+    Filtered<Element> elements = (*elements_).filter(element_unique);
     std::generate_n(std::inserter(result,
                                   result.begin()),
                     size,
-                    elements_producer);
+                    elements);
     return result;
   }
 

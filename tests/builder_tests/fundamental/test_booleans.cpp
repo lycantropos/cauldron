@@ -30,6 +30,30 @@ TEST_CASE("booleans \"Builder\" strategy", "[Builder]") {
     REQUIRE(is_true_wrapper(true_wrapper));
   }
 
+  SECTION("filtration") {
+    cauldron::Booleans booleans;
+    cauldron::Builder<BooleanWrapper, bool> wrappers(booleans);
+
+    SECTION("case") {
+      auto false_wrappers = wrappers.filter(is_false_wrapper);
+      auto true_wrappers = wrappers.filter(is_true_wrapper);
+
+      auto false_wrapper = false_wrappers();
+      auto true_wrapper = true_wrappers();
+
+      REQUIRE(is_false_wrapper(false_wrapper));
+      REQUIRE(is_true_wrapper(true_wrapper));
+    }
+
+    SECTION("impossible") {
+      auto invalid_wrappers =
+          wrappers.filter(is_false_wrapper).filter(is_true_wrapper);
+
+      REQUIRE_THROWS_AS(invalid_wrappers(),
+                        cauldron::OutOfCycles);
+    }
+  }
+
   SECTION("mapping") {
     cauldron::Converter<BooleanWrapper> to_false_wrapper(
         [&](const BooleanWrapper &wrapper) -> BooleanWrapper {
@@ -60,9 +84,9 @@ TEST_CASE("booleans \"Builder\" strategy", "[Builder]") {
       auto invalid_true_wrappers =
           booleans_wrappers.map(to_false_wrapper).filter(is_true_wrapper);
 
-      REQUIRE_THROWS_AS((*invalid_false_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_false_wrappers(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_true_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_true_wrappers(),
                         cauldron::OutOfCycles);
     }
   }

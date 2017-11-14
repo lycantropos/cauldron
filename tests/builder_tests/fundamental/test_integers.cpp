@@ -65,8 +65,8 @@ static void check_strategy() {
       auto even_wrappers = numbers_wrappers.filter(is_even_wrapper);
       auto odd_wrappers = numbers_wrappers.filter(is_odd_wrapper);
 
-      auto even_wrapper = (*even_wrappers)();
-      auto odd_wrapper = (*odd_wrappers)();
+      auto even_wrapper = even_wrappers();
+      auto odd_wrapper = odd_wrappers();
 
       REQUIRE(number_stays_in_range(even_wrapper.field()));
       REQUIRE(number_stays_in_range(odd_wrapper.field()));
@@ -76,9 +76,9 @@ static void check_strategy() {
 
     SECTION("impossible") {
       auto invalid_wrappers =
-          numbers_wrappers.filter(is_even_wrapper)->filter(is_odd_wrapper);
+          numbers_wrappers.filter(is_even_wrapper).filter(is_odd_wrapper);
 
-      REQUIRE_THROWS_AS((*invalid_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_wrappers(),
                         cauldron::OutOfCycles);
     }
   }
@@ -116,9 +116,9 @@ static void check_strategy() {
       auto invalid_odd_wrappers =
           numbers_wrappers.map(to_even_wrapper).filter(is_odd_wrapper);
 
-      REQUIRE_THROWS_AS((*invalid_even_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_even_wrappers(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_odd_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_odd_wrappers(),
                         cauldron::OutOfCycles);
     }
   }

@@ -56,28 +56,26 @@ class Strategy {
   /**
    * Returns a new strategy
    * that generates values from the strategy
+   * which satisfy provided ``strategies::Requirement`` instance.
+   *
+   * Note that if the ``requirement`` is too hard to satisfy
+   * this might result in failing with ``OutOfCycles``.
+   */
+  virtual Filtered<Value> filter(const Requirement<Value> &requirement) const {
+    Sieve<Value> sieve{requirement};
+    return Filtered<Value>(sieve,
+                           std::move(clone()));
+  }
+
+  /**
+   * Returns a new strategy
+   * that generates values from the strategy
    * modified with provided ``strategies::Converter`` instance.
    */
   virtual Mapped<Value> map(const Converter<Value> &converter) const {
     Facility<Value> facility{converter};
     return Mapped<Value>(facility,
                          clone());
-  }
-
-  /**
-   * Returns a new strategy
-   * that generates values from the strategy
-   * which satisfy provided ``strategies::Requirement`` instance.
-   *
-   * Note that if the ``requirement`` is too hard to satisfy
-   * this might result in failing with ``OutOfCycles``.
-   */
-  virtual std::unique_ptr<Filtered<Value>> filter(
-      const Requirement<Value> &requirement
-  ) const {
-    Sieve<Value> sieve{requirement};
-    return std::make_unique<Filtered<Value>>(sieve,
-                                             std::move(clone()));
   }
 
   /**
@@ -177,12 +175,21 @@ class Filtered : public CloneHelper<Value, Filtered<Value>> {
       sieve_(sieve),
       strategy_(std::move(strategy)) {};
 
-  std::unique_ptr<Filtered<Value>> filter(
+  /**
+   * Default copy constructor doesn't fit
+   * since we're using ``std::unique_ptr`` as class member
+   * which are not copyable.
+   */
+  Filtered(const Filtered<Value> &mapped) :
+      sieve_(mapped.sieve_),
+      strategy_((*mapped.strategy_).clone()) {}
+
+  Filtered<Value> filter(
       const Requirement<Value> &requirement
   ) const override {
     auto sieve = sieve_.expand(requirement);
-    return std::make_unique<Filtered<Value>>(sieve,
-                                             strategy_);
+    return Filtered<Value>(sieve,
+                           strategy_);
   }
 
   /**
@@ -223,7 +230,7 @@ class Mapped : public CloneHelper<Value, Mapped<Value>> {
 
   /**
    * Default copy constructor doesn't fit
-   * since we're using ``std::unique_ptr`` as class members
+   * since we're using ``std::unique_ptr`` as class member
    * which are not copyable.
    */
   Mapped(const Mapped<Value> &mapped) :

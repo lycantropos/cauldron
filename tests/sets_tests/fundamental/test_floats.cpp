@@ -77,8 +77,8 @@ static void check_strategy() {
       auto positive_sets = sets.filter(is_positive_set);
       auto non_positive_sets = sets.filter(is_non_positive_set);
 
-      auto positive_set = (*positive_sets)();
-      auto non_positive_set = (*non_positive_sets)();
+      auto positive_set = positive_sets();
+      auto non_positive_set = non_positive_sets();
       auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                           max_size);
 
@@ -92,9 +92,9 @@ static void check_strategy() {
 
     SECTION("impossible") {
       auto invalid_sets =
-          sets.filter(is_positive_set)->filter(is_non_positive_set);
+          sets.filter(is_positive_set).filter(is_non_positive_set);
 
-      REQUIRE_THROWS_AS((*invalid_sets)(),
+      REQUIRE_THROWS_AS(invalid_sets(),
                         cauldron::OutOfCycles);
     }
   }
@@ -160,9 +160,9 @@ static void check_strategy() {
       auto invalid_non_positive_sets =
           sets.map(to_positive_set).filter(is_non_positive_set);
 
-      REQUIRE_THROWS_AS((*invalid_positive_sets)(),
+      REQUIRE_THROWS_AS(invalid_positive_sets(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_non_positive_sets)(),
+      REQUIRE_THROWS_AS(invalid_non_positive_sets(),
                         cauldron::OutOfCycles);
     }
   }

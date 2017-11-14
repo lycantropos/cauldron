@@ -75,7 +75,7 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Strings alphabetic_strings(lengths,
-                                         *alphabetic_characters);
+                                         alphabetic_characters);
     cauldron::Builder<StringWrapper, std::string> alphabetic(
         alphabetic_strings);
 
@@ -83,8 +83,8 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
       auto lower_wrappers = alphabetic.filter(is_lower_wrapper);
       auto upper_wrappers = alphabetic.filter(is_upper_wrapper);
 
-      auto lower_wrapper = (*lower_wrappers)();
-      auto upper_wrapper = (*upper_wrappers)();
+      auto lower_wrapper = lower_wrappers();
+      auto upper_wrapper = upper_wrappers();
       auto length_stays_in_range = in_range_checker<size_t>(min_length,
                                                             max_length);
 
@@ -96,9 +96,9 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
 
     SECTION("impossible") {
       auto invalid_wrappers =
-          alphabetic.filter(is_lower_wrapper)->filter(is_upper_wrapper);
+          alphabetic.filter(is_lower_wrapper).filter(is_upper_wrapper);
 
-      REQUIRE_THROWS_AS((*invalid_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_wrappers(),
                         cauldron::OutOfCycles);
     }
   }
@@ -127,7 +127,7 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Strings alphabetic_strings(lengths,
-                                         *alphabetic_characters);
+                                         alphabetic_characters);
     cauldron::Builder<StringWrapper, std::string> alphabetic(
         alphabetic_strings);
 
@@ -154,9 +154,9 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
       auto invalid_upper_wrappers =
           alphabetic.map(to_lower_wrapper).filter(is_upper_wrapper);
 
-      REQUIRE_THROWS_AS((*invalid_lower_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_lower_wrappers(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_upper_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_upper_wrappers(),
                         cauldron::OutOfCycles);
     }
   }

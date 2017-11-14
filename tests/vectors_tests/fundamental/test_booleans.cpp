@@ -68,8 +68,8 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
       auto false_vectors = booleans_vectors.filter(is_false_vector);
       auto true_vectors = booleans_vectors.filter(is_true_vector);
 
-      auto false_vector = (*false_vectors)();
-      auto true_vector = (*true_vectors)();
+      auto false_vector = false_vectors();
+      auto true_vector = true_vectors();
       auto stays_in_range = in_range_checker(min_size,
                                              max_size);
 
@@ -81,8 +81,8 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
 
     SECTION("impossible") {
       auto invalid_vectors =
-          booleans_vectors.filter(is_false_vector)->filter(is_true_vector);
-      REQUIRE_THROWS_AS((*invalid_vectors)(),
+          booleans_vectors.filter(is_false_vector).filter(is_true_vector);
+      REQUIRE_THROWS_AS(invalid_vectors(),
                         cauldron::OutOfCycles);
     }
   }
@@ -130,9 +130,9 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
       auto invalid_true_vectors =
           booleans_vectors.map(to_false_vector).filter(is_true_vector);
 
-      REQUIRE_THROWS_AS((*invalid_false_vectors)(),
+      REQUIRE_THROWS_AS(invalid_false_vectors(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_true_vectors)(),
+      REQUIRE_THROWS_AS(invalid_true_vectors(),
                         cauldron::OutOfCycles);
     }
   }
