@@ -40,7 +40,7 @@ class Strategy {
    * that generates values from either original strategy or provided one.
    */
   virtual Union<Value> operator||(const Strategy<Value> &strategy) const {
-    return Union<Value>{clone(), strategy.clone()};
+    return Union<Value>{*this, strategy};
   }
 
   /**
@@ -111,11 +111,22 @@ class CloneHelper : public Strategy<Value> {
 template<class Value>
 class Union : public CloneHelper<Value, Union<Value>> {
  public:
-  Union(std::initializer_list<std::shared_ptr<Strategy<Value>>> strategies) {
-    if (strategies.size() == 0) {
-      throw std::invalid_argument("``strategies`` should be non-empty.");
+  explicit Union(const Strategy<Value> &strategy,
+                 const Strategy<Value> &other_strategy) {
+    strategies_.push_back(strategy.clone());
+    strategies_.push_back(other_strategy.clone());
+  }
+
+  /**
+   * Default copy constructor doesn't fit
+   * since we're using ``std::unique_ptr`` in class member
+   * which is not copyable.
+   */
+  Union(const Union<Value> &strategy) {
+    strategies_.reserve(strategy.strategies_.size());
+    for (const auto &sub_strategy: strategy.strategies_) {
+      strategies_.push_back(sub_strategy->clone());
     }
-    strategies_ = strategies;
   }
 
   /**
@@ -130,25 +141,21 @@ class Union : public CloneHelper<Value, Union<Value>> {
   }
 
   Union<Value> operator||(const Strategy<Value> &strategy) const override {
-    std::vector<std::shared_ptr<Strategy<Value>>> strategies(strategies_);
-    strategies.push_back(strategy.clone());
-    return Union<Value>(strategies);
+    Union<Value> result(*this);
+    result.strategies_.push_back(strategy.clone());
+    return result;
   }
 
   Union<Value> operator||(const Union<Value> &strategy) const override {
-    std::vector<std::shared_ptr<Strategy<Value>>> strategies(strategies_);
-    strategies.insert(strategies.begin(),
-                      strategy.strategies_.begin(),
-                      strategy.strategies_.end());
-    return Union<Value>(strategies);
+    Union<Value> result(*this);
+    for (const auto &sub_strategy: strategy.strategies_) {
+      result.strategies_.push_back(sub_strategy->clone());
+    }
+    return result;
   }
 
  private:
-  explicit Union(std::vector<std::shared_ptr<Strategy<Value>>> strategies) {
-    strategies_ = strategies;
-  }
-
-  std::vector<std::shared_ptr<Strategy<Value>>> strategies_;
+  std::vector<std::unique_ptr<Strategy<Value>>> strategies_;
 };
 
 
