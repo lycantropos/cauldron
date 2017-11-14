@@ -30,12 +30,11 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
   std::string non_zero_characters = factories::non_zero_characters();
 
   SECTION("single character") {
-    auto ones = std::make_shared<cauldron::Just<size_t>>(1);
+    cauldron::Just<size_t> sizes(1);
     for (char single_character: non_zero_characters) {
       std::string single_character_string{single_character};
-      auto same_character = std::make_shared<cauldron::Characters>(
-          single_character_string);
-      cauldron::Vectors<char> same_character_vectors(ones,
+      cauldron::Characters same_character(single_character_string);
+      cauldron::Vectors<char> same_character_vectors(sizes,
                                                      same_character);
 
       auto vector = same_character_vectors();
@@ -61,10 +60,9 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
                              vector.end(),
                              is_character_from_domain);
         };
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
-    auto characters = std::make_shared<cauldron::Characters>(
-        characters_string);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
+    cauldron::Characters characters(characters_string);
     cauldron::Vectors<char> characters_vectors(sizes,
                                                characters);
 
@@ -83,12 +81,12 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
     size_t max_size = constants::max_capacity;
     auto stays_in_range = in_range_checker<size_t>(min_size,
                                                    max_size);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Vectors<char> alphabetic(sizes,
-                                       std::move(alphabetic_characters));
+                                       *alphabetic_characters);
 
     SECTION("case") {
       auto lower_vectors = alphabetic.filter(is_lower_vector);
@@ -115,7 +113,7 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
   SECTION("mapping") {
     cauldron::Converter<std::vector<char>> to_lower_vector(
         [&](const std::vector<char> &vector) -> std::vector<char> {
-          auto result = std::vector<char>(vector.size());
+          std::vector<char> result(vector.size());
           std::transform(vector.begin(),
                          vector.end(),
                          result.begin(),
@@ -124,7 +122,7 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
         });
     cauldron::Converter<std::vector<char>> to_upper_vector(
         [&](const std::vector<char> &vector) -> std::vector<char> {
-          auto result = std::vector<char>(vector.size());
+          std::vector<char> result(vector.size());
           std::transform(vector.begin(),
                          vector.end(),
                          result.begin(),
@@ -140,12 +138,12 @@ TEST_CASE("characters \"Vectors\" strategy", "[Vectors]") {
     size_t max_size = constants::max_capacity;
     auto stays_in_range = in_range_checker<size_t>(min_size,
                                                    max_size);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Vectors<char> alphabetic(sizes,
-                                       std::move(alphabetic_characters));
+                                       *alphabetic_characters);
 
     SECTION("case") {
       auto lower_vectors = alphabetic.map(to_lower_vector);

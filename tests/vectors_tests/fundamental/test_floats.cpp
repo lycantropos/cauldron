@@ -45,17 +45,16 @@ static void check_strategy() {
                            numbers_vector.end(),
                            number_stays_in_range);
       };
-  auto numbers = std::make_shared<cauldron::Floats<Number>>(min_number,
-                                                            max_number);
+  cauldron::Floats<Number> numbers(min_number,
+                                   max_number);
 
   SECTION("stays in range") {
     static size_t min_size = 0;
     static size_t max_size = constants::max_capacity;
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
-    static const auto sizes =
-        std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                     max_size);
+    static const cauldron::Integers<size_t> sizes(min_size,
+                                                  max_size);
     cauldron::Vectors<Number> numbers_vectors(sizes,
                                               numbers);
 
@@ -73,9 +72,8 @@ static void check_strategy() {
     static size_t min_size = constants::min_capacity;
     static size_t max_size = sufficient_capacity(1, 2, // non- or positive
                                                  cauldron::MAX_CYCLES);
-    static const auto sizes =
-        std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                     max_size);
+    static const cauldron::Integers<size_t> sizes(min_size,
+                                                  max_size);
     cauldron::Vectors<Number> vectors(sizes,
                                       numbers);
 
@@ -110,7 +108,7 @@ static void check_strategy() {
     auto to_non_positive = to_non_positive_operator(min_number);
     cauldron::Converter<std::vector<Number>> to_positive_vector(
         [&](const std::vector<Number> &vector) -> std::vector<Number> {
-          auto result = std::vector<Number>(vector.size());
+          std::vector<Number> result(vector.size());
           std::transform(vector.begin(),
                          vector.end(),
                          result.begin(),
@@ -119,7 +117,7 @@ static void check_strategy() {
         });
     cauldron::Converter<std::vector<Number>> to_non_positive_vector(
         [&](const std::vector<Number> &vector) -> std::vector<Number> {
-          auto result = std::vector<Number>(vector.size());
+          std::vector<Number> result(vector.size());
           std::transform(vector.begin(),
                          vector.end(),
                          result.begin(),
@@ -135,8 +133,8 @@ static void check_strategy() {
     static size_t
         max_size = sufficient_capacity(1, 2, // non_positive or positive
                                        cauldron::MAX_CYCLES);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
     cauldron::Vectors<Number> vectors(sizes,
                                       numbers);
 

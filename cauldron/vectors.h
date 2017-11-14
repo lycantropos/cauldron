@@ -18,10 +18,19 @@ class Vectors : public CloneHelper<std::vector<Element>, Vectors<Element>> {
    * @param sizes: strategy to generate vectors sizes from.
    * @param elements: strategy to generate vectors elements from.
    */
-  Vectors(std::shared_ptr<SizesStrategy> sizes,
-          std::shared_ptr<ElementsStrategy> elements) :
-      sizes_(std::move(sizes)),
-      elements_(std::move(elements)) {};
+  Vectors(const SizesStrategy &sizes,
+          const ElementsStrategy &elements) :
+      sizes_(sizes.clone()),
+      elements_(elements.clone()) {};
+
+  /**
+   * Default copy constructor doesn't fit
+   * since we're using ``std::unique_ptr`` as class members
+   * which are not copyable.
+   */
+  Vectors(const Vectors<Element> &vectors) :
+      sizes_((*vectors.sizes_).clone()),
+      elements_((*vectors.elements_).clone()) {};
 
   /**
    * Generates pseudo-random ``std::vector`` instance.
@@ -29,9 +38,10 @@ class Vectors : public CloneHelper<std::vector<Element>, Vectors<Element>> {
   std::vector<Element> operator()() const override {
     size_t size = (*sizes_)();
     std::vector<Element> result(size);
-    // FIXME: workaround using bind to get producer from strategy
-    auto elements_producer = std::bind(&ElementsStrategy::operator(),
-                                       elements_);
+    // FIXME: workaround using lambda to get producer from strategy
+    auto elements_producer = [&]() -> Element {
+      return (*elements_)();
+    };
     std::generate_n(result.begin(),
                     size,
                     elements_producer);
@@ -39,7 +49,7 @@ class Vectors : public CloneHelper<std::vector<Element>, Vectors<Element>> {
   }
 
  private:
-  std::shared_ptr<SizesStrategy> sizes_;
-  std::shared_ptr<ElementsStrategy> elements_;
+  std::unique_ptr<SizesStrategy> sizes_;
+  std::unique_ptr<ElementsStrategy> elements_;
 };
 }
