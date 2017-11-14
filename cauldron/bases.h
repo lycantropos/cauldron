@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <random>
+
 #include "sieve.h"
 #include "facility.h"
 
@@ -40,8 +41,7 @@ class Strategy {
    * that generates values from either original strategy or provided one.
    */
   virtual Union<Value> operator||(const Strategy<Value> &strategy) const {
-    return Union<Value>{std::move(clone()),
-                        std::move(strategy.clone())};
+    return Union<Value>{*this, strategy};
   }
 
   /**
@@ -56,30 +56,24 @@ class Strategy {
   /**
    * Returns a new strategy
    * that generates values from the strategy
-   * modified with provided ``strategies::Converter`` instance.
-   */
-  virtual std::unique_ptr<Mapped<Value>> map(
-      const Converter<Value> &converter
-  ) const {
-    Facility<Value> facility{converter};
-    return std::make_unique<Mapped<Value>>(facility,
-                                           std::move(clone()));
-  }
-
-  /**
-   * Returns a new strategy
-   * that generates values from the strategy
    * which satisfy provided ``strategies::Requirement`` instance.
    *
    * Note that if the ``requirement`` is too hard to satisfy
    * this might result in failing with ``OutOfCycles``.
    */
-  virtual std::unique_ptr<Filtered<Value>> filter(
-      const Requirement<Value> &requirement
-  ) const {
+  virtual Filtered<Value> filter(const Requirement<Value> &requirement) const {
     Sieve<Value> sieve{requirement};
-    return std::make_unique<Filtered<Value>>(sieve,
-                                             std::move(clone()));
+    return Filtered<Value>(sieve, *this);
+  }
+
+  /**
+   * Returns a new strategy
+   * that generates values from the strategy
+   * modified with provided ``strategies::Converter`` instance.
+   */
+  virtual Mapped<Value> map(const Converter<Value> &converter) const {
+    Facility<Value> facility{converter};
+    return Mapped<Value>(facility, *this);
   }
 
   /**
@@ -117,18 +111,22 @@ class CloneHelper : public Strategy<Value> {
 template<class Value>
 class Union : public CloneHelper<Value, Union<Value>> {
  public:
-  Union(std::initializer_list<std::shared_ptr<Strategy<Value>>> strategies) {
-    if (strategies.size() == 0) {
-      throw std::invalid_argument("``strategies`` should be non-empty.");
-    }
-    strategies_ = strategies;
+  explicit Union(const Strategy<Value> &strategy,
+                 const Strategy<Value> &other_strategy) {
+    strategies_.push_back(strategy.clone());
+    strategies_.push_back(other_strategy.clone());
   }
 
-  explicit Union(std::vector<std::shared_ptr<Strategy<Value>>> strategies) {
-    if (strategies.size() == 0) {
-      throw std::invalid_argument("``strategies`` should be non-empty.");
+  /**
+   * Default copy constructor doesn't fit
+   * since we're using ``std::unique_ptr`` in class member
+   * which is not copyable.
+   */
+  Union(const Union<Value> &strategy) {
+    strategies_.reserve(strategy.strategies_.size());
+    for (const auto &sub_strategy: strategy.strategies_) {
+      strategies_.push_back(sub_strategy->clone());
     }
-    strategies_ = std::move(strategies);
   }
 
   /**
@@ -143,21 +141,21 @@ class Union : public CloneHelper<Value, Union<Value>> {
   }
 
   Union<Value> operator||(const Strategy<Value> &strategy) const override {
-    std::vector<std::shared_ptr<Strategy<Value>>> strategies(strategies_);
-    strategies.push_back(std::move(strategy.clone()));
-    return Union<Value>(strategies);
+    Union<Value> result(*this);
+    result.strategies_.push_back(strategy.clone());
+    return result;
   }
 
   Union<Value> operator||(const Union<Value> &strategy) const override {
-    std::vector<std::shared_ptr<Strategy<Value>>> strategies(strategies_);
-    strategies.insert(strategies.begin(),
-                      strategy.strategies_.begin(),
-                      strategy.strategies_.end());
-    return Union<Value>(strategies);
+    Union<Value> result(*this);
+    for (const auto &sub_strategy: strategy.strategies_) {
+      result.strategies_.push_back(sub_strategy->clone());
+    }
+    return result;
   }
 
  private:
-  std::vector<std::shared_ptr<Strategy<Value>>> strategies_;
+  std::vector<std::unique_ptr<Strategy<Value>>> strategies_;
 };
 
 
@@ -175,16 +173,24 @@ template<typename Value>
 class Filtered : public CloneHelper<Value, Filtered<Value>> {
  public:
   explicit Filtered(const Sieve<Value> &sieve,
-                    std::shared_ptr<Strategy<Value>> strategy) :
+                    const Strategy<Value> &strategy) :
       sieve_(sieve),
-      strategy_(std::move(strategy)) {};
+      strategy_(strategy.clone()) {};
 
-  std::unique_ptr<Filtered<Value>> filter(
+  /**
+   * Default copy constructor doesn't fit
+   * since we're using ``std::unique_ptr`` as class member
+   * which is not copyable.
+   */
+  Filtered(const Filtered<Value> &strategy) :
+      sieve_(strategy.sieve_),
+      strategy_(strategy.strategy_->clone()) {}
+
+  Filtered<Value> filter(
       const Requirement<Value> &requirement
   ) const override {
     auto sieve = sieve_.expand(requirement);
-    return std::make_unique<Filtered<Value>>(sieve,
-                                             strategy_);
+    return Filtered<Value>(sieve, *strategy_);
   }
 
   /**
@@ -201,7 +207,7 @@ class Filtered : public CloneHelper<Value, Filtered<Value>> {
 
  protected:
   Sieve<Value> sieve_;
-  std::shared_ptr<Strategy<Value>> strategy_;
+  std::unique_ptr<Strategy<Value>> strategy_;
 };
 
 
@@ -219,16 +225,22 @@ template<typename Value>
 class Mapped : public CloneHelper<Value, Mapped<Value>> {
  public:
   explicit Mapped(const Facility<Value> &facility,
-                  std::shared_ptr<Strategy<Value>> strategy) :
+                  const Strategy<Value> &strategy) :
       facility_(facility),
-      strategy_(std::move(strategy)) {};
+      strategy_(strategy.clone()) {};
 
-  std::unique_ptr<Mapped<Value>> map(
-      const Converter<Value> &converter
-  ) const override {
+  /**
+   * Default copy constructor doesn't fit
+   * since we're using ``std::unique_ptr`` as class member
+   * which is not copyable.
+   */
+  Mapped(const Mapped<Value> &strategy) :
+      facility_(strategy.facility_),
+      strategy_(strategy.strategy_->clone()) {}
+
+  Mapped<Value> map(const Converter<Value> &converter) const override {
     auto facility = facility_.expand(converter);
-    return std::make_unique<Mapped>(facility,
-                                    strategy_);
+    return Mapped(facility, *strategy_);
   }
 
   /**
@@ -242,6 +254,6 @@ class Mapped : public CloneHelper<Value, Mapped<Value>> {
 
  protected:
   Facility<Value> facility_;
-  std::shared_ptr<Strategy<Value>> strategy_;
+  std::unique_ptr<Strategy<Value>> strategy_;
 };
 }

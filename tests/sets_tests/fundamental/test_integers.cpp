@@ -47,14 +47,14 @@ static void check_strategy() {
                        set.end(),
                        number_stays_in_range);
   };
-  auto numbers = std::make_shared<cauldron::Integers<Number>>(min_number,
-                                                              max_number);
+  cauldron::Integers<Number> numbers(min_number,
+                                     max_number);
 
   SECTION("single element domain") {
-    auto ones = std::make_shared<cauldron::Just<size_t>>(1);
+    cauldron::Just<size_t> sizes(1);
     for (const Number number: numbers_range) {
-      auto same_number = std::make_shared<cauldron::Just<Number>>(number);
-      cauldron::Sets<Number> same_number_sets(ones,
+      cauldron::Just<Number> same_number(number);
+      cauldron::Sets<Number> same_number_sets(sizes,
                                               same_number);
 
       auto set = same_number_sets();
@@ -73,9 +73,8 @@ static void check_strategy() {
     );
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
-    static const auto sizes =
-        std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                     max_size);
+    static const cauldron::Integers<size_t> sizes(min_size,
+                                                  max_size);
     cauldron::Sets<Number> numbers_sets(sizes,
                                         numbers);
 
@@ -93,8 +92,8 @@ static void check_strategy() {
     static size_t min_size = constants::min_capacity;
     static size_t max_size = sufficient_capacity(1, 2, // odd or even
                                                  cauldron::MAX_CYCLES);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
     cauldron::Sets<Number> sets(sizes,
                                 numbers);
 
@@ -102,8 +101,8 @@ static void check_strategy() {
       auto even_sets = sets.filter(is_even_set);
       auto odd_sets = sets.filter(is_odd_set);
 
-      auto even_set = (*even_sets)();
-      auto odd_set = (*odd_sets)();
+      auto even_set = even_sets();
+      auto odd_set = odd_sets();
       auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                           max_size);
 
@@ -116,9 +115,9 @@ static void check_strategy() {
     }
 
     SECTION("impossible") {
-      auto invalid_sets = sets.filter(is_even_set)->filter(is_odd_set);
+      auto invalid_sets = sets.filter(is_even_set).filter(is_odd_set);
 
-      REQUIRE_THROWS_AS((*invalid_sets)(),
+      REQUIRE_THROWS_AS(invalid_sets(),
                         cauldron::OutOfCycles);
     }
   }
@@ -158,8 +157,8 @@ static void check_strategy() {
     static size_t min_size = constants::min_capacity;
     static size_t max_size = sufficient_capacity(1, 2, // odd or even
                                                  cauldron::MAX_CYCLES);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
     cauldron::Sets<Number> sets(sizes,
                                 numbers);
 
@@ -167,8 +166,8 @@ static void check_strategy() {
       auto even_sets = sets.map(to_even_set);
       auto odd_sets = sets.map(to_odd_set);
 
-      auto even_set = (*even_sets)();
-      auto odd_set = (*odd_sets)();
+      auto even_set = even_sets();
+      auto odd_set = odd_sets();
       auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                           max_size);
 
@@ -181,12 +180,12 @@ static void check_strategy() {
     }
 
     SECTION("impossible") {
-      auto invalid_even_sets = sets.map(to_odd_set)->filter(is_even_set);
-      auto invalid_odd_sets = sets.map(to_even_set)->filter(is_odd_set);
+      auto invalid_even_sets = sets.map(to_odd_set).filter(is_even_set);
+      auto invalid_odd_sets = sets.map(to_even_set).filter(is_odd_set);
 
-      REQUIRE_THROWS_AS((*invalid_even_sets)(),
+      REQUIRE_THROWS_AS(invalid_even_sets(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_odd_sets)(),
+      REQUIRE_THROWS_AS(invalid_odd_sets(),
                         cauldron::OutOfCycles);
     }
   }

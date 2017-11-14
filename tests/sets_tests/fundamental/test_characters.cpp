@@ -30,12 +30,11 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
   std::string non_zero_characters = factories::non_zero_characters();
 
   SECTION("single character") {
-    auto ones = std::make_shared<cauldron::Just<size_t>>(1);
+    cauldron::Just<size_t> sizes(1);
     for (char single_character: non_zero_characters) {
       std::string single_character_string{single_character};
-      auto same_character = std::make_shared<cauldron::Characters>(
-          single_character_string);
-      cauldron::Sets<char> same_character_sets(ones,
+      cauldron::Characters same_character(single_character_string);
+      cauldron::Sets<char> same_character_sets(sizes,
                                                same_character);
 
       auto same_character_set = same_character_sets();
@@ -63,10 +62,9 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
                                           cauldron::MAX_CYCLES);
     auto stays_in_range = in_range_checker<size_t>(min_size,
                                                    max_size);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
-    auto characters = std::make_shared<cauldron::Characters>(
-        characters_string);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
+    cauldron::Characters characters(characters_string);
     cauldron::Sets<char> characters_sets(sizes,
                                          characters);
 
@@ -85,19 +83,19 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
     size_t max_size = sufficient_set_size(
         constants::alphabetic_characters_count,
         cauldron::MAX_CYCLES);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Sets<char> alphabetic(sizes,
-                                    std::move(alphabetic_characters));
+                                    alphabetic_characters);
 
     SECTION("case") {
       auto lower_sets = alphabetic.filter(is_lower_set);
       auto upper_sets = alphabetic.filter(is_upper_set);
 
-      auto lower_set = (*lower_sets)();
-      auto upper_set = (*upper_sets)();
+      auto lower_set = lower_sets();
+      auto upper_set = upper_sets();
       auto stays_in_range = in_range_checker<size_t>(min_size,
                                                      max_size);
 
@@ -109,9 +107,9 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
 
     SECTION("impossible") {
       auto invalid_sets =
-          alphabetic.filter(is_lower_set)->filter(is_upper_set);
+          alphabetic.filter(is_lower_set).filter(is_upper_set);
 
-      REQUIRE_THROWS_AS((*invalid_sets)(),
+      REQUIRE_THROWS_AS(invalid_sets(),
                         cauldron::OutOfCycles);
     }
   }
@@ -148,19 +146,19 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
     size_t max_size = sufficient_set_size(
         constants::alphabetic_characters_count,
         cauldron::MAX_CYCLES);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
     cauldron::Sets<char> alphabetic(sizes,
-                                    std::move(alphabetic_characters));
+                                    alphabetic_characters);
 
     SECTION("case") {
       auto lower_sets = alphabetic.map(to_lower_set);
       auto upper_sets = alphabetic.map(to_upper_set);
 
-      auto lower_set = (*lower_sets)();
-      auto upper_set = (*upper_sets)();
+      auto lower_set = lower_sets();
+      auto upper_set = upper_sets();
       auto stays_in_range = in_range_checker<size_t>(min_size,
                                                      max_size);
 
@@ -172,13 +170,13 @@ TEST_CASE("characters \"Sets\" strategy", "[Sets]") {
 
     SECTION("impossible") {
       auto invalid_lower_sets =
-          alphabetic.map(to_upper_set)->filter(is_lower_set);
+          alphabetic.map(to_upper_set).filter(is_lower_set);
       auto invalid_upper_sets =
-          alphabetic.map(to_lower_set)->filter(is_upper_set);
+          alphabetic.map(to_lower_set).filter(is_upper_set);
 
-      REQUIRE_THROWS_AS((*invalid_lower_sets)(),
+      REQUIRE_THROWS_AS(invalid_lower_sets(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_upper_sets)(),
+      REQUIRE_THROWS_AS(invalid_upper_sets(),
                         cauldron::OutOfCycles);
     }
   }

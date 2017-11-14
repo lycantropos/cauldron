@@ -32,10 +32,10 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
     size_t max_size = constants::max_capacity;
     auto stays_in_range = in_range_checker<size_t>(min_size,
                                                    max_size);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
-    auto false_values = std::make_shared<cauldron::Booleans>(0.);
-    auto true_values = std::make_shared<cauldron::Booleans>(1.);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
+    cauldron::Booleans false_values(0.);
+    cauldron::Booleans true_values(1.);
     cauldron::Vectors<bool> false_vectors(sizes,
                                           false_values);
     cauldron::Vectors<bool> true_vectors(sizes,
@@ -58,9 +58,9 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
     size_t min_size = constants::min_capacity;
     size_t max_size = sufficient_capacity(1, 2, // true or false
                                           cauldron::MAX_CYCLES);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
-    auto booleans = std::make_shared<cauldron::Booleans>();
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
+    cauldron::Booleans booleans;
     cauldron::Vectors<bool> booleans_vectors(sizes,
                                              booleans);
 
@@ -68,8 +68,8 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
       auto false_vectors = booleans_vectors.filter(is_false_vector);
       auto true_vectors = booleans_vectors.filter(is_true_vector);
 
-      auto false_vector = (*false_vectors)();
-      auto true_vector = (*true_vectors)();
+      auto false_vector = false_vectors();
+      auto true_vector = true_vectors();
       auto stays_in_range = in_range_checker(min_size,
                                              max_size);
 
@@ -81,8 +81,8 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
 
     SECTION("impossible") {
       auto invalid_vectors =
-          booleans_vectors.filter(is_false_vector)->filter(is_true_vector);
-      REQUIRE_THROWS_AS((*invalid_vectors)(),
+          booleans_vectors.filter(is_false_vector).filter(is_true_vector);
+      REQUIRE_THROWS_AS(invalid_vectors(),
                         cauldron::OutOfCycles);
     }
   }
@@ -90,19 +90,11 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
   SECTION("mapping") {
     cauldron::Converter<std::vector<bool>> to_false_vector(
         [&](const std::vector<bool> &vector) -> std::vector<bool> {
-          auto result = std::vector<bool>(vector.size());
-          std::fill(result.begin(),
-                    result.end(),
-                    false);
-          return result;
+          return std::vector<bool>(vector.size(), false);
         });
     cauldron::Converter<std::vector<bool>> to_true_vector(
         [&](const std::vector<bool> &vector) -> std::vector<bool> {
-          auto result = std::vector<bool>(vector.size());
-          std::fill(result.begin(),
-                    result.end(),
-                    true);
-          return result;
+          return std::vector<bool>(vector.size(), true);
         });
 
     /* if `min_size`` equals to zero
@@ -111,9 +103,9 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
      */
     size_t min_size = constants::min_capacity;
     size_t max_size = constants::max_capacity;
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
-    auto booleans = std::make_shared<cauldron::Booleans>();
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
+    cauldron::Booleans booleans;
     cauldron::Vectors<bool> booleans_vectors(sizes,
                                              booleans);
 
@@ -121,8 +113,8 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
       auto false_vectors = booleans_vectors.map(to_false_vector);
       auto true_vectors = booleans_vectors.map(to_true_vector);
 
-      auto false_vector = (*false_vectors)();
-      auto true_vector = (*true_vectors)();
+      auto false_vector = false_vectors();
+      auto true_vector = true_vectors();
       auto stays_in_range = in_range_checker(min_size,
                                              max_size);
 
@@ -134,13 +126,13 @@ TEST_CASE("booleans \"Vectors\" strategy", "[Vectors]") {
 
     SECTION("impossible") {
       auto invalid_false_vectors =
-          booleans_vectors.map(to_true_vector)->filter(is_false_vector);
+          booleans_vectors.map(to_true_vector).filter(is_false_vector);
       auto invalid_true_vectors =
-          booleans_vectors.map(to_false_vector)->filter(is_true_vector);
+          booleans_vectors.map(to_false_vector).filter(is_true_vector);
 
-      REQUIRE_THROWS_AS((*invalid_false_vectors)(),
+      REQUIRE_THROWS_AS(invalid_false_vectors(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_true_vectors)(),
+      REQUIRE_THROWS_AS(invalid_true_vectors(),
                         cauldron::OutOfCycles);
     }
   }

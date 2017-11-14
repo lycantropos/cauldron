@@ -31,9 +31,8 @@ static void check_strategy() {
   );
   auto number_stays_in_range = in_range_checker<Number>(min_number,
                                                         max_number);
-  auto numbers = std::make_shared<cauldron::Floats<Number>>(min_number,
-                                                            max_number);
-
+  cauldron::Floats<Number> numbers(min_number,
+                                   max_number);
   cauldron::Builder<FloatWrapper, Number> numbers_wrappers(numbers);
 
   SECTION("stays in range") {
@@ -48,8 +47,8 @@ static void check_strategy() {
       auto non_positive_wrappers =
           numbers_wrappers.filter(is_non_positive_wrapper);
 
-      auto positive_wrapper = (*positive_wrappers)();
-      auto non_positive_wrapper = (*non_positive_wrappers)();
+      auto positive_wrapper = positive_wrappers();
+      auto non_positive_wrapper = non_positive_wrappers();
 
       REQUIRE(number_stays_in_range(positive_wrapper.field()));
       REQUIRE(number_stays_in_range(non_positive_wrapper.field()));
@@ -60,9 +59,9 @@ static void check_strategy() {
     SECTION("impossible") {
       auto invalid_wrappers =
           numbers_wrappers.filter(is_positive_wrapper)
-              ->filter(is_non_positive_wrapper);
+              .filter(is_non_positive_wrapper);
 
-      REQUIRE_THROWS_AS((*invalid_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_wrappers(),
                         cauldron::OutOfCycles);
     }
   }
@@ -84,8 +83,8 @@ static void check_strategy() {
       auto non_positive_wrappers =
           numbers_wrappers.map(to_non_positive_wrapper);
 
-      auto positive_wrapper = (*positive_wrappers)();
-      auto non_positive_wrapper = (*non_positive_wrappers)();
+      auto positive_wrapper = positive_wrappers();
+      auto non_positive_wrapper = non_positive_wrappers();
 
       REQUIRE(number_stays_in_range(positive_wrapper.field()));
       REQUIRE(number_stays_in_range(non_positive_wrapper.field()));
@@ -96,14 +95,14 @@ static void check_strategy() {
     SECTION("impossible") {
       auto invalid_positive_wrappers =
           numbers_wrappers.map(to_non_positive_wrapper)
-              ->filter(is_positive_wrapper);
+              .filter(is_positive_wrapper);
       auto invalid_non_positive_wrappers =
           numbers_wrappers.map(to_positive_wrapper)
-              ->filter(is_non_positive_wrapper);
+              .filter(is_non_positive_wrapper);
 
-      REQUIRE_THROWS_AS((*invalid_positive_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_positive_wrappers(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_non_positive_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_non_positive_wrappers(),
                         cauldron::OutOfCycles);
     }
   }

@@ -51,16 +51,15 @@ static void check_strategy() {
                            numbers_vector.end(),
                            number_stays_in_range);
       };
-  auto numbers = std::make_shared<cauldron::Integers<Number>>(min_number,
-                                                              max_number);
+  cauldron::Integers<Number> numbers(min_number,
+                                     max_number);
 
   SECTION("single element domain") {
-    cauldron::Just<size_t> ones(1);
+    cauldron::Just<size_t> sizes(1);
     for (Number number: numbers_range) {
       cauldron::Just<Number> same_number(number);
-      cauldron::Vectors<Number> same_number_vectors(
-          std::make_shared<cauldron::Just<size_t>>(ones),
-          std::make_shared<cauldron::Just<Number>>(same_number));
+      cauldron::Vectors<Number> same_number_vectors(sizes,
+                                                    same_number);
 
       auto vector = same_number_vectors();
 
@@ -69,13 +68,12 @@ static void check_strategy() {
   }
 
   SECTION("multiple elements domain") {
-    static size_t min_size = 0;
-    static size_t max_size = constants::max_capacity;
+    size_t min_size = 0;
+    size_t max_size = constants::max_capacity;
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
-    static const auto sizes =
-        std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                     max_size);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
     cauldron::Vectors<Number> numbers_vectors(sizes,
                                               numbers);
 
@@ -90,11 +88,11 @@ static void check_strategy() {
      * than "impossible" section would not raise exception
      * since it is possible to avoid filters with empty vector.
      */
-    static size_t min_size = constants::min_capacity;
-    static size_t max_size = sufficient_capacity(1, 2, // odd or even
-                                                 cauldron::MAX_CYCLES);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
+    size_t min_size = constants::min_capacity;
+    size_t max_size = sufficient_capacity(1, 2, // odd or even
+                                          cauldron::MAX_CYCLES);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
     cauldron::Vectors<Number> vectors(sizes,
                                       numbers);
 
@@ -102,8 +100,8 @@ static void check_strategy() {
       auto even_vectors = vectors.filter(is_even_vector);
       auto odd_vectors = vectors.filter(is_odd_vector);
 
-      auto even_vector = (*even_vectors)();
-      auto odd_vector = (*odd_vectors)();
+      auto even_vector = even_vectors();
+      auto odd_vector = odd_vectors();
       auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                           max_size);
 
@@ -117,9 +115,9 @@ static void check_strategy() {
 
     SECTION("impossible") {
       auto invalid_vectors =
-          vectors.filter(is_even_vector)->filter(is_odd_vector);
+          vectors.filter(is_even_vector).filter(is_odd_vector);
 
-      REQUIRE_THROWS_AS((*invalid_vectors)(),
+      REQUIRE_THROWS_AS(invalid_vectors(),
                         cauldron::OutOfCycles);
     }
   }
@@ -131,7 +129,7 @@ static void check_strategy() {
                                                        max_number));
     cauldron::Converter<std::vector<Number>> to_even_vector(
         [&](const std::vector<Number> &vector) -> std::vector<Number> {
-          auto result = std::vector<Number>(vector.size());
+          std::vector<Number> result(vector.size());
           std::transform(vector.begin(),
                          vector.end(),
                          result.begin(),
@@ -140,7 +138,7 @@ static void check_strategy() {
         });
     cauldron::Converter<std::vector<Number>> to_odd_vector(
         [&](const std::vector<Number> &vector) -> std::vector<Number> {
-          auto result = std::vector<Number>(vector.size());
+          std::vector<Number> result(vector.size());
           std::transform(vector.begin(),
                          vector.end(),
                          result.begin(),
@@ -152,13 +150,13 @@ static void check_strategy() {
      * than "impossible" section would not raise exception
      * since it is possible to avoid filters with empty vector.
      */
-    static size_t min_size = constants::min_capacity;
-    static size_t max_size = sufficient_capacity(1, 2, // odd or even
-                                                 cauldron::MAX_CYCLES);
+    size_t min_size = constants::min_capacity;
+    size_t max_size = sufficient_capacity(1, 2, // odd or even
+                                          cauldron::MAX_CYCLES);
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
     cauldron::Vectors<Number> vectors(sizes,
                                       numbers);
 
@@ -166,8 +164,8 @@ static void check_strategy() {
       auto even_vectors = vectors.map(to_even_vector);
       auto odd_vectors = vectors.map(to_odd_vector);
 
-      auto even_vector = (*even_vectors)();
-      auto odd_vector = (*odd_vectors)();
+      auto even_vector = even_vectors();
+      auto odd_vector = odd_vectors();
 
       REQUIRE(size_stays_in_range(even_vector.size()));
       REQUIRE(size_stays_in_range(odd_vector.size()));
@@ -179,13 +177,13 @@ static void check_strategy() {
 
     SECTION("impossible") {
       auto invalid_even_vectors =
-          vectors.map(to_odd_vector)->filter(is_even_vector);
+          vectors.map(to_odd_vector).filter(is_even_vector);
       auto invalid_odd_vectors =
-          vectors.map(to_even_vector)->filter(is_odd_vector);
+          vectors.map(to_even_vector).filter(is_odd_vector);
 
-      REQUIRE_THROWS_AS((*invalid_even_vectors)(),
+      REQUIRE_THROWS_AS(invalid_even_vectors(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_odd_vectors)(),
+      REQUIRE_THROWS_AS(invalid_odd_vectors(),
                         cauldron::OutOfCycles);
     }
   }

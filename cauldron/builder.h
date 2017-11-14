@@ -17,8 +17,19 @@ namespace cauldron {
 template<class Object, class ...Value>
 class Builder : public CloneHelper<Object, Builder<Object, Value...>> {
  public:
-  explicit Builder(std::shared_ptr<cauldron::Strategy<Value>>... strategy) :
-      strategies_(std::make_tuple(strategy...)) {}
+  /**
+   * @param strategy: strategy to generate constructor arguments from.
+   */
+  explicit Builder(const cauldron::Strategy<Value> &... strategy) :
+      strategies_(std::make_tuple(strategy.clone()...)) {}
+
+  /**
+   * Default copy constructor doesn't fit
+   * since we're using ``std::unique_ptr`` as class members
+   * which is not copyable.
+   */
+  Builder(const Builder<Object, Value...> &builder) :
+      strategies_(builder.clone_strategies()) {}
 
   /**
    * Generates pseudo-random ``Object`` instance.
@@ -30,7 +41,7 @@ class Builder : public CloneHelper<Object, Builder<Object, Value...>> {
   }
 
  private:
-  std::tuple<std::shared_ptr<cauldron::Strategy<Value>>...> strategies_;
+  std::tuple<std::unique_ptr<cauldron::Strategy<Value>>...> strategies_;
 
   /**
    * Helper function for unpacking ``Builder::strategies_`` tuple
@@ -38,10 +49,10 @@ class Builder : public CloneHelper<Object, Builder<Object, Value...>> {
    */
   template<std::size_t... Indices>
   Object produce(
-      std::tuple<std::shared_ptr<cauldron::Strategy<Value>>...> tuple,
+      const std::tuple<std::unique_ptr<cauldron::Strategy<Value>>...> &strategies,
       std::index_sequence<Indices...>
   ) const {
-    return produce(std::get<Indices>(tuple)...);
+    return produce(std::get<Indices>(strategies)...);
   }
 
   /**
@@ -49,9 +60,39 @@ class Builder : public CloneHelper<Object, Builder<Object, Value...>> {
    * from variadic ``Strategy`` instances.
    */
   Object produce(
-      std::shared_ptr<cauldron::Strategy<Value>>... strategy
+      const std::unique_ptr<cauldron::Strategy<Value>> &... strategy
   ) const {
-    return Object(strategy->operator()()...);
+    return Object((*strategy)()...);
+  }
+
+  std::tuple<std::unique_ptr<cauldron::Strategy<Value>>...>
+  clone_strategies() const {
+    auto strategies_count = std::tuple_size<decltype(strategies_)>{};
+    return clone_strategies(strategies_,
+                            std::make_index_sequence<strategies_count>{});
+  }
+
+  /**
+   * Helper function for unpacking ``Builder::strategies_`` tuple
+   * into variadic ``Strategy`` instances.
+   */
+  template<std::size_t... Indices>
+  std::tuple<std::unique_ptr<cauldron::Strategy<Value>>...>
+  clone_strategies(
+      const std::tuple<std::unique_ptr<cauldron::Strategy<Value>>...> &strategies,
+      std::index_sequence<Indices...>
+  ) const {
+    return clone_strategies(std::get<Indices>(strategies)...);
+  }
+
+  /**
+   * Helper function for cloning variadic ``Strategy`` instances.
+   */
+  std::tuple<std::unique_ptr<cauldron::Strategy<Value>>...>
+  clone_strategies(
+      const std::unique_ptr<cauldron::Strategy<Value>> &... strategy
+  ) const {
+    return std::make_tuple(strategy->clone()...);
   }
 };
 }

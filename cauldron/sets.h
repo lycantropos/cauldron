@@ -1,6 +1,8 @@
 #pragma once
 
+#include <algorithm>
 #include <set>
+
 #include "bases.h"
 
 
@@ -19,10 +21,19 @@ class Sets : public CloneHelper<std::set<Element>, Sets<Element>> {
    * @param sizes: strategy to generate sets sizes from.
    * @param elements: strategy to generate sets elements from.
    */
-  Sets(std::shared_ptr<SizesStrategy> sizes,
-       std::shared_ptr<ElementsStrategy> elements) :
-      sizes_(std::move(sizes)),
-      elements_(std::move(elements)) {};
+  Sets(const SizesStrategy &sizes,
+       const ElementsStrategy &elements) :
+      sizes_(sizes.clone()),
+      elements_(elements.clone()) {};
+
+  /**
+   * Default copy constructor doesn't fit
+   * since we're using ``std::unique_ptr`` as class members
+   * which is not copyable.
+   */
+  Sets(const Sets<Element> &sets) :
+      sizes_(sets.sizes_->clone()),
+      elements_(sets.elements_->clone()) {};
 
   /**
    * Generates pseudo-random ``std::set`` instance.
@@ -34,20 +45,16 @@ class Sets : public CloneHelper<std::set<Element>, Sets<Element>> {
         [&result](Element value) -> bool {
           return result.find(value) == result.end();
         });
-    std::shared_ptr<ElementsStrategy> elements(
-        elements_->filter(element_unique));
-    // FIXME: workaround using bind to get producer from strategy
-    auto elements_producer = std::bind(&ElementsStrategy::operator(),
-                                       elements);
+    Filtered<Element> elements = (*elements_).filter(element_unique);
     std::generate_n(std::inserter(result,
                                   result.begin()),
                     size,
-                    elements_producer);
+                    elements);
     return result;
   }
 
  private:
-  std::shared_ptr<SizesStrategy> sizes_;
-  std::shared_ptr<ElementsStrategy> elements_;
+  std::unique_ptr<SizesStrategy> sizes_;
+  std::unique_ptr<ElementsStrategy> elements_;
 };
 }

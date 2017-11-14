@@ -68,7 +68,7 @@ std::function<Float(Float)> empirical_distribution_function(
     if (nearest_less_point_ptr == polygon.end()) {
       nearest_less_frequency = 0;
     } else {
-      nearest_less_frequency = (*nearest_less_point_ptr).second;
+      nearest_less_frequency = nearest_less_point_ptr->second;
     }
     return Float(nearest_less_frequency) / sample_size;
   };

@@ -12,8 +12,8 @@
 static auto lengths_factory(size_t min_length,
                             size_t max_length) {
   std::tie(min_length, max_length) = ordered_pair(min_length, max_length);
-  return std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                      max_length);
+  return cauldron::Integers<size_t>(min_length,
+                                    max_length);
 }
 
 
@@ -22,7 +22,7 @@ static auto alphabet_factory(size_t min_length,
   std::tie(min_length, max_length) = ordered_pair(min_length, max_length);
   std::string alphabet_characters = factories::characters_string(min_length,
                                                                  max_length);
-  return std::make_shared<cauldron::Characters>(alphabet_characters);
+  return cauldron::Characters(alphabet_characters);
 }
 
 

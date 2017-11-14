@@ -28,14 +28,12 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
   std::string non_zero_characters = factories::non_zero_characters();
 
   SECTION("single character alphabet") {
-    auto ones = std::make_shared<cauldron::Just<size_t>>(1);
+    cauldron::Just<size_t> lengths(1);
     for (char single_character: non_zero_characters) {
       std::string single_character_string{single_character};
-      auto same_character = std::make_shared<cauldron::Characters>(
-          single_character_string);
-      auto same_character_strings = std::make_shared<cauldron::Strings>(
-          ones,
-          same_character);
+      cauldron::Characters same_character(single_character_string);
+      cauldron::Strings same_character_strings(lengths,
+                                               same_character);
       cauldron::Builder<StringWrapper, std::string>
           same_character_strings_wrappers(same_character_strings);
 
@@ -49,15 +47,14 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
     size_t min_length = 0;
     auto length_stays_in_range = in_range_checker<size_t>(min_length,
                                                           max_length);
-    auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                max_length);
+    cauldron::Integers<size_t> lengths(min_length,
+                                       max_length);
     std::string alphabet_characters = factories::characters_string(
         constants::min_capacity,
         constants::max_capacity);
-    auto alphabet = std::make_shared<cauldron::Characters>(
-        alphabet_characters);
-    auto strings = std::make_shared<cauldron::Strings>(lengths,
-                                                       alphabet);
+    cauldron::Characters alphabet(alphabet_characters);
+    cauldron::Strings strings(lengths,
+                              alphabet);
     cauldron::Builder<StringWrapper, std::string> strings_wrappers(strings);
 
     auto wrapper = strings_wrappers();
@@ -72,19 +69,13 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
      * than "impossible" section would not raise exception
      * since it is possible to avoid filters with empty string/wrapper.
      */
-    size_t min_size = constants::min_capacity;
-    size_t max_size = min_size + 1;
     size_t min_length = constants::min_capacity;
-    auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
-                                                              max_size);
-    auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                max_length);
-
+    cauldron::Integers<size_t> lengths(min_length,
+                                       max_length);
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
-    auto alphabetic_strings = std::make_shared<cauldron::Strings>(
-        lengths,
-        std::move(alphabetic_characters));
+    cauldron::Strings alphabetic_strings(lengths,
+                                         alphabetic_characters);
     cauldron::Builder<StringWrapper, std::string> alphabetic(
         alphabetic_strings);
 
@@ -92,10 +83,8 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
       auto lower_wrappers = alphabetic.filter(is_lower_wrapper);
       auto upper_wrappers = alphabetic.filter(is_upper_wrapper);
 
-      auto lower_wrapper = (*lower_wrappers)();
-      auto upper_wrapper = (*upper_wrappers)();
-      auto sizes_stays_in_range = in_range_checker<size_t>(min_size,
-                                                           max_size);
+      auto lower_wrapper = lower_wrappers();
+      auto upper_wrapper = upper_wrappers();
       auto length_stays_in_range = in_range_checker<size_t>(min_length,
                                                             max_length);
 
@@ -107,9 +96,9 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
 
     SECTION("impossible") {
       auto invalid_wrappers =
-          alphabetic.filter(is_lower_wrapper)->filter(is_upper_wrapper);
+          alphabetic.filter(is_lower_wrapper).filter(is_upper_wrapper);
 
-      REQUIRE_THROWS_AS((*invalid_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_wrappers(),
                         cauldron::OutOfCycles);
     }
   }
@@ -133,14 +122,12 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
     size_t min_length = constants::min_capacity;
     auto sizes = std::make_shared<cauldron::Integers<size_t>>(min_size,
                                                               max_size);
-    auto lengths = std::make_shared<cauldron::Integers<size_t>>(min_length,
-                                                                max_length);
-
+    cauldron::Integers<size_t> lengths(min_length,
+                                       max_length);
     auto alphabetic_characters =
         cauldron::Characters(non_zero_characters).filter(is_alphabetic);
-    auto alphabetic_strings = std::make_shared<cauldron::Strings>(
-        lengths,
-        std::move(alphabetic_characters));
+    cauldron::Strings alphabetic_strings(lengths,
+                                         alphabetic_characters);
     cauldron::Builder<StringWrapper, std::string> alphabetic(
         alphabetic_strings);
 
@@ -148,8 +135,8 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
       auto lower_wrappers = alphabetic.map(to_lower_wrapper);
       auto upper_wrappers = alphabetic.map(to_upper_wrapper);
 
-      auto lower_wrapper = (*lower_wrappers)();
-      auto upper_wrapper = (*upper_wrappers)();
+      auto lower_wrapper = lower_wrappers();
+      auto upper_wrapper = upper_wrappers();
       auto sizes_stays_in_range = in_range_checker<size_t>(min_size,
                                                            max_size);
       auto length_stays_in_range = in_range_checker<size_t>(min_length,
@@ -163,13 +150,13 @@ TEST_CASE("strings \"Builder\" strategy", "[Builder]") {
 
     SECTION("impossible") {
       auto invalid_lower_wrappers =
-          alphabetic.map(to_upper_wrapper)->filter(is_lower_wrapper);
+          alphabetic.map(to_upper_wrapper).filter(is_lower_wrapper);
       auto invalid_upper_wrappers =
-          alphabetic.map(to_lower_wrapper)->filter(is_upper_wrapper);
+          alphabetic.map(to_lower_wrapper).filter(is_upper_wrapper);
 
-      REQUIRE_THROWS_AS((*invalid_lower_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_lower_wrappers(),
                         cauldron::OutOfCycles);
-      REQUIRE_THROWS_AS((*invalid_upper_wrappers)(),
+      REQUIRE_THROWS_AS(invalid_upper_wrappers(),
                         cauldron::OutOfCycles);
     }
   }
