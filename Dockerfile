@@ -16,11 +16,12 @@ COPY CMakeModules ./CMakeModules/
 COPY CMakeLists.txt .
 COPY cauldron/ ./cauldron/
 COPY tests/ ./tests/
+COPY run-plain-tests.sh ./run-plain-tests.sh
 
 WORKDIR build
 
 RUN cmake -DTESTS=ON .. && \
-    make -j2 && \
+    make -j$(nproc --all) && \
     make install
 
-CMD ["./main"]
+ENTRYPOINT ["/opt/cauldron/run-plain-tests.sh"]
