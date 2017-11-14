@@ -40,8 +40,7 @@ class Strategy {
    * that generates values from either original strategy or provided one.
    */
   virtual Union<Value> operator||(const Strategy<Value> &strategy) const {
-    return Union<Value>{std::move(clone()),
-                        std::move(strategy.clone())};
+    return Union<Value>{clone(), strategy.clone()};
   }
 
   /**
@@ -63,8 +62,7 @@ class Strategy {
    */
   virtual Filtered<Value> filter(const Requirement<Value> &requirement) const {
     Sieve<Value> sieve{requirement};
-    return Filtered<Value>(sieve,
-                           std::move(clone()));
+    return Filtered<Value>(sieve, clone());
   }
 
   /**
@@ -124,7 +122,7 @@ class Union : public CloneHelper<Value, Union<Value>> {
     if (strategies.size() == 0) {
       throw std::invalid_argument("``strategies`` should be non-empty.");
     }
-    strategies_ = std::move(strategies);
+    strategies_ = strategies;
   }
 
   /**
@@ -171,7 +169,7 @@ template<typename Value>
 class Filtered : public CloneHelper<Value, Filtered<Value>> {
  public:
   explicit Filtered(const Sieve<Value> &sieve,
-                    std::shared_ptr<Strategy<Value>> strategy) :
+                    std::unique_ptr<Strategy<Value>> strategy) :
       sieve_(sieve),
       strategy_(std::move(strategy)) {};
 
@@ -206,7 +204,7 @@ class Filtered : public CloneHelper<Value, Filtered<Value>> {
 
  protected:
   Sieve<Value> sieve_;
-  std::shared_ptr<Strategy<Value>> strategy_;
+  std::unique_ptr<Strategy<Value>> strategy_;
 };
 
 
