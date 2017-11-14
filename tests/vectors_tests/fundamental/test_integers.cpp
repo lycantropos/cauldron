@@ -68,12 +68,12 @@ static void check_strategy() {
   }
 
   SECTION("multiple elements domain") {
-    static size_t min_size = 0;
-    static size_t max_size = constants::max_capacity;
+    size_t min_size = 0;
+    size_t max_size = constants::max_capacity;
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
-    static const cauldron::Integers<size_t> sizes(min_size,
-                                                  max_size);
+    cauldron::Integers<size_t> sizes(min_size,
+                                     max_size);
     cauldron::Vectors<Number> numbers_vectors(sizes,
                                               numbers);
 
@@ -88,9 +88,9 @@ static void check_strategy() {
      * than "impossible" section would not raise exception
      * since it is possible to avoid filters with empty vector.
      */
-    static size_t min_size = constants::min_capacity;
-    static size_t max_size = sufficient_capacity(1, 2, // odd or even
-                                                 cauldron::MAX_CYCLES);
+    size_t min_size = constants::min_capacity;
+    size_t max_size = sufficient_capacity(1, 2, // odd or even
+                                          cauldron::MAX_CYCLES);
     cauldron::Integers<size_t> sizes(min_size,
                                      max_size);
     cauldron::Vectors<Number> vectors(sizes,
@@ -150,9 +150,9 @@ static void check_strategy() {
      * than "impossible" section would not raise exception
      * since it is possible to avoid filters with empty vector.
      */
-    static size_t min_size = constants::min_capacity;
-    static size_t max_size = sufficient_capacity(1, 2, // odd or even
-                                                 cauldron::MAX_CYCLES);
+    size_t min_size = constants::min_capacity;
+    size_t max_size = sufficient_capacity(1, 2, // odd or even
+                                          cauldron::MAX_CYCLES);
     auto size_stays_in_range = in_range_checker<size_t>(min_size,
                                                         max_size);
     cauldron::Integers<size_t> sizes(min_size,
