@@ -118,13 +118,6 @@ class Union : public CloneHelper<Value, Union<Value>> {
     strategies_ = strategies;
   }
 
-  explicit Union(std::vector<std::shared_ptr<Strategy<Value>>> strategies) {
-    if (strategies.size() == 0) {
-      throw std::invalid_argument("``strategies`` should be non-empty.");
-    }
-    strategies_ = strategies;
-  }
-
   /**
    * Generates value from one of ``strategies_`` elements.
    */
@@ -151,6 +144,10 @@ class Union : public CloneHelper<Value, Union<Value>> {
   }
 
  private:
+  explicit Union(std::vector<std::shared_ptr<Strategy<Value>>> strategies) {
+    strategies_ = strategies;
+  }
+
   std::vector<std::shared_ptr<Strategy<Value>>> strategies_;
 };
 
