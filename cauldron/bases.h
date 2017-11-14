@@ -63,7 +63,7 @@ class Strategy {
    */
   virtual Filtered<Value> filter(const Requirement<Value> &requirement) const {
     Sieve<Value> sieve{requirement};
-    return Filtered<Value>(sieve, clone());
+    return Filtered<Value>(sieve, *this);
   }
 
   /**
@@ -73,8 +73,7 @@ class Strategy {
    */
   virtual Mapped<Value> map(const Converter<Value> &converter) const {
     Facility<Value> facility{converter};
-    return Mapped<Value>(facility,
-                         clone());
+    return Mapped<Value>(facility, *this);
   }
 
   /**
@@ -174,9 +173,9 @@ template<typename Value>
 class Filtered : public CloneHelper<Value, Filtered<Value>> {
  public:
   explicit Filtered(const Sieve<Value> &sieve,
-                    std::unique_ptr<Strategy<Value>> strategy) :
+                    const Strategy<Value> &strategy) :
       sieve_(sieve),
-      strategy_(std::move(strategy)) {};
+      strategy_(strategy.clone()) {};
 
   /**
    * Default copy constructor doesn't fit
@@ -191,8 +190,7 @@ class Filtered : public CloneHelper<Value, Filtered<Value>> {
       const Requirement<Value> &requirement
   ) const override {
     auto sieve = sieve_.expand(requirement);
-    return Filtered<Value>(sieve,
-                           strategy_->clone());
+    return Filtered<Value>(sieve, *strategy_);
   }
 
   /**
@@ -227,9 +225,9 @@ template<typename Value>
 class Mapped : public CloneHelper<Value, Mapped<Value>> {
  public:
   explicit Mapped(const Facility<Value> &facility,
-                  std::unique_ptr<Strategy<Value>> strategy) :
+                  const Strategy<Value> &strategy) :
       facility_(facility),
-      strategy_(std::move(strategy)) {};
+      strategy_(strategy.clone()) {};
 
   /**
    * Default copy constructor doesn't fit
@@ -242,8 +240,7 @@ class Mapped : public CloneHelper<Value, Mapped<Value>> {
 
   Mapped<Value> map(const Converter<Value> &converter) const override {
     auto facility = facility_.expand(converter);
-    return Mapped(facility,
-                  strategy_->clone());
+    return Mapped(facility, *strategy_);
   }
 
   /**
