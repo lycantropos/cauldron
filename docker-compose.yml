@@ -6,7 +6,7 @@ services:
       context: .
       args:
         CMAKE_VERSION: 3.9.5
-        CATCH2_VERSION: 2.0.1
+        CATCH_VERSION: 2.0.1
     image: lycantropos/cauldron:0.0.0
     container_name: cauldron
     volumes:

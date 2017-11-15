@@ -2,10 +2,10 @@ ARG CMAKE_VERSION
 
 FROM lycantropos/cmake:${CMAKE_VERSION}
 
-ARG CATCH2_VERSION
-ENV CATCH2_VERSION=${CATCH2_VERSION}
+ARG CATCH_VERSION
+ENV CATCH_VERSION=${CATCH_VERSION}
 RUN cd /usr/local/include && \
-    curl -LJO https://github.com/catchorg/Catch2/releases/download/v${CATCH2_VERSION}/catch.hpp
+    curl -LJO https://github.com/catchorg/Catch2/releases/download/v${CATCH_VERSION}/catch.hpp
 
 RUN apt-get update && \
     apt-get install -y lcov

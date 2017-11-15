@@ -98,10 +98,10 @@ Download `Catch <https://github.com/catchorg/Catch2>`__ framework header
 .. code-block:: bash
 
   cd /usr/local/include
-  curl -LJO https://github.com/catchorg/Catch2/releases/download/v${CATCH2_VERSION}/catch.hpp
+  curl -LJO https://github.com/catchorg/Catch2/releases/download/v${CATCH_VERSION}/catch.hpp
   cd -
 
-where ``CATCH2_VERSION`` is the ``Catch`` framework version (e.g. ``2.0.1``).
+where ``CATCH_VERSION`` is the ``Catch`` framework version (e.g. ``2.0.1``).
 
 Create **build** directory
 
