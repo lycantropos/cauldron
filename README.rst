@@ -86,11 +86,22 @@ Plain
 Requirements:
 
 - `curl <https://curl.haxx.se/download.html>`__,
+- `Catch 2.0.1+ single header <https://github.com/catchorg/Catch2/releases>`__,
 - `CMake 3.9+ <https://cmake.org/install/>`__,
 - `Clang 3.4+ <http://releases.llvm.org/download.html>`__ or
   `GCC 5.0+ <https://gcc.gnu.org/install/>`__
-  (on ``Linux`` systems ``Clang`` will require ``libstdc++5`` or newer),
-- `Catch 2.0.1+ single header <https://github.com/catchorg/Catch2/releases>`__.
+  (on ``Linux`` systems ``Clang`` will require ``libstdc++5`` or newer).
+
+Download `Catch <https://github.com/catchorg/Catch2>`__ framework header
+(may require ``sudo``)
+
+.. code-block:: bash
+
+  cd /usr/local/include
+  curl -LJO https://github.com/catchorg/Catch2/releases/download/v${CATCH2_VERSION}/catch.hpp
+  cd -
+
+where ``CATCH2_VERSION`` is the ``Catch`` framework version (e.g. ``2.0.1``).
 
 Create **build** directory
 
