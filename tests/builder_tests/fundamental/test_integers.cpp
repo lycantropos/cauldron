@@ -15,11 +15,11 @@ static void check_strategy() {
   using IntegerWrapper = Wrapper<Number>;
 
   cauldron::Requirement<IntegerWrapper> is_even_wrapper(
-      [&](IntegerWrapper wrapper) -> bool {
+      [&](const IntegerWrapper &wrapper) -> bool {
         return even<Number>(wrapper.field());
       });
   cauldron::Requirement<IntegerWrapper> is_odd_wrapper(
-      [&](IntegerWrapper wrapper) -> bool {
+      [&](const IntegerWrapper &wrapper) -> bool {
         return odd<Number>(wrapper.field());
       });
 
