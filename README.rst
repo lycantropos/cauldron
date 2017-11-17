@@ -67,48 +67,39 @@ that works with vectors of numbers
 and we need to calculate *Euclidean norm* (aka *magnitude*) of a vector.
 Formula is
 
-.. math::
+.. image:: http://latex.codecogs.com/gif.download?%5Cforall%20x%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3D%20%5Csqrt%7B%20%5Cleft%7C%20x_1%20%5Cright%7C%5E2%20+%20%5Cldots%20+%20%5Cleft%7C%20x_n%20%5Cright%7C%5E2%20%7D
+   :align: center
 
-  \forall x \in \mathbb{R}^n :
-  \left\|x\right\|_2 = \sqrt{ \left| x_1 \right|^2 + \ldots + \left| x_n \right|^2 }
-
-where :math:`n` is the vector space dimension.
+where ``n`` is the vector space dimension.
 
 Magnitude satisfies next ratios
 
 1.
   Magnitude of zero vector equals to zero
 
-  .. math::
-
-    \left\|\vec{0}\right\|_2 = 0
+  .. image:: http://latex.codecogs.com/gif.download?%5Cleft%5C%7C%5Cvec%7B0%7D%5Cright%5C%7C_2%20%3D%200
+     :align: center
 
 2.
   Magnitude of non-zero vector is always positive
 
-  .. math::
-
-    \forall x \in \mathbb{R}^n :
-    x \neq \vec{0} \Rightarrow \left\|x\right\|_2 > 0
+  .. image:: https://latex.codecogs.com/gif.download?%5Cforall%20x%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20x%20%5Cneq%20%5Cvec%7B0%7D%20%5CRightarrow%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3E%200
+     :align: center
 
 3.
   `Triangle inequality <https://en.wikipedia.org/wiki/Triangle_inequality>`__
 
-  .. math::
-
-    \forall x, y \in \mathbb{R}^n &:&
-    \left\|x + y\right\|_2 \leq \left\|x\right\|_2 + \left\|y\right\|_2
+  .. image:: https://latex.codecogs.com/gif.download?%5Cforall%20x%2C%20y%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20%5Cleft%5C%7Cx%20+%20y%5Cright%5C%7C_2%20%5Cleq%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20+%20%5Cleft%5C%7Cy%5Cright%5C%7C_2
+     :align: center
 
 4.
   Magnitude of vector with same coordinate
   equals to product of dimension's square root and
   coordinate modulus
 
-  .. math::
 
-    \forall \alpha \in \mathbb{R}, \forall x \in \mathbb{R}^n :
-    (\forall i \in \overline{1..n} : x_i = \alpha) \Rightarrow
-    \left\|x\right\|_2 = \sqrt{n} \cdot \left|\alpha\right|
+  .. image:: https://latex.codecogs.com/gif.download?%5Cforall%20%5Calpha%20%5Cin%20%5Cmathbb%7BR%7D%2C%20%5Cforall%20x%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20%28%5Cforall%20i%20%5Cin%20%5Coverline%7B1..n%7D%20%3A%20x_i%20%3D%20%5Calpha%29%20%5CRightarrow%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3D%20%5Csqrt%7Bn%7D%20%5Ccdot%20%5Cleft%7C%5Calpha%5Cright%7C
+     :align: center
 
 Let's write test case using `Catch <https://github.com/catchorg/Catch2>`__ framework
 which checks if our implementation of *Euclidean norm* computation satisfies this ratios.
@@ -202,7 +193,7 @@ Our test case will look like
     }
   }
 
-As we can see there is only declaration of ``vector_magnitude``.
+As we can see there is only declaration of ``magnitude``.
 Straightforward definition would be
 
 .. code-block:: c++
@@ -227,12 +218,14 @@ since each coordinate squared will be greater than max possible ``double`` value
 
 If we rewrite magnitude formula like
 
-.. math::
+.. image:: http://latex.codecogs.com/gif.download?%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3D%20%5Csqrt%7B%20%5Cleft%7C%20x_1%20%5Cright%7C%5E2%20+%20%5Cldots%20+%20%5Cleft%7C%20x_n%20%5Cright%7C%5E2%20%7D%20%3D%20%5Calpha%20%5Ccdot%20%5Csqrt%7B%20%28%5Cleft%7C%20x_1%20%5Cright%7C%20/%20%5Calpha%29%5E2%20+%20%5Cldots%20+%20%28%5Cleft%7C%20x_n%20%5Cright%7C%20/%20%5Calpha%29%5E2%20%7D
+   :align: center
 
-  \left\|x\right\|_2 = \sqrt{ \left| x_1 \right|^2 + \ldots + \left| x_n \right|^2 }
-  = \alpha \cdot \sqrt{ (\left| x_1 \right| / \alpha)^2 + \ldots + (\left| x_n \right| / \alpha)^2 }
+where
 
-where :math:`\alpha = \mathrm{max}(\left|x_1\right|, \ldots, \left|x_n\right|)`,
+.. image:: http://latex.codecogs.com/gif.download?%5Calpha%20%3D%20%5Cmathrm%7Bmax%7D%28%5Cleft%7Cx_1%5Cright%7C%2C%20%5Cldots%2C%20%5Cleft%7Cx_n%5Cright%7C%29
+   :align: center
+
 there will be no overflow.
 
 So finally we can write
