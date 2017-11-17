@@ -173,7 +173,7 @@ template<typename Value>
 class Filtered : public CloneHelper<Value, Filtered<Value>> {
  public:
   explicit Filtered(const Strategy<Value> &strategy,
-                      const Sieve<Value> &sieve) :
+                    const Sieve<Value> &sieve) :
       strategy_(strategy.clone()),
       sieve_(sieve) {};
 
@@ -225,7 +225,7 @@ template<typename Value>
 class Mapped : public CloneHelper<Value, Mapped<Value>> {
  public:
   explicit Mapped(const Strategy<Value> &strategy,
-                    const Facility<Value> &facility) :
+                  const Facility<Value> &facility) :
       strategy_(strategy.clone()),
       facility_(facility) {};
 
