@@ -67,7 +67,7 @@ that works with vectors of numbers
 and we need to calculate *Euclidean norm* (aka *magnitude*) of a vector.
 Formula is
 
-.. image:: http://latex.codecogs.com/gif.download?%5Cforall%20x%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3D%20%5Csqrt%7B%20%5Cleft%7C%20x_1%20%5Cright%7C%5E2%20+%20%5Cldots%20+%20%5Cleft%7C%20x_n%20%5Cright%7C%5E2%20%7D
+.. image:: https://latex.codecogs.com/gif.download?%5Cforall%20x%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3D%20%5Csqrt%7B%20%5Cleft%7C%20x_1%20%5Cright%7C%5E2%20+%20%5Cldots%20+%20%5Cleft%7C%20x_n%20%5Cright%7C%5E2%20%7D
    :align: center
 
 where ``n`` is the vector space dimension.
@@ -77,7 +77,7 @@ Magnitude satisfies next ratios
 1.
   Magnitude of zero vector equals to zero
 
-  .. image:: http://latex.codecogs.com/gif.download?%5Cleft%5C%7C%5Cvec%7B0%7D%5Cright%5C%7C_2%20%3D%200
+  .. image:: https://latex.codecogs.com/gif.download?%5Cleft%5C%7C%5Cvec%7B0%7D%5Cright%5C%7C_2%20%3D%200
      :align: center
 
 2.
@@ -218,12 +218,12 @@ since each coordinate squared will be greater than max possible ``double`` value
 
 If we rewrite magnitude formula like
 
-.. image:: http://latex.codecogs.com/gif.download?%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3D%20%5Csqrt%7B%20%5Cleft%7C%20x_1%20%5Cright%7C%5E2%20+%20%5Cldots%20+%20%5Cleft%7C%20x_n%20%5Cright%7C%5E2%20%7D%20%3D%20%5Calpha%20%5Ccdot%20%5Csqrt%7B%20%28%5Cleft%7C%20x_1%20%5Cright%7C%20/%20%5Calpha%29%5E2%20+%20%5Cldots%20+%20%28%5Cleft%7C%20x_n%20%5Cright%7C%20/%20%5Calpha%29%5E2%20%7D
+.. image:: https://latex.codecogs.com/gif.download?%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3D%20%5Csqrt%7B%20%5Cleft%7C%20x_1%20%5Cright%7C%5E2%20+%20%5Cldots%20+%20%5Cleft%7C%20x_n%20%5Cright%7C%5E2%20%7D%20%3D%20%5Calpha%20%5Ccdot%20%5Csqrt%7B%20%28%5Cleft%7C%20x_1%20%5Cright%7C%20/%20%5Calpha%29%5E2%20+%20%5Cldots%20+%20%28%5Cleft%7C%20x_n%20%5Cright%7C%20/%20%5Calpha%29%5E2%20%7D
    :align: center
 
 where
 
-.. image:: http://latex.codecogs.com/gif.download?%5Calpha%20%3D%20%5Cmathrm%7Bmax%7D%28%5Cleft%7Cx_1%5Cright%7C%2C%20%5Cldots%2C%20%5Cleft%7Cx_n%5Cright%7C%29
+.. image:: https://latex.codecogs.com/gif.download?%5Calpha%20%3D%20%5Cmathrm%7Bmax%7D%28%5Cleft%7Cx_1%5Cright%7C%2C%20%5Cldots%2C%20%5Cleft%7Cx_n%5Cright%7C%29
    :align: center
 
 there will be no overflow.
