@@ -14,6 +14,253 @@ cauldron
 .. image:: https://img.shields.io/github/license/lycantropos/cauldron.svg
   :target: https://github.com/lycantropos/cauldron/blob/master/LICENSE
 
+``cauldron`` helps to write property-based test cases
+and abstract from specific examples.
+
+The core definition is *strategy*
+(which is related to `strategy pattern <https://en.wikipedia.org/wiki/Strategy_pattern>`__,
+but not the same):
+an object which encapsulates an algorithm for generating specific type of values.
+
+Strategies can be modified
+
+- by filtering out values which do not satisfy custom predicates,
+- by transforming values with custom operators
+
+and combined
+
+- united into one,
+- passed as an argument to another strategy).
+
+-----
+Usage
+-----
+
+Simple example
+--------------
+
+Let's build strategy which always generates ``true`` value
+
+.. code-block:: c++
+
+  #include <iostream>
+  #include <cauldron/just.h>
+
+
+  int main() {
+    cauldron::Just<bool> true_values(true);
+    bool true_value = true_values();
+    if (true_value) {
+      std::cout << "Hello, World!" << std::endl;
+      return 0;
+    } else {
+      std::cout << "Something went wrong!" << std::endl;
+      return 1;
+    };
+  }
+
+Complex example
+---------------
+
+Let's assume we're writing a program
+that works with vectors of numbers
+and we need to calculate *Euclidean norm* (aka *magnitude*) of a vector.
+Formula is
+
+.. math::
+
+  \forall x \in \mathbb{R}^n :
+  \left\|x\right\|_2 = \sqrt{ \left| x_1 \right|^2 + \ldots + \left| x_n \right|^2 }
+
+where :math:`n` is the vector space dimension.
+
+Magnitude satisfies next ratios
+
+1.
+  Magnitude of zero vector equals to zero
+
+  .. math::
+
+    \left\|\vec{0}\right\|_2 = 0
+
+2.
+  Magnitude of non-zero vector is always positive
+
+  .. math::
+
+    \forall x \in \mathbb{R}^n :
+    x \neq \vec{0} \Rightarrow \left\|x\right\|_2 > 0
+
+3.
+  `Triangle inequality <https://en.wikipedia.org/wiki/Triangle_inequality>`__
+
+  .. math::
+
+    \forall x, y \in \mathbb{R}^n &:&
+    \left\|x + y\right\|_2 \leq \left\|x\right\|_2 + \left\|y\right\|_2
+
+4.
+  Magnitude of vector with same coordinate
+  equals to product of dimension's square root and
+  coordinate modulus
+
+  .. math::
+
+    \forall \alpha \in \mathbb{R}, \forall x \in \mathbb{R}^n :
+    (\forall i \in \overline{1..n} : x_i = \alpha) \Rightarrow
+    \left\|x\right\|_2 = \sqrt{n} \cdot \left|\alpha\right|
+
+Let's write test case using `Catch <https://github.com/catchorg/Catch2>`__ framework
+which checks if our implementation of *Euclidean norm* computation satisfies this ratios.
+
+- Consider that numbers have floating point type (e.g. ``double``).
+- For checking triangle inequality we will overload vectors' ``operator+``.
+
+Our test case will look like
+
+.. code-block:: c++
+
+  #define CATCH_CONFIG_MAIN
+
+  #include <algorithm>
+  #include <functional>
+  #include <vector>
+
+  #include <catch.hpp>
+  #include <cauldron/just.h>
+  #include <cauldron/integers.h>
+  #include <cauldron/floats.h>
+  #include <cauldron/vectors.h>
+
+
+  double magnitude(const std::vector<double> &vector);
+
+
+  std::vector<double> operator+(const std::vector<double> &vector,
+                                const std::vector<double> &other_vector) {
+    assert(vector.size() == other_vector.size());
+
+    std::vector<double> result;
+    result.reserve(vector.size());
+
+    std::transform(vector.begin(), vector.end(),
+                   other_vector.begin(),
+                   std::back_inserter(result),
+                   std::plus<double>());
+    return result;
+  }
+
+
+  TEST_CASE("Magnitude computation", "[magnitude]") {
+    /*
+     * we use ``1`` to make vectors non-empty,
+     * ``100`` is just an upper bound to start with
+     */
+    cauldron::Integers<size_t> dimensions(1, 100);
+    size_t dimension = dimensions();
+    // considering all vectors have the same size
+    cauldron::Just<size_t> sizes(dimension);
+    // for now it generates values from ``0.`` to ``1.``
+    cauldron::Floats<double> elements;
+    cauldron::Vectors<double> vectors(sizes,
+                                      elements);
+
+    SECTION("zero vector") {
+      std::vector<double> zero_vector(dimension, 0);
+
+      REQUIRE(magnitude(zero_vector) == 0.);
+    }
+
+    SECTION("non-zero vector") {
+      auto is_non_zero_number = [](double number) -> bool {
+        return number != 0;
+      };
+      cauldron::Requirement<std::vector<double>> is_non_zero_vector(
+          [&](const std::vector<double> &vector) -> bool {
+            return std::any_of(vector.begin(), vector.end(),
+                               is_non_zero_number);
+          });
+      auto non_zero_vectors = vectors.filter(is_non_zero_vector);
+      std::vector<double> non_zero_vector = non_zero_vectors();
+
+      REQUIRE(magnitude(non_zero_vector) > 0.);
+    }
+
+    SECTION("triangle inequality") {
+      std::vector<double> vector = vectors();
+      std::vector<double> other_vector = vectors();
+
+      REQUIRE(magnitude(vector + other_vector)
+                  <= magnitude(vector) + magnitude(other_vector));
+    }
+
+    SECTION("same value vector") {
+      double element = elements();
+      std::vector<double> same_value_vector(dimension, element);
+
+      REQUIRE(magnitude(same_value_vector) == sqrt(dimension) * abs(element));
+    }
+  }
+
+As we can see there is only declaration of ``vector_magnitude``.
+Straightforward definition would be
+
+.. code-block:: c++
+
+  double magnitude(const std::vector<double> &vector) {
+    double result = 0.;
+    for (const double coordinate: vector) {
+      result += pow(coordinate, 2);
+    }
+    return sqrt(result);
+  }
+
+But if we change ``elements`` strategy to
+
+.. code-block:: c++
+
+  cauldron::Just<double> elements(std::numeric_limits<double>::max()
+                                      / sqrt(dimension));
+
+last ratio will not be satisfied
+since each coordinate squared will be greater than max possible ``double`` value.
+
+If we rewrite magnitude formula like
+
+.. math::
+
+  \left\|x\right\|_2 = \sqrt{ \left| x_1 \right|^2 + \ldots + \left| x_n \right|^2 }
+  = \alpha \cdot \sqrt{ (\left| x_1 \right| / \alpha)^2 + \ldots + (\left| x_n \right| / \alpha)^2 }
+
+where :math:`\alpha = \mathrm{max}(\left|x_1\right|, \ldots, \left|x_n\right|)`,
+there will be no overflow.
+
+So finally we can write
+
+.. code-block:: c++
+
+  double magnitude(const std::vector<double> &vector) {
+    std::vector<double> coordinates_moduli;
+    coordinates_moduli.reserve(vector.size());
+    std::transform(vector.begin(), vector.end(),
+                   std::back_inserter(coordinates_moduli),
+                   [](double number) -> double { return abs(number); });
+    double max_coordinate_modulus = *std::max_element(coordinates_moduli.begin(),
+                                                      coordinates_moduli.end());
+
+    if (max_coordinate_modulus == 0.) {
+      return 0.;
+    }
+
+    double result = 0.;
+    for (const double coordinate: vector) {
+      result += pow(coordinate / max_coordinate_modulus, 2);
+    }
+    return max_coordinate_modulus * sqrt(result);
+  }
+
+and make sure that all tests pass.
+
 -----------
 Downloading
 -----------
