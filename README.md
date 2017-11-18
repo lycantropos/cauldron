@@ -247,8 +247,11 @@ git clone https://github.com/lycantropos/cauldron.git
 cd cauldron
 ```
 
-## Note
+---
+
 Next instructions are executed from project's directory.
+
+---
 
 ## Installation
 
@@ -266,16 +269,15 @@ mkdir build
 cd build
 ```
 
----------
-**Note**: 
-if **build** directory already exists re-create it after removing
+---
+If **build** directory already exists re-create it after removing
 
 ```bash
 rm -r build
 mkdir build
 cd build
 ```
----------
+---
 
 Build and install
 
@@ -319,14 +321,15 @@ cd build
 ```
 
 ---------
-**Note**: 
-if **build** directory already exists re-create it after removing
+
+If **build** directory already exists re-create it after removing
 
 ```bash
 rm -r build
 mkdir build
 cd build
 ```
+
 ---------
 
 Build with tests
@@ -387,8 +390,9 @@ Bump version
 bumpversion --verbose $VERSION
 ```
 
----------
-**Note**: 
-to avoid inconsistency between branches and pull requests,
+---
+
+To avoid inconsistency between branches and pull requests,
 bumping version should be merged into `master` branch as separate pull request.
----------
+
+---
