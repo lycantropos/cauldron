@@ -54,28 +54,28 @@ that works with vectors of numbers
 and we need to calculate *Euclidean norm* (aka *magnitude*) of a vector.
 Formula is
 
-![magnitude](https://latex.codecogs.com/gif.download?%5Cforall%20x%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3D%20%5Csqrt%7B%20%5Cleft%7C%20x_1%20%5Cright%7C%5E2%20+%20%5Cldots%20+%20%5Cleft%7C%20x_n%20%5Cright%7C%5E2%20%7D)
+![magnitude](https://latex.codecogs.com/gif.latex?%5Cforall%20x%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3D%20%5Csqrt%7B%20%5Cleft%7C%20x_1%20%5Cright%7C%5E2%20+%20%5Cldots%20+%20%5Cleft%7C%20x_n%20%5Cright%7C%5E2%20%7D)
 
-where `n` is the vector space dimension.
+where ![n](https://latex.codecogs.com/gif.latex?n) is the vector space dimension.
 
 Magnitude satisfies next ratios
 
 1. Magnitude of zero vector equals to zero 
 
-![zero vector](https://latex.codecogs.com/gif.download?%5Cleft%5C%7C%5Cvec%7B0%7D%5Cright%5C%7C_2%20%3D%200)
+![zero vector](https://latex.codecogs.com/gif.latex?%5Cleft%5C%7C%5Cvec%7B0%7D%5Cright%5C%7C_2%20%3D%200)
 
 2. Magnitude of non-zero vector is always positive
 
-![non-zero vector](https://latex.codecogs.com/gif.download?%5Cforall%20x%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20x%20%5Cneq%20%5Cvec%7B0%7D%20%5CRightarrow%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3E%200)
+![non-zero vector](https://latex.codecogs.com/gif.latex?%5Cforall%20x%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20x%20%5Cneq%20%5Cvec%7B0%7D%20%5CRightarrow%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3E%200)
 
 3. [Triangle inequality](https://en.wikipedia.org/wiki/Triangle_inequality)
 
-![triangle inequality](https://latex.codecogs.com/gif.download?%5Cforall%20x%2C%20y%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20%5Cleft%5C%7Cx%20+%20y%5Cright%5C%7C_2%20%5Cleq%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20+%20%5Cleft%5C%7Cy%5Cright%5C%7C_2)
+![triangle inequality](https://latex.codecogs.com/gif.latex?%5Cforall%20x%2C%20y%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20%5Cleft%5C%7Cx%20+%20y%5Cright%5C%7C_2%20%5Cleq%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20+%20%5Cleft%5C%7Cy%5Cright%5C%7C_2)
 
 4. Magnitude of vector with same coordinate
 equals to product of dimension's square root and coordinate modulus
 
-![same value vector](https://latex.codecogs.com/gif.download?%5Cforall%20%5Calpha%20%5Cin%20%5Cmathbb%7BR%7D%2C%20%5Cforall%20x%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20%28%5Cforall%20i%20%5Cin%20%5Coverline%7B1..n%7D%20%3A%20x_i%20%3D%20%5Calpha%29%20%5CRightarrow%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3D%20%5Csqrt%7Bn%7D%20%5Ccdot%20%5Cleft%7C%5Calpha%5Cright%7C)
+![same value vector](https://latex.codecogs.com/gif.latex?%5Cforall%20%5Calpha%20%5Cin%20%5Cmathbb%7BR%7D%2C%20%5Cforall%20x%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20%28%5Cforall%20i%20%5Cin%20%5Coverline%7B1..n%7D%20%3A%20x_i%20%3D%20%5Calpha%29%20%5CRightarrow%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3D%20%5Csqrt%7Bn%7D%20%5Ccdot%20%5Cleft%7C%5Calpha%5Cright%7C)
 
 Let's write test case using [`Catch`](https://github.com/catchorg/Catch2) framework
 which checks if our implementation of *Euclidean norm* computation satisfies this ratios.
@@ -194,11 +194,11 @@ since each coordinate squared will be greater than max possible `double` value.
 
 If we rewrite magnitude formula like
 
-![magnitude](https://latex.codecogs.com/gif.download?%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3D%20%5Csqrt%7B%20%5Cleft%7C%20x_1%20%5Cright%7C%5E2%20+%20%5Cldots%20+%20%5Cleft%7C%20x_n%20%5Cright%7C%5E2%20%7D%20%3D%20%5Calpha%20%5Ccdot%20%5Csqrt%7B%20%28%5Cleft%7C%20x_1%20%5Cright%7C%20/%20%5Calpha%29%5E2%20+%20%5Cldots%20+%20%28%5Cleft%7C%20x_n%20%5Cright%7C%20/%20%5Calpha%29%5E2%20%7D)
+![magnitude](https://latex.codecogs.com/gif.latex?%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3D%20%5Csqrt%7B%20%5Cleft%7C%20x_1%20%5Cright%7C%5E2%20+%20%5Cldots%20+%20%5Cleft%7C%20x_n%20%5Cright%7C%5E2%20%7D%20%3D%20%5Calpha%20%5Ccdot%20%5Csqrt%7B%20%28%5Cleft%7C%20x_1%20%5Cright%7C%20/%20%5Calpha%29%5E2%20+%20%5Cldots%20+%20%28%5Cleft%7C%20x_n%20%5Cright%7C%20/%20%5Calpha%29%5E2%20%7D)
 
 where
 
-![alpha](https://latex.codecogs.com/gif.download?%5Calpha%20%3D%20%5Cmathrm%7Bmax%7D%28%5Cleft%7Cx_1%5Cright%7C%2C%20%5Cldots%2C%20%5Cleft%7Cx_n%5Cright%7C%29)
+![alpha](https://latex.codecogs.com/gif.latex?%5Calpha%20%3D%20%5Cmathrm%7Bmax%7D%28%5Cleft%7Cx_1%5Cright%7C%2C%20%5Cldots%2C%20%5Cleft%7Cx_n%5Cright%7C%29)
 
 there will be no overflow.
 
