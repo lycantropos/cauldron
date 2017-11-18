@@ -56,7 +56,7 @@ Formula is
 
 ![magnitude](https://latex.codecogs.com/gif.latex?%5Cforall%20x%20%5Cin%20%5Cmathbb%7BR%7D%5En%20%3A%20%5Cleft%5C%7Cx%5Cright%5C%7C_2%20%3D%20%5Csqrt%7B%20%5Cleft%7C%20x_1%20%5Cright%7C%5E2%20+%20%5Cldots%20+%20%5Cleft%7C%20x_n%20%5Cright%7C%5E2%20%7D)
 
-where `n` is the vector space dimension.
+where ![n](https://latex.codecogs.com/gif.latex?n) is the vector space dimension.
 
 Magnitude satisfies next ratios
 
