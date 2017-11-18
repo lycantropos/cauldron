@@ -63,7 +63,7 @@ class Strategy {
    */
   virtual Filtered<Value> filter(const Requirement<Value> &requirement) const {
     Sieve<Value> sieve{requirement};
-    return Filtered<Value>(sieve, *this);
+    return Filtered<Value>(*this, sieve);
   }
 
   /**
@@ -73,7 +73,7 @@ class Strategy {
    */
   virtual Mapped<Value> map(const Converter<Value> &converter) const {
     Facility<Value> facility{converter};
-    return Mapped<Value>(facility, *this);
+    return Mapped<Value>(*this, facility);
   }
 
   /**
@@ -172,10 +172,10 @@ class Union : public CloneHelper<Value, Union<Value>> {
 template<typename Value>
 class Filtered : public CloneHelper<Value, Filtered<Value>> {
  public:
-  explicit Filtered(const Sieve<Value> &sieve,
-                    const Strategy<Value> &strategy) :
-      sieve_(sieve),
-      strategy_(strategy.clone()) {};
+  explicit Filtered(const Strategy<Value> &strategy,
+                    const Sieve<Value> &sieve) :
+      strategy_(strategy.clone()),
+      sieve_(sieve) {};
 
   /**
    * Default copy constructor doesn't fit
@@ -183,14 +183,14 @@ class Filtered : public CloneHelper<Value, Filtered<Value>> {
    * which is not copyable.
    */
   Filtered(const Filtered<Value> &strategy) :
-      sieve_(strategy.sieve_),
-      strategy_(strategy.strategy_->clone()) {}
+      strategy_(strategy.strategy_->clone()),
+      sieve_(strategy.sieve_) {}
 
   Filtered<Value> filter(
       const Requirement<Value> &requirement
   ) const override {
     auto sieve = sieve_.expand(requirement);
-    return Filtered<Value>(sieve, *strategy_);
+    return Filtered<Value>(*strategy_, sieve);
   }
 
   /**
@@ -206,8 +206,8 @@ class Filtered : public CloneHelper<Value, Filtered<Value>> {
   }
 
  protected:
-  Sieve<Value> sieve_;
   std::unique_ptr<Strategy<Value>> strategy_;
+  Sieve<Value> sieve_;
 };
 
 
@@ -224,10 +224,10 @@ class Filtered : public CloneHelper<Value, Filtered<Value>> {
 template<typename Value>
 class Mapped : public CloneHelper<Value, Mapped<Value>> {
  public:
-  explicit Mapped(const Facility<Value> &facility,
-                  const Strategy<Value> &strategy) :
-      facility_(facility),
-      strategy_(strategy.clone()) {};
+  explicit Mapped(const Strategy<Value> &strategy,
+                  const Facility<Value> &facility) :
+      strategy_(strategy.clone()),
+      facility_(facility) {};
 
   /**
    * Default copy constructor doesn't fit
@@ -235,12 +235,12 @@ class Mapped : public CloneHelper<Value, Mapped<Value>> {
    * which is not copyable.
    */
   Mapped(const Mapped<Value> &strategy) :
-      facility_(strategy.facility_),
-      strategy_(strategy.strategy_->clone()) {}
+      strategy_(strategy.strategy_->clone()),
+      facility_(strategy.facility_) {}
 
   Mapped<Value> map(const Converter<Value> &converter) const override {
     auto facility = facility_.expand(converter);
-    return Mapped(facility, *strategy_);
+    return Mapped(*strategy_, facility);
   }
 
   /**
@@ -253,7 +253,7 @@ class Mapped : public CloneHelper<Value, Mapped<Value>> {
   }
 
  protected:
-  Facility<Value> facility_;
   std::unique_ptr<Strategy<Value>> strategy_;
+  Facility<Value> facility_;
 };
 }

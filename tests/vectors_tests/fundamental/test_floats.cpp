@@ -40,9 +40,9 @@ static void check_strategy() {
   auto number_stays_in_range = in_range_checker<Number>(min_number,
                                                         max_number);
   auto numbers_stay_in_range =
-      [&](const std::vector<Number> &numbers_vector) -> bool {
-        return std::all_of(numbers_vector.begin(),
-                           numbers_vector.end(),
+      [&](const std::vector<Number> &vector) -> bool {
+        return std::all_of(vector.begin(),
+                           vector.end(),
                            number_stays_in_range);
       };
   cauldron::Floats<Number> numbers(min_number,

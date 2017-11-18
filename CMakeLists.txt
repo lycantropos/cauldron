@@ -1,11 +1,10 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.9)
 project(cauldron
         VERSION 0.0.0
         DESCRIPTION "Property-based testing inspired by hypothesis")
 
 option(TESTS "enables building tests script" OFF)
 
-# add the project specific cmake modules directory to the cmake module path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
 
 string(CONCAT
@@ -33,28 +32,23 @@ set(HEADER_FILES
         cauldron/vectors.h
         cauldron/sets.h
         cauldron/builder.h)
+
 set(SOURCE_FILES
         cauldron/booleans.cpp
         cauldron/characters.cpp
         cauldron/strings.cpp)
 
 add_library(cauldron STATIC ${SOURCE_FILES})
+
 set_target_properties(cauldron PROPERTIES VERSION ${PROJECT_VERSION})
 
 install(TARGETS cauldron
         DESTINATION "${CMAKE_INSTALL_PREFIX}/lib")
+
 install(FILES ${HEADER_FILES}
         DESTINATION "${CMAKE_INSTALL_PREFIX}/include/cauldron")
 
 if (TESTS)
-    include(CheckIncludeFileCXX)
-
-    check_include_file_cxx(catch.hpp HAVE_CATCH_HPP)
-    if (NOT HAVE_CATCH_HPP)
-        message(FATAL_ERROR "Catch header not found.")
-    endif ()
-
-    # include the cmake code coverage module
     include(CodeCoverage)
 
     string(CONCAT
@@ -72,6 +66,7 @@ if (TESTS)
             tests/ordered_pair.h
             tests/utils.h
             tests/builder_tests/wrapper.h)
+
     set(TESTS_SOURCE_FILES
             tests/globals.cpp
             tests/factories.cpp
@@ -105,10 +100,10 @@ if (TESTS)
             tests/union_tests/fundamental/test_floats.cpp
             tests/union_tests/fundamental/test_characters.cpp
             tests/union_tests/compound/test_strings.cpp)
+
     add_executable(main
             ${HEADER_FILES} ${SOURCE_FILES}
             ${TESTS_HEADER_FILES} ${TESTS_SOURCE_FILES})
 
-    # cmake code coverage module target
     setup_target_for_coverage(${PROJECT_NAME}_coverage main coverage)
 endif ()

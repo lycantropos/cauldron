@@ -6,13 +6,12 @@ services:
       context: .
       args:
         CMAKE_VERSION: 3.9.5
-        CATCH2_VERSION: 2.0.1
+        CATCH_VERSION: 2.0.1
     image: lycantropos/cauldron:0.0.0
     container_name: cauldron
-    entrypoint: /opt/cauldron/docker-entrypoint.sh
     volumes:
       - ./CMakeModules:/opt/cauldron/CMakeModules
       - ./CMakeLists.txt:/opt/cauldron/CMakeLists.txt
       - ./cauldron:/opt/cauldron/cauldron
       - ./tests:/opt/cauldron/tests
-      - ./docker-entrypoint.sh:/opt/cauldron/docker-entrypoint.sh
+      - ./run-plain-tests.sh:/opt/cauldron/run-plain-tests.sh

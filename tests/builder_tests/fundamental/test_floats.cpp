@@ -15,11 +15,11 @@ static void check_strategy() {
   using FloatWrapper = Wrapper<Number>;
 
   cauldron::Requirement<FloatWrapper> is_positive_wrapper(
-      [&](FloatWrapper wrapper) -> bool {
+      [&](const FloatWrapper &wrapper) -> bool {
         return positive<Number>(wrapper.field());
       });
   cauldron::Requirement<FloatWrapper> is_non_positive_wrapper(
-      [&](FloatWrapper wrapper) -> bool {
+      [&](const FloatWrapper &wrapper) -> bool {
         return non_positive<Number>(wrapper.field());
       });
 

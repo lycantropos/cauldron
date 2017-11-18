@@ -11,13 +11,13 @@
 
 TEST_CASE("booleans \"Sets\" strategy", "[Sets]") {
   cauldron::Requirement<std::set<bool>> is_false_set(
-      [&](std::set<bool> set) -> bool {
+      [&](const std::set<bool> &set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
                            negate);
       });
   cauldron::Requirement<std::set<bool>> is_true_set(
-      [&](std::set<bool> set) -> bool {
+      [&](const std::set<bool> &set) -> bool {
         return std::all_of(set.begin(),
                            set.end(),
                            identity);
