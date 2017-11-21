@@ -12,7 +12,7 @@ RUN apt-get update && \
 
 WORKDIR /opt/cauldron
 
-COPY CMakeModules ./CMakeModules/
+COPY cmake ./cmake/
 COPY CMakeLists.txt .
 COPY cauldron/ ./cauldron/
 COPY tests/ ./tests/
