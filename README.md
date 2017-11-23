@@ -16,12 +16,12 @@ an object which encapsulates an algorithm for generating specific type of values
 Strategies can be modified
 
 - by filtering out values which do not satisfy custom predicates,
-- by transforming values with custom operators
+- by transforming values with custom operators,
 
 and combined
 
 - united into one,
-- passed as an argument to another strategy).
+- passed as an argument to another strategy.
 
 ## Usage
 
