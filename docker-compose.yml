@@ -10,7 +10,7 @@ services:
     image: lycantropos/cauldron:0.0.0
     container_name: cauldron
     volumes:
-      - ./CMakeModules:/opt/cauldron/CMakeModules
+      - ./cmake:/opt/cauldron/cmake
       - ./CMakeLists.txt:/opt/cauldron/CMakeLists.txt
       - ./cauldron:/opt/cauldron/cauldron
       - ./tests:/opt/cauldron/tests

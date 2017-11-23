@@ -5,7 +5,7 @@ project(cauldron
 
 option(TESTS "enables building tests script" OFF)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 string(CONCAT
         CMAKE_CXX_FLAGS

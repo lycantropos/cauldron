@@ -164,7 +164,7 @@ TEST_CASE("Magnitude computation", "[magnitude]") {
     double element = elements();
     std::vector<double> same_value_vector(dimension, element);
 
-    REQUIRE(magnitude(same_value_vector) == sqrt(dimension) * abs(element));
+    REQUIRE(magnitude(same_value_vector) == sqrt(dimension) * fabs(element));
   }
 }
 ```
@@ -210,7 +210,7 @@ double magnitude(const std::vector<double> &vector) {
   coordinates_moduli.reserve(vector.size());
   std::transform(vector.begin(), vector.end(),
                  std::back_inserter(coordinates_moduli),
-                 [](double number) -> double { return abs(number); });
+                 [](double number) -> double { return fabs(number); });
   double max_coordinate_modulus = *std::max_element(coordinates_moduli.begin(),
                                                     coordinates_moduli.end());
 
