@@ -17,7 +17,7 @@ doxygen
 cd docs/html
 git init
 git remote add origin https://github.com/${TRAVIS_REPO_SLUG}.git
-git co -b gh-pages
+git checkout -b gh-pages
 
 git add --all
 git commit -m "Deploy code docs to \"GitHub Pages\" " \
