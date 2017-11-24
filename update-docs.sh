@@ -16,7 +16,7 @@ doxygen
 
 cd docs/html
 git init
-git add remote origin https://github.com/${TRAVIS_REPO_SLUG}.git
+git remote add origin https://github.com/${TRAVIS_REPO_SLUG}.git
 git co -b gh-pages
 
 git add --all
