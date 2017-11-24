@@ -4,19 +4,35 @@ dist: trusty
 services:
   - docker
 
+branches:
+  except:
+    - gh-pages
+
 addons:
   apt:
     sources:
-        - ubuntu-toolchain-r-test
+      - ubuntu-toolchain-r-test
     packages:
-        - docker-ce
-        - lcov
+      - docker-ce
+      # coverage
+      - lcov
+      # docs generating
+      - doxygen
+      - doxygen-doc
+      - doxygen-latex
+      - doxygen-gui
+      - graphviz
 
 script:
   - ./run-tests.sh
 
 after_success:
   - ./update-coverage.sh
+  - ./update-docs.sh
 
 after_script:
   - ./cleanup.sh
+
+env:
+  global:
+    secure: Tbbon2EnWpUAbHIBhCXzXSgqx+/O/nX8f11U5MeQZffspzRle8opcOZ9lJaN34MKOAIIFmCBYWXcwhURo620DQpGbeDb8s6apCD418y9tQ+KwDq0fIMd28ewruchYsLRgZFJALS03H+Y3/o3PRZ5N4Pl4f4C6R4NlTkRAMTovcj3Tr2MJPodFXmIctcrZKQ/WlsIDo8lYxVIrO5zlBiBDXp0Mu+Z0IR06O9wNt70svOJnPrjCj1Gml0zDzRevKBMUCA5WV3SzkIlMh/p3brtTKzxOTt5kwLekTl+HlPNtBdZ4HMYi8Rvll0KWnks+hiuNaUu8tjT54TCybnXeqSffBg7aDG2MBG3+b8K8nDNa5Vr93oszmBKRVlekbxmHhJpRqIqswBQH5UKZfb7HEQeg0ThJx1MoobHg4r4edCyeAZUKDa8f97YUkUt/Y4wGyAaKsEy1wWa1aaezrhXGKl+3L9aN0L6/SIoFh+JRbVcTEU3h2bxk1XECng7sl25D2pBprCveDV4ODCAcsr2Vtq9r6c3KGWRBRgBKqLXKSBdWw+aznxj37hxETBkcUTKPyRpsy/1p75oJ65582DLQ9bkjMFFV0JoGIXnNqG3RvsY8010mmZN3eOLdFKAE90+ENE6DCaOTqT5wZXbmcVgPlPt2rySGE63USNfArcHAnB2znA=
