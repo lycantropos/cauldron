@@ -28,7 +28,8 @@ script:
 
 after_success:
   - ./update-coverage.sh
-  - ./update-docs.sh
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    ./update-docs.sh
 
 after_script:
   - ./cleanup.sh
