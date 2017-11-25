@@ -1,0 +1,15 @@
+<map id="cauldron::Strategy&lt; Value &gt;" name="cauldron::Strategy&lt; Value &gt;">
+<area shape="rect" id="node2" href="$classcauldron_1_1_clone_helper.html" title="cauldron::CloneHelper\l\&lt; Value \&gt;" alt="" coords="182,5,333,46"/>
+<area shape="rect" id="node3" href="$classcauldron_1_1_clone_helper.html" title="CloneHelper\&lt; Value,\l Filtered\&lt; Value \&gt; \&gt;" alt="" coords="186,70,329,111"/>
+<area shape="rect" id="node5" href="$classcauldron_1_1_clone_helper.html" title="CloneHelper\&lt; Value,\l Floats\&lt; Value \&gt; \&gt;" alt="" coords="186,135,329,177"/>
+<area shape="rect" id="node7" href="$classcauldron_1_1_clone_helper.html" title="CloneHelper\&lt; Value,\l Integers\&lt; Value \&gt; \&gt;" alt="" coords="186,201,329,242"/>
+<area shape="rect" id="node9" href="$classcauldron_1_1_clone_helper.html" title="CloneHelper\&lt; Value,\l Just\&lt; Value \&gt; \&gt;" alt="" coords="186,266,329,307"/>
+<area shape="rect" id="node11" href="$classcauldron_1_1_clone_helper.html" title="CloneHelper\&lt; Value,\l Mapped\&lt; Value \&gt; \&gt;" alt="" coords="186,331,329,373"/>
+<area shape="rect" id="node13" href="$classcauldron_1_1_clone_helper.html" title="CloneHelper\&lt; Value,\l Union\&lt; Value \&gt; \&gt;" alt="" coords="186,397,329,438"/>
+<area shape="rect" id="node4" href="$classcauldron_1_1_filtered.html" title="cauldron::Filtered\l\&lt; Value \&gt;" alt="" coords="412,70,535,111"/>
+<area shape="rect" id="node6" href="$classcauldron_1_1_floats.html" title="cauldron::Floats\&lt; Value \&gt;" alt="" coords="387,143,559,169"/>
+<area shape="rect" id="node8" href="$classcauldron_1_1_integers.html" title="cauldron::Integers\l\&lt; Value \&gt;" alt="" coords="410,201,537,242"/>
+<area shape="rect" id="node10" href="$classcauldron_1_1_just.html" title="cauldron::Just\&lt; Value \&gt;" alt="" coords="393,273,554,300"/>
+<area shape="rect" id="node12" href="$classcauldron_1_1_mapped.html" title="cauldron::Mapped\&lt; Value \&gt;" alt="" coords="382,339,565,365"/>
+<area shape="rect" id="node14" href="$classcauldron_1_1_union.html" title="cauldron::Union\&lt; Value \&gt;" alt="" coords="388,404,559,431"/>
+</map>

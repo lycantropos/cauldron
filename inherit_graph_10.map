@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classcauldron_1_1_strategy.html" title="cauldron::Strategy\l\&lt; std::vector\&lt; Element \&gt; \&gt;" alt="" coords="6,11,186,53"/>
+<area shape="rect" id="node2" href="$classcauldron_1_1_clone_helper.html" title="cauldron::CloneHelper\l\&lt; std::vector\&lt; Element\l \&gt;, Vectors\&lt; Element \&gt; \&gt;" alt="" coords="235,4,405,60"/>
+<area shape="rect" id="node3" href="$classcauldron_1_1_vectors.html" title="cauldron::Vectors\&lt;\l Element \&gt;" alt="" coords="454,11,586,53"/>
+</map>

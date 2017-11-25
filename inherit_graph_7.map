@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classcauldron_1_1_strategy.html" title="cauldron::Strategy\l\&lt; Object \&gt;" alt="" coords="5,11,133,53"/>
+<area shape="rect" id="node2" href="$classcauldron_1_1_clone_helper.html" title="cauldron::CloneHelper\l\&lt; Object, Builder\&lt; Object,\l Value...\&gt; \&gt;" alt="" coords="182,4,357,60"/>
+<area shape="rect" id="node3" href="$classcauldron_1_1_builder.html" title="cauldron::Builder\&lt;\l Object, Value \&gt;" alt="" coords="406,11,533,53"/>
+</map>

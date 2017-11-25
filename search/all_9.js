@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['satisfactory',['satisfactory',['../classcauldron_1_1_sieve.html#a494ce15ace009ea87858f5d7c6fe8458',1,'cauldron::Sieve']]],
+  ['sets',['Sets',['../classcauldron_1_1_sets.html',1,'cauldron']]],
+  ['sets',['Sets',['../classcauldron_1_1_sets.html#a85fb17859e9b40be6013f14f717d8642',1,'cauldron::Sets::Sets(const SizesStrategy &amp;sizes, const ElementsStrategy &amp;elements)'],['../classcauldron_1_1_sets.html#a64ad876d3fa2f45107d10fb74978f878',1,'cauldron::Sets::Sets(const Sets&lt; Element &gt; &amp;sets)']]],
+  ['sets_2eh',['sets.h',['../sets_8h.html',1,'']]],
+  ['sieve',['Sieve',['../classcauldron_1_1_sieve.html',1,'cauldron']]],
+  ['sieve',['Sieve',['../classcauldron_1_1_sieve.html#af74ec8f83558a69fbfdcfb69b4189fa3',1,'cauldron::Sieve::Sieve(unsigned max_cycles=MAX_CYCLES)'],['../classcauldron_1_1_sieve.html#a90af1774f51a1c18afdefaee5978834f',1,'cauldron::Sieve::Sieve(std::initializer_list&lt; Requirement&lt; Product &gt;&gt; requirements, unsigned max_cycles=MAX_CYCLES)'],['../classcauldron_1_1_sieve.html#a26ae0aab42096b57d8d7ee00e6c9b350',1,'cauldron::Sieve::Sieve(const std::vector&lt; Requirement&lt; Product &gt;&gt; &amp;requirements, unsigned max_cycles=MAX_CYCLES)']]],
+  ['sieve_2eh',['sieve.h',['../sieve_8h.html',1,'']]],
+  ['sieve_3c_20value_20_3e',['Sieve&lt; Value &gt;',['../classcauldron_1_1_sieve.html',1,'cauldron']]],
+  ['sieve_5f',['sieve_',['../classcauldron_1_1_filtered.html#a6593c7c368ed7543d2b43c208b36bd3f',1,'cauldron::Filtered']]],
+  ['sift',['sift',['../classcauldron_1_1_sieve.html#ad9eb794f6c355af0e8ed5bb6acb0548e',1,'cauldron::Sieve']]],
+  ['strategy',['Strategy',['../classcauldron_1_1_strategy.html',1,'cauldron']]],
+  ['strategy_3c_20bool_20_3e',['Strategy&lt; bool &gt;',['../classcauldron_1_1_strategy.html',1,'cauldron']]],
+  ['strategy_3c_20char_20_3e',['Strategy&lt; char &gt;',['../classcauldron_1_1_strategy.html',1,'cauldron']]],
+  ['strategy_3c_20object_20_3e',['Strategy&lt; Object &gt;',['../classcauldron_1_1_strategy.html',1,'cauldron']]],
+  ['strategy_3c_20std_3a_3aset_3c_20element_20_3e_20_3e',['Strategy&lt; std::set&lt; Element &gt; &gt;',['../classcauldron_1_1_strategy.html',1,'cauldron']]],
+  ['strategy_3c_20std_3a_3astring_20_3e',['Strategy&lt; std::string &gt;',['../classcauldron_1_1_strategy.html',1,'cauldron']]],
+  ['strategy_3c_20std_3a_3avector_3c_20element_20_3e_20_3e',['Strategy&lt; std::vector&lt; Element &gt; &gt;',['../classcauldron_1_1_strategy.html',1,'cauldron']]],
+  ['strategy_5f',['strategy_',['../classcauldron_1_1_filtered.html#a524f6ccddc10c6c9d53157f9c43dcb07',1,'cauldron::Filtered::strategy_()'],['../classcauldron_1_1_mapped.html#a3d9680d78b7f03722a28bee8d323605a',1,'cauldron::Mapped::strategy_()']]],
+  ['strings',['Strings',['../classcauldron_1_1_strings.html#a8971883625282d0718dcf8b3dbfbb51c',1,'cauldron::Strings::Strings(const Strategy&lt; size_t &gt; &amp;lengths, const Strategy&lt; char &gt; &amp;alphabet)'],['../classcauldron_1_1_strings.html#ae6ba9f6d6baa1cf2c87cc45b9abe543a',1,'cauldron::Strings::Strings(const Strings &amp;strings)']]],
+  ['strings',['Strings',['../classcauldron_1_1_strings.html',1,'cauldron']]],
+  ['strings_2ecpp',['strings.cpp',['../strings_8cpp.html',1,'']]],
+  ['strings_2eh',['strings.h',['../strings_8h.html',1,'']]]
+];
