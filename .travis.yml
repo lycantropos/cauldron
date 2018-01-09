@@ -4,10 +4,6 @@ dist: trusty
 services:
   - docker
 
-branches:
-  except:
-    - gh-pages
-
 addons:
   apt:
     sources:
