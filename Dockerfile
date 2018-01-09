@@ -12,11 +12,11 @@ RUN apt-get update && \
 
 WORKDIR /opt/cauldron
 
-COPY cmake ./cmake/
+COPY cmake/ cmake/
 COPY CMakeLists.txt .
-COPY cauldron/ ./cauldron/
-COPY tests/ ./tests/
-COPY run-plain-tests.sh ./run-plain-tests.sh
+COPY cauldron/ cauldron/
+COPY tests/ tests/
+COPY run-plain-tests.sh .
 
 WORKDIR build
 
